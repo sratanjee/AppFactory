@@ -79,5 +79,8 @@ Thumbs.db
 *.iml
 *.swp
 
+# FVM version cache
+.fvm/
+
 # FVM Version Cache
 .fvm/

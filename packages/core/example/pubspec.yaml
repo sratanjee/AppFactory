@@ -1,0 +1,26 @@
+name: factory_core_example
+description: Subsystem tour for factory_core. Not a real factory app.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.4 <3.48.0"
+
+dependencies:
+  factory_core:
+    path: ../
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true
