@@ -9,7 +9,6 @@ build/
 pubspec.lock
 
 # FVM
-.fvm/flutter_sdk
 
 # iOS
 ios/Pods/
@@ -79,3 +78,6 @@ Thumbs.db
 .vscode/
 *.iml
 *.swp
+
+# FVM Version Cache
+.fvm/

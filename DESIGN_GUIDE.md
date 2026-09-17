@@ -22,7 +22,7 @@ Flutter renders both platforms. It does not decide what they look like. The shar
 | Pull-to-refresh | Cupertino sliver refresh | Material indicator |
 | Haptics | Selection, impact, notification patterns via `HapticFeedback` mapped to UIKit generators | Vibration effects via the platform channel; lighter and rarer than iOS |
 | Typography | SF Pro / SF Rounded via system font; Dynamic Type respected | Roboto Flex / Google Sans via system font; font scale respected |
-| Icons | SF Symbols through the native widget layer where possible; Cupertino icons in Flutter | Material Symbols (rounded) |
+| Icons | SF Symbols rendered natively via `factory_core`'s method channel, with `cupertino_icons` as fallback | `cupertino_icons` — a deliberate house-style choice for unified factory iconography across platforms, not a Material Symbols set |
 | Dark mode | Follow system; semantic colors only | Follow system; dynamic color (Material You) on by default, brand accent as fallback |
 
 Hard rules:
