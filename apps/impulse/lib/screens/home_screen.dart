@@ -335,11 +335,17 @@ class _AddSheetState extends State<_AddSheet> {
           const Text('Add something',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
           const SizedBox(height: 24),
-          _LabeledField(label: 'Name', controller: _nameController),
+          const Text('Name',
+              style: TextStyle(fontSize: 14, color: Color(0xFF888888))),
+          const SizedBox(height: 4),
+          AdaptiveInput(controller: _nameController, placeholder: 'What was it?'),
           const SizedBox(height: 16),
-          _LabeledField(
-            label: 'Price',
+          const Text('Price',
+              style: TextStyle(fontSize: 14, color: Color(0xFF888888))),
+          const SizedBox(height: 4),
+          AdaptiveInput(
             controller: _priceController,
+            placeholder: '0.00',
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
           const SizedBox(height: 24),
@@ -364,56 +370,6 @@ class _AddSheetState extends State<_AddSheet> {
             enabled: !_saving,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LabeledField extends StatelessWidget {
-  const _LabeledField({
-    required this.label,
-    required this.controller,
-    this.keyboardType,
-  });
-
-  final String label;
-  final TextEditingController controller;
-  final TextInputType? keyboardType;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF888888))),
-        const SizedBox(height: 4),
-        _TextInput(controller: controller, keyboardType: keyboardType),
-      ],
-    );
-  }
-}
-
-class _TextInput extends StatelessWidget {
-  const _TextInput({required this.controller, this.keyboardType});
-  final TextEditingController controller;
-  final TextInputType? keyboardType;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFCCCCCC)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: EditableText(
-        controller: controller,
-        focusNode: FocusNode(),
-        style: const TextStyle(fontSize: 16, color: Color(0xFF000000)),
-        cursorColor: context.adaptiveTheme.accent,
-        backgroundCursorColor: const Color(0x00000000),
-        keyboardType: keyboardType,
       ),
     );
   }

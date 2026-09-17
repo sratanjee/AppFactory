@@ -2,6 +2,7 @@ export 'adaptive_app.dart';
 export 'adaptive_button.dart';
 export 'adaptive_dialog.dart';
 export 'adaptive_icon.dart';
+export 'adaptive_input.dart';
 export 'adaptive_list.dart';
 export 'adaptive_page.dart';
 export 'adaptive_picker.dart';
