@@ -1,24 +1,40 @@
 import Flutter
 import UIKit
+import WidgetKit
 
 public class FactoryCorePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(
+    let symbolChannel = FlutterMethodChannel(
       name: "factory_core/sf_symbol",
       binaryMessenger: registrar.messenger()
     )
+    let bridgeChannel = FlutterMethodChannel(
+      name: "factory_core/widget_bridge",
+      binaryMessenger: registrar.messenger()
+    )
     let instance = FactoryCorePlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    registrar.addMethodCallDelegate(instance, channel: symbolChannel)
+    registrar.addMethodCallDelegate(instance, channel: bridgeChannel)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "render":
       handleRender(call, result: result)
+    case "publish":
+      handlePublish(call, result: result)
+    case "read":
+      handleRead(call, result: result)
+    case "clear":
+      handleClear(call, result: result)
+    case "reloadAllWidgets":
+      handleReload(result: result)
     default:
       result(FlutterMethodNotImplemented)
     }
   }
+
+  // MARK: - SF Symbol rendering
 
   private func handleRender(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     guard
@@ -57,6 +73,62 @@ public class FactoryCorePlugin: NSObject, FlutterPlugin {
     }
     result(FlutterStandardTypedData(bytes: data))
   }
+
+  // MARK: - Widget bridge
+
+  private func handlePublish(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard
+      let args = call.arguments as? [String: Any],
+      let suiteName = args["suiteName"] as? String,
+      let payload = args["payload"] as? String
+    else {
+      result(FlutterError(code: "bad_args", message: "Missing suiteName or payload", details: nil))
+      return
+    }
+    let defaults = UserDefaults(suiteName: suiteName) ?? UserDefaults.standard
+    defaults.set(payload, forKey: "payload")
+    reloadTimelines()
+    result(nil)
+  }
+
+  private func handleRead(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard
+      let args = call.arguments as? [String: Any],
+      let suiteName = args["suiteName"] as? String
+    else {
+      result(FlutterError(code: "bad_args", message: "Missing suiteName", details: nil))
+      return
+    }
+    let defaults = UserDefaults(suiteName: suiteName) ?? UserDefaults.standard
+    result(defaults.string(forKey: "payload"))
+  }
+
+  private func handleClear(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard
+      let args = call.arguments as? [String: Any],
+      let suiteName = args["suiteName"] as? String
+    else {
+      result(FlutterError(code: "bad_args", message: "Missing suiteName", details: nil))
+      return
+    }
+    let defaults = UserDefaults(suiteName: suiteName) ?? UserDefaults.standard
+    defaults.removeObject(forKey: "payload")
+    reloadTimelines()
+    result(nil)
+  }
+
+  private func handleReload(result: @escaping FlutterResult) {
+    reloadTimelines()
+    result(nil)
+  }
+
+  private func reloadTimelines() {
+    if #available(iOS 14.0, *) {
+      WidgetCenter.shared.reloadAllTimelines()
+    }
+  }
+
+  // MARK: - Helpers
 
   private static func parseWeight(_ s: String) -> UIImage.SymbolWeight {
     switch s {
