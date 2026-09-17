@@ -24,6 +24,7 @@ Map<String, String> buildContext({
     'slug': spec.slug,
     'slugUnderscored': spec.slugUnderscored,
     'appName': _dartString(spec.appName),
+    'appNameLiteral': spec.appName,
     'appClassName': className,
     'bundleId': spec.bundleIdRaw,
     'bundlePrefix': bundlePrefix,

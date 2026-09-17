@@ -102,12 +102,22 @@ class Generator {
 
   Future<void> _writeGeneratedFiles(Map<String, String> ctx) async {
     await _writeFile('pubspec.yaml', render(pubspecTemplate, ctx));
+    await _writeFile('analysis_options.yaml',
+        render(analysisOptionsTemplate, ctx));
     await _writeFile('lib/main.dart', render(mainDartTemplate, ctx));
     await _writeFile('lib/app.dart', render(appDartTemplate, ctx));
     await _writeFile('lib/app_config.dart', render(appConfigDartTemplate, ctx));
     await _writeFile('lib/router.dart', render(routerDartTemplate, ctx));
     await _writeFile('lib/screens/home_screen.dart', render(homeScreenTemplate, ctx));
     await _writeFile('.shorebird/shorebird.yaml', render(shorebirdYamlTemplate, ctx));
+
+    // flutter create leaves behind a stub widget_test.dart that references
+    // its own MyApp scaffold. Replace it with a mount-only smoke test.
+    final stubTest = File(p.join(_appDir, 'test/widget_test.dart'));
+    if (await stubTest.exists()) {
+      await stubTest.delete();
+    }
+    await _writeFile('test/smoke_test.dart', render(smokeTestTemplate, ctx));
   }
 
   Future<void> _writeStoreStubs(Map<String, String> ctx) async {

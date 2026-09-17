@@ -1,0 +1,21 @@
+"I want to put a 48-hour wait between wanting something and buying it so that I stop spending money on things I regret."
+
+For A 25–35 year old who has TikTok Shop and Amazon on their phone, is trying to pay down a credit card, and just realized their "little treats" added up to $400 last month..
+
+What it does
+
+• Show lifetime Saved total (hero), the Waiting list with live countdowns, and the Ready-to-decide list
+• Capture the thing they almost bought
+• Show one item; locked until timer ends
+• Everything decided, newest first, grouped by month with a Saved subtotal per month
+• Preferences and account
+
+Why people use it
+
+Free: unlimited items, 24h and 48h waits, Saved total, last 30 days of history. Pro: 72h and 7-day waits, full history with monthly subtotals, CSV export.
+
+Subscription
+
+Free trial: 7-day. Weekly: $2.99. Annual: $19.99.
+Auto-renews unless cancelled.
+Manage in App Store settings.

@@ -5,7 +5,7 @@ library;
 
 const pubspecTemplate = r'''
 name: ${slugUnderscored}
-description: ${appName}.
+description: ${appNameLiteral}.
 publish_to: none
 version: 1.0.0+1
 
@@ -34,9 +34,9 @@ flutter:
 ''';
 
 const mainDartTemplate = r'''
-import 'package:${slugUnderscored}/app.dart';
 import 'package:factory_core/factory_core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:${slugUnderscored}/app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,9 +47,9 @@ void main() {
 
 const appDartTemplate = r'''
 import 'package:factory_core/factory_core.dart';
+import 'package:flutter/widgets.dart';
 import 'package:${slugUnderscored}/app_config.dart';
 import 'package:${slugUnderscored}/router.dart';
-import 'package:flutter/widgets.dart';
 
 class ${appClassName}App extends StatelessWidget {
   const ${appClassName}App({super.key});
@@ -89,12 +89,11 @@ abstract final class AppConfig {
 
   static AnalyticsConfig get analyticsConfig => posthogKey.isEmpty
       ? const AnalyticsConfig.disabled()
-      : AnalyticsConfig(apiKey: posthogKey);
+      : const AnalyticsConfig(apiKey: posthogKey);
 
   static PaywallConfig get paywallConfig => PaywallConfig(
         iosApiKey: revenueCatIosKey,
         androidApiKey: revenueCatAndroidKey,
-        entitlementId: '${revenueCatEntitlement}',
         benefits: ${benefitsList},
         termsUrl: Uri.parse('https://example.test/terms'),
         privacyUrl: Uri.parse('https://example.test/privacy'),
@@ -103,8 +102,8 @@ abstract final class AppConfig {
 ''';
 
 const routerDartTemplate = r'''
-import 'package:${slugUnderscored}/screens/home_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:${slugUnderscored}/screens/home_screen.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -146,6 +145,40 @@ const shorebirdYamlTemplate = r'''
 app_id: TODO_SHOREBIRD_APP_ID
 ''';
 
+const analysisOptionsTemplate = r'''
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    prefer_double_quotes: false
+    unnecessary_type_name_in_constructor: false
+    prefer_initializing_formals: false
+''';
+
+const smokeTestTemplate = r'''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:${slugUnderscored}/app.dart';
+
+void main() {
+  testWidgets('${appClassName}App mounts', (tester) async {
+    await tester.pumpWidget(const ${appClassName}App());
+    await tester.pump();
+  });
+}
+''';
+
 const reviewMdTemplate = r'''
 # ${appName} — review
 
@@ -162,12 +195,12 @@ Fill in as the pipeline progresses. Empty at scaffold means "flagged, not blocki
 
 // Store metadata
 
-const iosNameTemplate = r'${appName}';
+const iosNameTemplate = r'${appNameLiteral}';
 const iosSubtitleTemplate = r'${iosSubtitle}';
 const iosKeywordsTemplate = r'${iosKeywordsCsv}';
 const iosPromoTemplate = r'${primaryKeyword}';
 const iosDescriptionTemplate = r'${iosLongDescription}';
 
-const androidNameTemplate = r'${appName}';
+const androidNameTemplate = r'${appNameLiteral}';
 const androidShortDescriptionTemplate = r'${androidShortDescription}';
 const androidDescriptionTemplate = r'${androidLongDescription}';
