@@ -1,0 +1,33 @@
+{
+  "@@locale": "en",
+
+  "buttonCancel": "Cancel",
+  "@buttonCancel": {
+    "description": "Sheet or dialog cancel action label."
+  },
+
+  "buttonTryAgain": "Try again",
+  "@buttonTryAgain": {
+    "description": "Error state retry action label."
+  },
+
+  "buttonRestorePurchases": "Restore purchases",
+  "@buttonRestorePurchases": {
+    "description": "Paywall restore-purchases action label."
+  },
+
+  "buttonTerms": "Terms",
+  "@buttonTerms": {
+    "description": "Paywall footer link to Terms of Service."
+  },
+
+  "buttonPrivacy": "Privacy",
+  "@buttonPrivacy": {
+    "description": "Paywall footer link to Privacy Policy."
+  },
+
+  "errorGeneric": "Something went wrong. Try again.",
+  "@errorGeneric": {
+    "description": "Default error message when no more specific one exists."
+  }
+}

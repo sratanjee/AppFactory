@@ -1,6 +1,7 @@
 import 'package:factory_core/adaptive/adaptive_icon.dart';
 import 'package:factory_core/adaptive/platform.dart';
 import 'package:factory_core/adaptive/theme.dart';
+import 'package:factory_core/l10n/l10n.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoActionSheet,
@@ -21,18 +22,23 @@ class AdaptivePicker<T> extends StatelessWidget {
     required this.items,
     required this.selectedValue,
     required this.onSelected,
-    this.cancelLabel = 'Cancel',
+    this.cancelLabel,
     super.key,
   });
 
   final List<AdaptivePickerItem<T>> items;
   final T selectedValue;
   final ValueChanged<T> onSelected;
-  final String cancelLabel;
+
+  /// Overrides the default cancel label (`FactoryLocalizations.buttonCancel`,
+  /// or a hardcoded English fallback when no `Localizations` ancestor exists).
+  final String? cancelLabel;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.adaptiveTheme;
+    final resolvedCancelLabel =
+        cancelLabel ?? context.maybeL10n?.buttonCancel ?? 'Cancel';
     if (AdaptivePlatform.isIOS) {
       final selected = items.firstWhere(
         (i) => i.value == selectedValue,
@@ -52,7 +58,7 @@ class AdaptivePicker<T> extends StatelessWidget {
               ],
               cancelButton: CupertinoActionSheetAction(
                 onPressed: Navigator.of(ctx).pop,
-                child: Text(cancelLabel),
+                child: Text(resolvedCancelLabel),
               ),
             ),
           );

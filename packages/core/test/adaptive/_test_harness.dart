@@ -1,6 +1,7 @@
 import 'package:factory_core/factory_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 /// Wraps a widget under test with just enough ambient scaffolding to render
 /// both Cupertino and Material widgets, without filling to parent — golden
@@ -19,6 +20,10 @@ Widget wrapForTest(
   return Localizations(
     locale: const Locale('en'),
     delegates: const [
+      FactoryLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
       DefaultMaterialLocalizations.delegate,
       DefaultCupertinoLocalizations.delegate,
       DefaultWidgetsLocalizations.delegate,

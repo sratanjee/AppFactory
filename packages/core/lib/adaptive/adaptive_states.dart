@@ -1,4 +1,5 @@
 import 'package:factory_core/adaptive/theme.dart';
+import 'package:factory_core/l10n/l10n.dart';
 import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/widgets.dart';
 
@@ -19,17 +20,21 @@ class AdaptiveError extends StatelessWidget {
   const AdaptiveError({
     required this.message,
     this.onRetry,
-    this.retryLabel = 'Try again',
+    this.retryLabel,
     super.key,
   });
 
   final String message;
   final VoidCallback? onRetry;
-  final String retryLabel;
+
+  /// Overrides the default label (`FactoryLocalizations.buttonTryAgain`, or
+  /// a hardcoded English fallback when no `Localizations` ancestor exists).
+  final String? retryLabel;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.adaptiveTheme;
+    final label = retryLabel ?? context.maybeL10n?.buttonTryAgain ?? 'Try again';
     return Center(
       child: Padding(
         padding: EdgeInsets.all(theme.spacing.xl),
@@ -43,7 +48,7 @@ class AdaptiveError extends StatelessWidget {
               GestureDetector(
                 onTap: onRetry,
                 child: Text(
-                  retryLabel,
+                  label,
                   style: TextStyle(color: theme.accent, fontWeight: FontWeight.w600),
                 ),
               ),

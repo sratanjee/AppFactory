@@ -9,6 +9,7 @@ analyzer:
     - '**/*.g.dart'
     - '**/*.freezed.dart'
     - '**/*.drift.dart'
+    - '**/generated/**'
     - build/**
     - android/**
     - ios/**

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:factory_core/adaptive/platform.dart';
 import 'package:factory_core/adaptive/theme.dart';
+import 'package:factory_core/l10n/l10n.dart';
 import 'package:flutter/cupertino.dart' show CupertinoApp, CupertinoThemeData;
 import 'package:flutter/material.dart' show ColorScheme, MaterialApp, ThemeData;
 import 'package:flutter/services.dart' show SystemChrome, SystemUiMode;
@@ -55,6 +56,7 @@ class _AdaptiveAppState extends State<AdaptiveApp> {
 
   Widget _buildPlatformApp() {
     final delegates = <LocalizationsDelegate<Object?>>[
+      FactoryLocalizations.delegate,
       ...?widget.localizationsDelegates,
       GlobalMaterialLocalizations.delegate,
       GlobalCupertinoLocalizations.delegate,
