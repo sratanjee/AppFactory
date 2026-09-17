@@ -1,0 +1,21 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    prefer_double_quotes: false
+    unnecessary_type_name_in_constructor: false
+    prefer_initializing_formals: false
+    # CLI does I/O; the async File methods are fine.
+    avoid_slow_async_io: false
+    # Template constants are `r'${var}'` strings on purpose.
+    unnecessary_raw_strings: false
+    # Explicit local types improve readability in a small codebase.
+    omit_local_variable_types: false
