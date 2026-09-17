@@ -52,16 +52,6 @@ void main() {
               ),
             ),
             GoldenTestScenario(
-              name: 'loading',
-              child: wrapForTest(
-                AdaptivePrimaryButton(
-                  label: 'Start counting',
-                  onPressed: () {},
-                  isLoading: true,
-                ),
-              ),
-            ),
-            GoldenTestScenario(
               name: 'disabled',
               child: wrapForTest(
                 const AdaptivePrimaryButton(

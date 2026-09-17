@@ -12,7 +12,7 @@ const _sampleSections = <AdaptiveListSection>[
     header: 'General',
     items: [
       AdaptiveListItem(title: 'Notifications', hasNavigation: true),
-      AdaptiveListItem(title: 'Sounds', subtitle: 'Haptics and alerts'),
+      AdaptiveListItem(title: 'Sounds'),
     ],
   ),
   AdaptiveListSection(
@@ -20,8 +20,6 @@ const _sampleSections = <AdaptiveListSection>[
     footer: 'Signed in as Sarang',
     items: [
       AdaptiveListItem(title: 'Manage subscription', hasNavigation: true),
-      AdaptiveListItem(title: 'Restore purchases'),
-      AdaptiveListItem(title: 'Sign out'),
     ],
   ),
 ];
@@ -40,32 +38,32 @@ void main() {
         'AdaptiveList — ${platform.name}',
         fileName: 'adaptive_list_${platform.name}',
         builder: () => GoldenTestGroup(
-          scenarioConstraints: const BoxConstraints(maxWidth: 360, maxHeight: 480),
+          scenarioConstraints: const BoxConstraints(maxWidth: 360, maxHeight: 640),
           children: [
             GoldenTestScenario(
               name: 'light 100%',
               child: wrapForTest(
-                const AdaptiveList(sections: _sampleSections),
+                const AdaptiveList(sections: _sampleSections, scrollable: false),
               ),
             ),
             GoldenTestScenario(
               name: 'dark 100%',
               child: wrapForTest(
-                const AdaptiveList(sections: _sampleSections),
+                const AdaptiveList(sections: _sampleSections, scrollable: false),
                 brightness: Brightness.dark,
               ),
             ),
             GoldenTestScenario(
               name: 'light 200%',
               child: wrapForTest(
-                const AdaptiveList(sections: _sampleSections),
+                const AdaptiveList(sections: _sampleSections, scrollable: false),
                 textScale: 2,
               ),
             ),
             GoldenTestScenario(
               name: 'dark 200%',
               child: wrapForTest(
-                const AdaptiveList(sections: _sampleSections),
+                const AdaptiveList(sections: _sampleSections, scrollable: false),
                 brightness: Brightness.dark,
                 textScale: 2,
               ),
