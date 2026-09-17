@@ -103,6 +103,18 @@ abstract class FactoryLocalizations {
   /// **'Cancel'**
   String get buttonCancel;
 
+  /// Onboarding step advance label (non-terminal step).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get buttonContinue;
+
+  /// Onboarding terminal step label.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get buttonGetStarted;
+
   /// Error state retry action label.
   ///
   /// In en, this message translates to:

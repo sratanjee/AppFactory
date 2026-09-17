@@ -6,6 +6,16 @@
     "description": "Sheet or dialog cancel action label."
   },
 
+  "buttonContinue": "Continue",
+  "@buttonContinue": {
+    "description": "Onboarding step advance label (non-terminal step)."
+  },
+
+  "buttonGetStarted": "Get started",
+  "@buttonGetStarted": {
+    "description": "Onboarding terminal step label."
+  },
+
   "buttonTryAgain": "Try again",
   "@buttonTryAgain": {
     "description": "Error state retry action label."

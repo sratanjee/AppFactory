@@ -13,6 +13,12 @@ class FactoryLocalizationsEn extends FactoryLocalizations {
   String get buttonCancel => 'Cancel';
 
   @override
+  String get buttonContinue => 'Continue';
+
+  @override
+  String get buttonGetStarted => 'Get started';
+
+  @override
   String get buttonTryAgain => 'Try again';
 
   @override
