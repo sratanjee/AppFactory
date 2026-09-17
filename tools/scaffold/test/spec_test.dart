@@ -92,6 +92,14 @@ void main() {
     expect(spec.slugUnderscored, 'example_habits');
   });
 
+  test('code-formatted fields have their Markdown backticks stripped', () {
+    // Regression for the parser bug caught only by end-to-end dry-run:
+    // SPEC_TEMPLATE.md wraps `bundle ID` and `revenueCatEntitlement` in
+    // backticks. Unit tests must fail loudly if they leak through.
+    expect(spec.bundleIdRaw, isNot(contains('`')));
+    expect(spec.monetization.revenueCatEntitlement, isNot(contains('`')));
+  });
+
   test('throws on missing §1 App name', () {
     const bad = '''
 ## 1. Identity
