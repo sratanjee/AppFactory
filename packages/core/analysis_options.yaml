@@ -21,3 +21,8 @@ linter:
     prefer_double_quotes: false
     # Fires spuriously on constructor declarations `Foo._()` in Dart 3.13. Revisit when lint stabilises.
     unnecessary_type_name_in_constructor: false
+    # Blocks the "private field, public param name" pattern
+    # (`Paywall._({required PaywallConfig config}) : _config = config`).
+    # Initializing formals for private fields (`this._config`) force ugly
+    # `Paywall._(_config: ...)` call sites. Prefer legibility.
+    prefer_initializing_formals: false
