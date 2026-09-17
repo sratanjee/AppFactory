@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:impulse/data/app_database.dart';
 import 'package:impulse/data/items_repo.dart';
-import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -91,18 +90,56 @@ class _SavedTotal extends StatelessWidget {
 }
 
 String _formatCurrency(double amount) {
-  final code = _localeCurrencyCode();
-  return NumberFormat.simpleCurrency(name: code).format(amount);
+  // Explicit symbol + decimals so we don't need locale data loaded at
+  // runtime (which trips up on the simulator without initializeDateFormatting).
+  final symbol = _localeCurrencySymbol();
+  return '$symbol${amount.toStringAsFixed(2)}';
 }
 
 String _localeCurrencyCode() {
+  // Best-effort ISO code inferred from Platform.localeName ("en_US" → "USD").
+  // Falls back to USD when the mapping is unknown.
   try {
     final locale = Platform.localeName;
-    final format = NumberFormat.simpleCurrency(locale: locale);
-    return format.currencyName ?? 'USD';
+    final region = locale.split(RegExp('[_\\-]')).length > 1
+        ? locale.split(RegExp('[_\\-]')).last
+        : 'US';
+    return _codeFromRegion(region);
   } on Object {
     return 'USD';
   }
+}
+
+String _localeCurrencySymbol() {
+  const map = {
+    'USD': r'$',
+    'CAD': r'CA$',
+    'GBP': '£',
+    'EUR': '€',
+    'JPY': '¥',
+    'INR': '₹',
+    'AUD': r'AU$',
+  };
+  return map[_localeCurrencyCode()] ?? r'$';
+}
+
+String _codeFromRegion(String region) {
+  const regionToCode = {
+    'US': 'USD',
+    'CA': 'CAD',
+    'GB': 'GBP',
+    'UK': 'GBP',
+    'IE': 'EUR',
+    'DE': 'EUR',
+    'FR': 'EUR',
+    'ES': 'EUR',
+    'IT': 'EUR',
+    'NL': 'EUR',
+    'JP': 'JPY',
+    'IN': 'INR',
+    'AU': 'AUD',
+  };
+  return regionToCode[region.toUpperCase()] ?? 'USD';
 }
 
 class _Section extends StatelessWidget {
@@ -252,8 +289,17 @@ class _ItemRow extends StatelessWidget {
 }
 
 String _priceString(Item item) {
-  final amount = item.priceMinor / 100;
-  return NumberFormat.simpleCurrency(name: item.currency).format(amount);
+  const symbols = {
+    'USD': r'$',
+    'CAD': r'CA$',
+    'GBP': '£',
+    'EUR': '€',
+    'JPY': '¥',
+    'INR': '₹',
+    'AUD': r'AU$',
+  };
+  final symbol = symbols[item.currency] ?? '${item.currency} ';
+  return '$symbol${(item.priceMinor / 100).toStringAsFixed(2)}';
 }
 
 String _formatRemaining(int ms) {
@@ -271,7 +317,10 @@ String _formatRemaining(int ms) {
 Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
   await AdaptiveSheet.show<void>(
     context,
-    child: _AddSheet(ref: ref),
+    child: ColoredBox(
+      color: const Color(0xFFFFFFFF),
+      child: _AddSheet(ref: ref),
+    ),
   );
 }
 

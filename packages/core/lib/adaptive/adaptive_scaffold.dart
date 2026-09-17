@@ -61,7 +61,12 @@ class AdaptiveScaffold extends StatelessWidget {
         ],
       );
     } else {
-      content = body;
+      // CupertinoPageScaffold lets body draw under the translucent nav
+      // bar — per DESIGN_GUIDE §1 the scaffold, not the app, offsets by
+      // the nav bar height so content isn't hidden.
+      content = title != null
+          ? SafeArea(top: true, bottom: false, child: body)
+          : body;
     }
 
     final scaffold = CupertinoPageScaffold(
