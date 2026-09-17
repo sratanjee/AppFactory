@@ -5,5 +5,6 @@ export 'analytics/analytics.dart';
 export 'l10n/l10n.dart';
 export 'onboarding/onboarding.dart';
 export 'paywall/paywall.dart';
+export 'shorebird/shorebird.dart';
 export 'storage/storage.dart';
 export 'widget_bridge/widget_bridge.dart';
