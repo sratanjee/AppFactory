@@ -25,6 +25,15 @@ class FactoryLocalizationsEn extends FactoryLocalizations {
   String get buttonRestorePurchases => 'Restore purchases';
 
   @override
+  String get buttonStartFreeTrial => 'Start free trial';
+
+  @override
+  String get paywallErrorPurchaseFailed => 'Purchase failed. Try again.';
+
+  @override
+  String get paywallErrorRestoreFailed => 'Restore failed. Try again.';
+
+  @override
   String get buttonTerms => 'Terms';
 
   @override

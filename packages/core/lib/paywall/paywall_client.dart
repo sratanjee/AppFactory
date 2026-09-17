@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:factory_core/analytics/analytics_client.dart';
 import 'package:factory_core/paywall/paywall_config.dart';
+import 'package:factory_core/paywall/paywall_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' as rc;
@@ -104,13 +105,20 @@ class Paywall {
   /// Testing mode. Never touches RC. `fetchOffering()` returns `offering`.
   /// `present()`/`presentIfNotEntitled()` return `nextPresentResult` (or
   /// `PaywallResult.dismissed` by default) without rendering UI.
+  ///
+  /// Widget tests that need to render `PaywallScreen` with real benefit
+  /// copy / URLs can pass a [config]; supplying [analytics] lets the test
+  /// inspect the same instance the widget calls
+  /// `trackPaywallView`/`trackPaywallPurchase` against.
   factory Paywall.testing({
+    PaywallConfig? config,
+    Analytics? analytics,
     PaywallOffering? offering,
     PaywallResult nextPresentResult = PaywallResult.dismissed,
   }) =>
       Paywall._(
-        config: const PaywallConfig.disabled(),
-        analytics: Analytics.testing(),
+        config: config ?? const PaywallConfig.disabled(),
+        analytics: analytics ?? Analytics.testing(),
         testOffering: offering,
         testNextPresentResult: nextPresentResult,
       );
@@ -284,11 +292,10 @@ class Paywall {
   }) async {
     if (_testNextPresentResult != null) return _testNextPresentResult;
     if (!_isReal) return PaywallResult.notPresented;
-    // Real presentation is wired in the UI subsystem (paywall_screen.dart)
-    // to keep this file free of widget dependencies. See PaywallScreen.show().
-    throw UnsupportedError(
-      'Call PaywallScreen.show(context, paywall, placement: placement) '
-      'from your app code to present the paywall.',
+    return await PaywallScreen.show(
+      context,
+      paywall: this,
+      placement: placement,
     );
   }
 

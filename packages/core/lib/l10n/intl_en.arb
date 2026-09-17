@@ -26,6 +26,21 @@
     "description": "Paywall restore-purchases action label."
   },
 
+  "buttonStartFreeTrial": "Start free trial",
+  "@buttonStartFreeTrial": {
+    "description": "Paywall primary action when the selected package has a free trial."
+  },
+
+  "paywallErrorPurchaseFailed": "Purchase failed. Try again.",
+  "@paywallErrorPurchaseFailed": {
+    "description": "Inline error message under the primary paywall button when a purchase fails."
+  },
+
+  "paywallErrorRestoreFailed": "Restore failed. Try again.",
+  "@paywallErrorRestoreFailed": {
+    "description": "Inline error message when a restore fails."
+  },
+
   "buttonTerms": "Terms",
   "@buttonTerms": {
     "description": "Paywall footer link to Terms of Service."

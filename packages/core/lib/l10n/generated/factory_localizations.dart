@@ -127,6 +127,24 @@ abstract class FactoryLocalizations {
   /// **'Restore purchases'**
   String get buttonRestorePurchases;
 
+  /// Paywall primary action when the selected package has a free trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Start free trial'**
+  String get buttonStartFreeTrial;
+
+  /// Inline error message under the primary paywall button when a purchase fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed. Try again.'**
+  String get paywallErrorPurchaseFailed;
+
+  /// Inline error message when a restore fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed. Try again.'**
+  String get paywallErrorRestoreFailed;
+
   /// Paywall footer link to Terms of Service.
   ///
   /// In en, this message translates to:
