@@ -5,6 +5,7 @@ import 'package:factory_core/factory_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wash_quote/data/app_database.dart';
 import 'package:wash_quote/data/job_repo.dart';
 import 'package:wash_quote/features/money_format.dart';
 import 'package:wash_quote/features/paywall_gate.dart';
@@ -33,7 +34,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     final isCustomers = widget.mode == JobsMode.byCustomer;
 
     return AdaptiveScaffold(
-      title: Text(isCustomers ? AppStrings.tabCustomers : AppStrings.jobsTitle),
+      titleDisplay: TitleDisplay.none,
       body: summariesAsync.when(
         loading: () => const AdaptiveLoading(),
         error: (_, _) => AdaptiveError(
@@ -43,26 +44,50 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
         data: (summaries) {
           final filtered = _filter(summaries);
           return ListView(
-            padding: EdgeInsets.symmetric(horizontal: theme.spacing.lg),
+            padding: EdgeInsets.zero,
             children: [
-              SizedBox(height: theme.spacing.sm),
-              _SegmentToggle(
-                value: _segment,
-                onChanged: (v) => setState(() => _segment = v),
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    theme.spacing.lg,
+                    theme.spacing.sm,
+                    theme.spacing.lg,
+                    0,
+                  ),
+                  child: _Header(
+                    title: isCustomers
+                        ? AppStrings.tabCustomers
+                        : AppStrings.jobsTitle,
+                    segment: isCustomers ? null : _segment,
+                    onSegmentChanged: isCustomers
+                        ? null
+                        : (v) => setState(() => _segment = v),
+                  ),
+                ),
               ),
-              SizedBox(height: theme.spacing.lg),
-              _HeroCard(onTap: () => _openBuilder(context)),
-              SizedBox(height: theme.spacing.xl),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  theme.spacing.lg,
+                  18,
+                  theme.spacing.lg,
+                  0,
+                ),
+                child: _HeroCard(onTap: () => _openBuilder(context)),
+              ),
               if (filtered.isEmpty)
-                const _EmptyLine(text: AppStrings.jobsEmptyHint)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: theme.spacing.lg),
+                  child: const _EmptyLine(text: AppStrings.jobsEmptyHint),
+                )
+              else if (isCustomers)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: theme.spacing.lg),
+                  child: _ByCustomerList(summaries: filtered),
+                )
               else ...[
-                if (isCustomers)
-                  _ByCustomerList(summaries: filtered)
-                else ...[
-                  _WaitingRow(summaries: _waiting(filtered)),
-                  SizedBox(height: theme.spacing.xl),
-                  _AcceptedList(summaries: _accepted(filtered)),
-                ],
+                _WaitingRow(summaries: _waiting(filtered)),
+                _AcceptedList(summaries: _accepted(filtered)),
               ],
               SizedBox(height: theme.spacing.xxl),
             ],
@@ -112,25 +137,92 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   }
 }
 
-class _SegmentToggle extends StatelessWidget {
-  const _SegmentToggle({required this.value, required this.onChanged});
+class _Header extends StatelessWidget {
+  const _Header({
+    required this.title,
+    required this.segment,
+    required this.onSegmentChanged,
+  });
+
+  final String title;
+  final _Segment? segment;
+  final ValueChanged<_Segment>? onSegmentChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.3,
+          ),
+        ),
+        const Spacer(),
+        if (segment != null && onSegmentChanged != null)
+          _InlineSegmented(
+            value: segment!,
+            onChanged: onSegmentChanged!,
+          ),
+      ],
+    );
+  }
+}
+
+class _InlineSegmented extends StatelessWidget {
+  const _InlineSegmented({required this.value, required this.onChanged});
 
   final _Segment value;
   final ValueChanged<_Segment> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: AdaptiveSegmentedControl<_Segment>(
-        segments: const [
-          AdaptiveSegment(
-              value: _Segment.quotes, label: AppStrings.jobsSegmentQuotes),
-          AdaptiveSegment(
-              value: _Segment.invoices, label: AppStrings.jobsSegmentInvoices),
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F2F7),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _pill(_Segment.quotes, AppStrings.jobsSegmentQuotes),
+          _pill(_Segment.invoices, AppStrings.jobsSegmentInvoices),
         ],
-        selectedValue: value,
-        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _pill(_Segment seg, String label) {
+    final selected = value == seg;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => onChanged(seg),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFFFFFFF) : null,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: selected
+              ? const [
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: selected ? const Color(0xFF1C1C1E) : const Color(0xFF6E6E73),
+          ),
+        ),
       ),
     );
   }
@@ -147,55 +239,71 @@ class _HeroCard extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Container(
-        height: 168,
-        padding: EdgeInsets.all(theme.spacing.lg),
-        decoration: BoxDecoration(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          height: 168,
           color: theme.accent,
-          borderRadius: BorderRadius.circular(22),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0x33FFFFFF),
-              ),
-              child: const AdaptiveIcon(
-                AdaptiveIconName.cameraSymbol,
-                color: Color(0xFFFFFFFF),
-                size: 28,
-              ),
-            ),
-            SizedBox(width: theme.spacing.lg),
-            const Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppStrings.jobsHeroHeadline,
-                    style: TextStyle(
-                      color: Color(0xFFFFFFFF),
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -30,
+                right: -30,
+                child: Container(
+                  width: 160,
+                  height: 160,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0x1FFFFFFF),
                   ),
-                  SizedBox(height: 6),
-                  Text(
-                    AppStrings.jobsHeroSubline,
-                    style: TextStyle(
-                      color: Color(0xE6FFFFFF),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0x33FFFFFF),
+                      ),
+                      child: const AdaptiveIcon(
+                        AdaptiveIconName.cameraSymbol,
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.jobsHeroHeadline,
+                          style: TextStyle(
+                            color: Color(0xFFFFFFFF),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          AppStrings.jobsHeroSubline,
+                          style: TextStyle(
+                            color: Color(0xD9FFFFFF),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -210,7 +318,33 @@ class _EmptyLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Text(text, style: const TextStyle(color: Color(0xFF666666))),
+      child: Text(text, style: const TextStyle(color: Color(0xFF6E6E73))),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.count, required this.totalCents});
+  final String title;
+  final int count;
+  final int totalCents;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
+        const Spacer(),
+        Text(
+          '$count · ${Money.formatCents(totalCents)}',
+          style: const TextStyle(fontSize: 13, color: Color(0xFF6E6E73)),
+        ),
+      ],
     );
   }
 }
@@ -224,20 +358,26 @@ class _WaitingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     if (summaries.isEmpty) return const SizedBox.shrink();
     final total = summaries.fold<int>(0, (a, s) => a + s.totalCents);
-    final header =
-        '${AppStrings.jobsWaitingHeader} · ${summaries.length} · ${Money.formatCents(total)}';
     final theme = context.adaptiveTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(header,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        SizedBox(height: theme.spacing.xl),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: theme.spacing.lg),
+          child: _SectionHeader(
+            title: AppStrings.jobsWaitingHeader,
+            count: summaries.length,
+            totalCents: total,
+          ),
+        ),
         SizedBox(height: theme.spacing.md),
         SizedBox(
-          height: 168,
+          height: 176,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: theme.spacing.lg),
             itemCount: summaries.length,
             separatorBuilder: (_, _) => SizedBox(width: theme.spacing.md),
             itemBuilder: (context, i) => _QuoteThumbCard(summary: summaries[i]),
@@ -255,63 +395,96 @@ class _QuoteThumbCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.adaptiveTheme;
     final photo = summary.beforePhotoPath;
-    final name = summary.customer?.name ?? AppStrings.builderNoCustomer;
+    final serviceName = summary.primaryServiceName ?? AppStrings.tabServices;
+    final customer = summary.customer?.name ?? AppStrings.builderNoCustomer;
+    final priceLabel = Money.formatCents(summary.totalCents);
+    final pillLabel = _sentPillLabel(summary.job);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => _openDetail(context, summary.job.id),
       child: SizedBox(
         width: 150,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(theme.cornerRadius.md),
-              child: Container(
-                height: 100,
-                color: const Color(0xFFEDEDF2),
-                child: photo == null
-                    ? const Center(
-                        child: AdaptiveIcon(
-                          AdaptiveIconName.photo,
-                          color: Color(0xFFA0A0A0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: ColoredBox(
+            color: const Color(0xFFF2F2F7),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 92,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: photo == null
+                            ? Container(
+                                color: const Color(0xFFCFD8E3),
+                                alignment: Alignment.center,
+                                child: const AdaptiveIcon(
+                                  AdaptiveIconName.photo,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              )
+                            : Image.file(File(photo), fit: BoxFit.cover),
+                      ),
+                      if (pillLabel != null)
+                        Positioned(
+                          left: 8,
+                          bottom: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0x73000000),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              pillLabel,
+                              style: const TextStyle(
+                                color: Color(0xFFFFFFFF),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
-                      )
-                    : Image.file(File(photo), fit: BoxFit.cover),
-              ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        serviceName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '$customer · $priceLabel',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF6E6E73),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: theme.spacing.sm),
-            Text(name, style: const TextStyle(fontSize: 14)),
-            Text(
-              Money.formatCents(summary.totalCents),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
-            _StatusPill(status: JobStatusCode.fromCode(summary.job.status)),
-          ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.status});
-  final JobStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.adaptiveTheme;
-    return Container(
-      margin: const EdgeInsets.only(top: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: theme.accent.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        _statusLabel(status),
-        style: TextStyle(fontSize: 11, color: theme.accent),
       ),
     );
   }
@@ -324,31 +497,53 @@ class _AcceptedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (summaries.isEmpty) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          AppStrings.jobsAcceptedHeader,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 8),
-        for (final s in summaries) _AcceptedRow(summary: s),
-      ],
+    final theme = context.adaptiveTheme;
+    final total = summaries.fold<int>(0, (a, s) => a + s.totalCents);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        theme.spacing.lg,
+        theme.spacing.xl,
+        theme.spacing.lg,
+        0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SectionHeader(
+            title: AppStrings.jobsAcceptedHeader,
+            count: summaries.length,
+            totalCents: total,
+          ),
+          const SizedBox(height: 8),
+          for (var i = 0; i < summaries.length; i++)
+            _AcceptedRow(summary: summaries[i], showDivider: i > 0),
+        ],
+      ),
     );
   }
 }
 
 class _AcceptedRow extends StatelessWidget {
-  const _AcceptedRow({required this.summary});
+  const _AcceptedRow({required this.summary, required this.showDivider});
   final JobSummary summary;
+  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.adaptiveTheme;
+    final serviceName = summary.primaryServiceName ?? AppStrings.tabServices;
+    final customer = summary.customer?.name ?? AppStrings.builderNoCustomer;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => _openDetail(context, summary.job.id),
-      child: Padding(
+      child: Container(
+        decoration: showDivider
+            ? const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Color(0xFFF2F2F7)),
+                ),
+              )
+            : null,
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
@@ -361,14 +556,19 @@ class _AcceptedRow extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                summary.customer?.name ?? AppStrings.builderNoCustomer,
-                style: const TextStyle(fontSize: 16),
+                '$serviceName · $customer',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             Text(
               Money.formatCents(summary.totalCents),
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 fontFeatures: [FontFeature.tabularFigures()],
               ),
@@ -398,13 +598,14 @@ class _ByCustomerList extends StatelessWidget {
       children: [
         for (final name in names) ...[
           Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 4),
+            padding: const EdgeInsets.only(top: 16, bottom: 4),
             child: Text(
               name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
           ),
-          for (final s in groups[name]!) _AcceptedRow(summary: s),
+          for (var i = 0; i < groups[name]!.length; i++)
+            _AcceptedRow(summary: groups[name]![i], showDivider: i > 0),
         ],
       ],
     );
@@ -415,17 +616,13 @@ void _openDetail(BuildContext context, int jobId) {
   unawaited(context.push<void>('/job/$jobId'));
 }
 
-String _statusLabel(JobStatus status) {
-  switch (status) {
-    case JobStatus.quote:
-      return AppStrings.jobsStatusQuote;
-    case JobStatus.sent:
-      return AppStrings.jobsStatusSent;
-    case JobStatus.accepted:
-      return AppStrings.jobsStatusAccepted;
-    case JobStatus.invoiced:
-      return AppStrings.jobsStatusInvoiced;
-    case JobStatus.paid:
-      return AppStrings.jobsStatusPaid;
-  }
+String? _sentPillLabel(Job job) {
+  if (job.status != JobStatus.sent.code) return null;
+  final sentAt = job.sentAt ?? job.createdAt;
+  final ago = DateTime.now().difference(
+    DateTime.fromMillisecondsSinceEpoch(sentAt),
+  );
+  if (ago.inHours < 24) return '${AppStrings.jobsStatusSent} today';
+  final days = ago.inDays;
+  return '${AppStrings.jobsStatusSent} ${days}d ago';
 }

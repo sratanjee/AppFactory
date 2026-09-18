@@ -37,12 +37,14 @@ class JobSummary {
     required this.customer,
     required this.totalCents,
     required this.beforePhotoPath,
+    required this.primaryServiceName,
   });
 
   final Job job;
   final Customer? customer;
   final int totalCents;
   final String? beforePhotoPath;
+  final String? primaryServiceName;
 }
 
 class NewLineItem {
@@ -207,11 +209,17 @@ class JobRepo {
               ..orderBy([(t) => OrderingTerm.asc(t.takenAt)])
               ..limit(1))
             .getSingleOrNull();
+        final firstLine = await (_db.select(_db.lineItems)
+              ..where((t) => t.jobId.equals(job.id))
+              ..orderBy([(t) => OrderingTerm.asc(t.id)])
+              ..limit(1))
+            .getSingleOrNull();
         results.add(JobSummary(
           job: job,
           customer: customer,
           totalCents: total,
           beforePhotoPath: firstPhoto?.path,
+          primaryServiceName: firstLine?.description,
         ));
       }
       return results;
