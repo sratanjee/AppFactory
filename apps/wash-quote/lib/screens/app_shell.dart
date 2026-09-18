@@ -6,9 +6,10 @@ import 'package:wash_quote/screens/jobs_screen.dart';
 import 'package:wash_quote/screens/money_screen.dart';
 import 'package:wash_quote/screens/services_screen.dart';
 
-/// Persistent four-tab shell. Uses `IndexedStack` so each tab keeps its
-/// scroll position, providers, and any half-typed input across tab
-/// switches.
+/// Persistent four-tab shell. Each tab's own `AdaptiveScaffold` renders
+/// its large title and content; the shell renders the tab bar once at the
+/// bottom and swaps the tab's page body in/out. Using IndexedStack means
+/// scroll position and half-typed input survive tab switches.
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
@@ -19,23 +20,23 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
 
-  static const _tabs = [
-    _Tab(
+  static const _destinations = [
+    AdaptiveTabDestination(
       icon: AdaptiveIconName.home,
       selectedIcon: AdaptiveIconName.home,
       label: AppStrings.tabJobs,
     ),
-    _Tab(
+    AdaptiveTabDestination(
       icon: AdaptiveIconName.person,
       selectedIcon: AdaptiveIconName.person,
       label: AppStrings.tabCustomers,
     ),
-    _Tab(
+    AdaptiveTabDestination(
       icon: AdaptiveIconName.pencil,
       selectedIcon: AdaptiveIconName.pencil,
       label: AppStrings.tabServices,
     ),
-    _Tab(
+    AdaptiveTabDestination(
       icon: AdaptiveIconName.clock,
       selectedIcon: AdaptiveIconName.clock,
       label: AppStrings.tabMoney,
@@ -44,71 +45,28 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    return _ShellScaffold(
-      currentIndex: _index,
-      onChanged: (i) => setState(() => _index = i),
-      destinations: _tabs,
-      children: const [
-        JobsScreen(mode: JobsMode.all),
-        JobsScreen(mode: JobsMode.byCustomer),
-        ServicesScreen(),
-        MoneyScreen(),
-      ],
-    );
-  }
-}
-
-class _Tab extends AdaptiveTabDestination {
-  const _Tab({
-    required super.icon,
-    required super.selectedIcon,
-    required super.label,
-  });
-}
-
-class _ShellScaffold extends StatelessWidget {
-  const _ShellScaffold({
-    required this.currentIndex,
-    required this.onChanged,
-    required this.destinations,
-    required this.children,
-  });
-
-  final int currentIndex;
-  final ValueChanged<int> onChanged;
-  final List<AdaptiveTabDestination> destinations;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
     final tabBar = AdaptiveTabBar(
-      destinations: destinations,
-      currentIndex: currentIndex,
-      onDestinationSelected: onChanged,
+      destinations: _destinations,
+      currentIndex: _index,
+      onDestinationSelected: (i) => setState(() => _index = i),
     );
 
-    return _TabbedRoot(
-      tabBar: tabBar,
-      body: IndexedStack(index: currentIndex, children: children),
-    );
-  }
-}
-
-/// Wraps the current-tab content and a bottom tab bar. We can't use
-/// `AdaptiveScaffold` here because each tab owns its own scaffold (large
-/// title, primary action). This is the one place the shell is bare —
-/// screens inside build their own `AdaptiveScaffold`.
-class _TabbedRoot extends StatelessWidget {
-  const _TabbedRoot({required this.body, required this.tabBar});
-
-  final Widget body;
-  final Widget tabBar;
-
-  @override
-  Widget build(BuildContext context) {
+    // Each tab child owns its scaffold, so we compose the tab bar via a
+    // bottom-aligned Row here — this keeps each screen's own primary
+    // action working inside its own AdaptiveScaffold.
     return Column(
       children: [
-        Expanded(child: body),
+        Expanded(
+          child: IndexedStack(
+            index: _index,
+            children: const [
+              JobsScreen(mode: JobsMode.all),
+              JobsScreen(mode: JobsMode.byCustomer),
+              ServicesScreen(),
+              MoneyScreen(),
+            ],
+          ),
+        ),
         tabBar,
       ],
     );
