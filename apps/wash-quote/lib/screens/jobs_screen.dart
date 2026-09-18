@@ -241,9 +241,12 @@ class _HeroCard extends StatelessWidget {
       onTap: onTap,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(22),
-        child: Container(
-          height: 168,
+        child: ColoredBox(
           color: theme.accent,
+          // 168pt is the intended visual at 100% text; grow the card
+          // vertically at larger text sizes so headline + subline never
+          // clip. Stack sizes to the tallest non-positioned child, which
+          // is now the padded content column with a min-height sentinel.
           child: Stack(
             children: [
               Positioned(
@@ -261,8 +264,8 @@ class _HeroCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       width: 44,
@@ -277,27 +280,31 @@ class _HeroCard extends StatelessWidget {
                         color: Color(0xFFFFFFFF),
                       ),
                     ),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppStrings.jobsHeroHeadline,
-                          style: TextStyle(
-                            color: Color(0xFFFFFFFF),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          AppStrings.jobsHeroSubline,
-                          style: TextStyle(
-                            color: Color(0xD9FFFFFF),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                    // Visual gap between the camera glyph and the headline
+                    // (was MainAxisAlignment.spaceBetween on a 168pt-tall
+                    // Column). SizedBox keeps the same intrinsic sizing
+                    // whether the Text grows to two lines or not.
+                    const SizedBox(height: 24),
+                    const Text(
+                      AppStrings.jobsHeroHeadline,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      AppStrings.jobsHeroSubline,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Color(0xD9FFFFFF),
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),

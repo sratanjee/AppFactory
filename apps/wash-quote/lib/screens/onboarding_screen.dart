@@ -293,42 +293,59 @@ class _StarterRowState extends State<_StarterRow> {
   @override
   Widget build(BuildContext context) {
     final theme = context.adaptiveTheme;
+    final input = SizedBox(
+      width: 110,
+      child: AdaptiveInput(
+        controller: _controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: (v) {
+          final d = double.tryParse(v);
+          if (d != null && d >= 0) {
+            widget.onCents((d * 100).round());
+          }
+        },
+      ),
+    );
     return Padding(
       padding: EdgeInsets.symmetric(vertical: theme.spacing.sm),
-      child: Row(
+      // Wrap keeps the row on a single line at default text sizes but
+      // relaxes to two lines at large text sizes, instead of overflowing.
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: theme.spacing.md,
+        runSpacing: theme.spacing.sm,
         children: [
-          AdaptiveSwitch(
-            value: widget.selected,
-            onChanged: widget.onToggle,
-          ),
-          SizedBox(width: theme.spacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.starter.name,
-                    style: const TextStyle(fontSize: 16)),
-                Text(
-                  _unitLabel(widget.starter.unit),
-                  style: const TextStyle(fontSize: 12, color: Color(0xFF888888)),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AdaptiveSwitch(
+                value: widget.selected,
+                onChanged: widget.onToggle,
+              ),
+              SizedBox(width: theme.spacing.md),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 220),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.starter.name,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      _unitLabel(widget.starter.unit),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF888888),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 90,
-            child: AdaptiveInput(
-              controller: _controller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              onChanged: (v) {
-                final d = double.tryParse(v);
-                if (d != null && d >= 0) {
-                  widget.onCents((d * 100).round());
-                }
-              },
-            ),
-          ),
+          input,
         ],
       ),
     );

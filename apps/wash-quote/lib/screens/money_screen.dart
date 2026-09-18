@@ -66,22 +66,7 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
                 ),
               ),
               SizedBox(height: theme.spacing.xl),
-              _TotalTile(
-                label: AppStrings.moneyQuoted,
-                cents: totals.quoted,
-              ),
-              _TotalTile(
-                label: AppStrings.moneyAccepted,
-                cents: totals.accepted,
-              ),
-              _TotalTile(
-                label: AppStrings.moneyInvoiced,
-                cents: totals.invoiced,
-              ),
-              _TotalTile(
-                label: AppStrings.moneyPaid,
-                cents: totals.paid,
-              ),
+              _TotalsGrid(totals: totals),
             ],
           );
         },
@@ -148,6 +133,56 @@ class _Totals {
   final int paid;
 }
 
+class _TotalsGrid extends StatelessWidget {
+  const _TotalsGrid({required this.totals});
+
+  final _Totals totals;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.adaptiveTheme;
+    final tiles = <_TotalTileData>[
+      _TotalTileData(AppStrings.moneyQuoted, totals.quoted),
+      _TotalTileData(AppStrings.moneyAccepted, totals.accepted),
+      _TotalTileData(AppStrings.moneyInvoiced, totals.invoiced),
+      _TotalTileData(AppStrings.moneyPaid, totals.paid),
+    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 2×2 on wide-enough phones/iPads; falls back to 1×4 on very
+        // narrow widths or when large text pushes each tile past ~half
+        // the available width.
+        final gap = theme.spacing.md;
+        final fullWidth = constraints.maxWidth;
+        // Give each tile enough room for the large price to avoid clipping
+        // at 200% text scaling. 220pt fits `$99,999.99` at scale 1; at 2×
+        // the number is ~180pt, which fits within a ~220pt tile plus
+        // wrap-when-needed. If half-width dips below 200 we go single-col.
+        final tileWidth = fullWidth >= 440
+            ? (fullWidth - gap) / 2
+            : fullWidth;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (final t in tiles)
+              SizedBox(
+                width: tileWidth,
+                child: _TotalTile(label: t.label, cents: t.cents),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _TotalTileData {
+  const _TotalTileData(this.label, this.cents);
+  final String label;
+  final int cents;
+}
+
 class _TotalTile extends StatelessWidget {
   const _TotalTile({required this.label, required this.cents});
 
@@ -162,15 +197,22 @@ class _TotalTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF666666))),
           Text(
-            Money.formatCents(cents),
-            style: TextStyle(
-              fontSize: 44,
-              fontWeight: FontWeight.w700,
-              color: theme.accent,
-              fontFeatures: const [FontFeature.tabularFigures()],
+            label,
+            style: const TextStyle(fontSize: 13, color: Color(0xFF666666)),
+          ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              Money.formatCents(cents),
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 44,
+                fontWeight: FontWeight.w700,
+                color: theme.accent,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
             ),
           ),
         ],
