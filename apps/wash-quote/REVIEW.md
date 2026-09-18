@@ -136,3 +136,4 @@ Pass. Ship this.
 
 - **Google Play (Internal Testing)** — 2026-09-18 22:15 UTC — versionCode 1, versionName 1.0.0, `app-release.aab` (68.3 MB), signed with `~/.keys/wash-quote-upload.jks`
 - **Apple TestFlight** — 2026-09-18 22:34 UTC — Delivery UUID `565b9ad1-8729-4fa9-8105-8f4a378b01d5`, `wash_quote.ipa` (31.6 MB), signed via team Q64K9PK38K automatic signing
+- **Google Play (Production)** — 2026-09-18 22:41 UTC — versionCode 1 promoted from internal → production, 20% staged rollout in US. Awaiting Google pre-launch review before user rollout begins.
