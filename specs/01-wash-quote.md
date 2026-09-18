@@ -70,7 +70,7 @@ Storage layering: (1) local SQLite via Drift is the source of truth, no login on
 | Free trial | 7-day, on annual only |
 | Weekly price | none (monthly instead: $9.99/mo) |
 | Annual price | $59.99/yr (pre-selected, saving shown against monthly) |
-| Lifetime price | $79 one-time (third option) |
+| Lifetime price | $79.99 one-time (third option) |
 | RevenueCat entitlement | `pro` |
 | What is gated vs. free | Everything is gated. Business setup (onboarding) is free; the first quote requires `pro`. |
 
