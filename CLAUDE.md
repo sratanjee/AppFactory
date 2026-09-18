@@ -36,7 +36,7 @@ factory/
 7. **Shorebird on every app.** Code push is how we fix a fleet without thirty store reviews.
 8. **One accent, one job, no scope creep.** Anything not in the spec goes in `REVIEW.md` under "Not built", not in the code.
 9. **Sibling apps must not look like a series.** Different glyph, accent, onboarding copy, and screenshot story from every other app in the same factory category. Reviewer checks against `apps/*/store/`.
-10. **Humans submit to stores.** The pipeline stops at TestFlight and Play internal testing.
+10. **Humans confirm production submissions.** The pipeline defaults to TestFlight and Play internal testing. Production submissions (App Store review submit, Play production track promotion) require explicit per-app authorization from the user in-conversation (e.g. "push wash-quote to production", "promote seizure-log to Play production"). After that authorization, the pipeline may execute the promotion or submission for that specific app. Authorization does not carry across apps or sessions — each production push is its own opt-in.
 
 ## Pipeline
 
