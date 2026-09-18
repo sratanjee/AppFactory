@@ -19,7 +19,6 @@ void main() {
     await business.upsertSingleton(
       name: 'Blue Wave Wash',
       payVia: 'Venmo @bluewave',
-      defaultDepositPct: 25,
     );
 
     final houseId = await services.add(
