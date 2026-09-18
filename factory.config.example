@@ -62,3 +62,8 @@ ANTHROPIC_DEFAULT_MODEL="claude-opus-4-7"
 DEFAULT_SUPPORT_URL=""
 DEFAULT_PRIVACY_URL=""
 DEFAULT_MARKETING_URL=""
+
+# ---- Privacy site ----
+# Scaffolds derive each app's privacy URL as <base>/<slug>/privacy.html.
+# Reference site: https://sratanjee.github.io/appfactory-site
+PRIVACY_URL_BASE=""
