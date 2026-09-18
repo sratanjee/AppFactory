@@ -65,7 +65,7 @@ class AdaptiveScaffold extends StatelessWidget {
       // bar — per DESIGN_GUIDE §1 the scaffold, not the app, offsets by
       // the nav bar height so content isn't hidden.
       content = title != null
-          ? SafeArea(top: true, bottom: false, child: body)
+          ? SafeArea(bottom: false, child: body)
           : body;
     }
 
