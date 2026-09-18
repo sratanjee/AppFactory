@@ -405,7 +405,11 @@ class SpecParser {
       freeTrial: table['Free trial'] ?? 'none',
       weeklyPrice: table['Weekly price'] ?? '',
       annualPrice: table['Annual price'] ?? '',
-      lifetimePrice: table['Lifetime price (optional)'] ?? '',
+      // Human-authored specs sometimes drop the "(optional)" suffix, so
+      // accept either form.
+      lifetimePrice: table['Lifetime price (optional)'] ??
+          table['Lifetime price'] ??
+          '',
       revenueCatEntitlement: table['RevenueCat entitlement'] ?? 'pro',
       gatedVsFree: table['What is gated vs. free'] ?? '',
       benefits: benefits,
