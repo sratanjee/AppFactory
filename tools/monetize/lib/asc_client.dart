@@ -84,13 +84,18 @@ class AscClient {
   }
 
   /// Creates a non-consumable IAP product. Returns the created resource id.
+  ///
+  /// Uses the v2 create endpoint at `POST /v2/inAppPurchases` — the
+  /// v1 `/v1/inAppPurchasesV2` path only exists as a read-side
+  /// relationship (GET /v1/apps/{id}/inAppPurchasesV2) and returns
+  /// 404 on POST.
   Future<String> createNonConsumable({
     required String appId,
     required String productId,
     required String referenceName,
   }) async {
     final res = await _http.post(
-      Uri.parse('$_base/inAppPurchasesV2'),
+      Uri.parse('https://api.appstoreconnect.apple.com/v2/inAppPurchases'),
       headers: _headers,
       body: jsonEncode({
         'data': {
