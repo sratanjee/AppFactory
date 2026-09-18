@@ -1,8 +1,7 @@
-# App Factory — fleet config
-# Loaded by tools/scaffold, tools/monetize, backend, and CI.
-# Everything here is checked in. Real secrets live in factory.config.local (gitignored).
-# To override any value locally without touching this file, create factory.config.local
-# and export the same variables — the scaffolder sources this first, then .local.
+# App Factory — fleet config template
+# Copy to factory.config (gitignored) and fill in the values. Optional
+# per-machine overrides go in factory.config.local (also gitignored,
+# merged on top of factory.config by the loader).
 
 # ---- Identity ----
 BUNDLE_PREFIX=com.appfactory
@@ -13,44 +12,48 @@ FLUTTER_VERSION=3.47.4
 DART_MIN=3.13.0
 
 # ---- Developer accounts ----
-# A is the live account. B and C are stubs; add when Apple / Google accounts exist.
+# A is live. B and C are stubs; add when Apple / Google accounts exist.
 DEV_ACCOUNT_A_LABEL=""
+DEV_ACCOUNT_A_TEAM_ID=""
 DEV_ACCOUNT_A_ASC_TEAM_ID=""
 DEV_ACCOUNT_A_ASC_ISSUER_ID=""
 DEV_ACCOUNT_A_ASC_KEY_ID=""
+# Absolute path to the .p8 file downloaded from ASC. Keep the file outside
+# the repo (~/.keys/ is a good spot).
+DEV_ACCOUNT_A_ASC_KEY_PATH=""
 DEV_ACCOUNT_A_PLAY_PACKAGE_ACCOUNT_JSON=""
 
 DEV_ACCOUNT_B_LABEL=""
+DEV_ACCOUNT_B_TEAM_ID=""
 DEV_ACCOUNT_B_ASC_TEAM_ID=""
 DEV_ACCOUNT_B_ASC_ISSUER_ID=""
 DEV_ACCOUNT_B_ASC_KEY_ID=""
+DEV_ACCOUNT_B_ASC_KEY_PATH=""
 DEV_ACCOUNT_B_PLAY_PACKAGE_ACCOUNT_JSON=""
 
 DEV_ACCOUNT_C_LABEL=""
+DEV_ACCOUNT_C_TEAM_ID=""
 DEV_ACCOUNT_C_ASC_TEAM_ID=""
 DEV_ACCOUNT_C_ASC_ISSUER_ID=""
 DEV_ACCOUNT_C_ASC_KEY_ID=""
+DEV_ACCOUNT_C_ASC_KEY_PATH=""
 DEV_ACCOUNT_C_PLAY_PACKAGE_ACCOUNT_JSON=""
 
 # ---- RevenueCat ----
-# Public API keys — safe to commit per RC's own docs. Rotate via the RC
-# dashboard, no code change needed.
 REVENUECAT_PROJECT_ID=""
 REVENUECAT_API_V2_TOKEN=""
-REVENUECAT_IOS_PUBLIC_KEY="appl_lpBWCLpQDFktvSCFAzSLiIHNQTh"
-# Android app not created in RC yet — stub.
+REVENUECAT_IOS_PUBLIC_KEY=""
 REVENUECAT_ANDROID_PUBLIC_KEY=""
 
-# ---- Shorebird (code push) ----
+# ---- Shorebird ----
 SHOREBIRD_ORG=""
 SHOREBIRD_TOKEN=""
 
-# ---- Codemagic (CI) ----
+# ---- Codemagic ----
 CODEMAGIC_TEAM_ID=""
 CODEMAGIC_API_TOKEN=""
 
-# ---- Shared backend / AI proxy ----
-# One backend for the whole fleet. Claude only, via Anthropic.
+# ---- Shared backend ----
 BACKEND_BASE_URL=""
 ANTHROPIC_API_KEY=""
 ANTHROPIC_DEFAULT_MODEL="claude-opus-4-7"

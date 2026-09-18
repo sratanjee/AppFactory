@@ -51,6 +51,7 @@ DerivedData/
 !default.perspectivev3
 
 # Secrets
+factory.config
 factory.config.local
 *.env
 .env
@@ -58,6 +59,11 @@ factory.config.local
 !.env.example
 GoogleService-Info.plist
 google-services.json
+# ASC / Play / any signing keys live in ~/.keys/ (outside the repo); block
+# any accidental drop into the tree, too.
+*.p8
+*.p12
+*.pem
 
 # Shorebird
 .shorebird/
