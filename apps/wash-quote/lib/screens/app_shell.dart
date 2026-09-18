@@ -1,6 +1,9 @@
 import 'package:factory_core/factory_core.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:wash_quote/data/app_database.dart';
 import 'package:wash_quote/l10n/app_strings.dart';
 import 'package:wash_quote/screens/jobs_screen.dart';
 import 'package:wash_quote/screens/money_screen.dart';
@@ -54,7 +57,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     // Each tab child owns its scaffold, so we compose the tab bar via a
     // bottom-aligned Row here — this keeps each screen's own primary
     // action working inside its own AdaptiveScaffold.
-    return Column(
+    final shell = Column(
       children: [
         Expanded(
           child: IndexedStack(
@@ -69,6 +72,60 @@ class _AppShellState extends ConsumerState<AppShell> {
         ),
         tabBar,
       ],
+    );
+
+    // Debug-only reset pill. Reviewer round-1 blocker 4: without this,
+    // `hasSeenOnboarding` sticks across `flutter run` re-installs (Android
+    // keeps app data for the same signing key) and there's no way to
+    // replay onboarding without an out-of-band uninstall.
+    if (!kDebugMode) return shell;
+    return Stack(
+      children: [
+        Positioned.fill(child: shell),
+        Positioned(
+          top: 4,
+          right: 12,
+          child: SafeArea(child: _DebugResetPill(onTap: _resetAppData)),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _resetAppData() async {
+    final kv = await ref.read(keyValueStoreProvider.future);
+    final db = ref.read(appDatabaseProvider);
+    await resetAppData(keyValueStore: kv, database: db);
+    if (!mounted) return;
+    // Send the user back to /boot so the standard onboarding gate re-runs.
+    context.go('/boot');
+  }
+}
+
+class _DebugResetPill extends StatelessWidget {
+  const _DebugResetPill({required this.onTap});
+
+  final Future<void> Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: const Color(0xCC000000),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: const Text(
+          'Reset (debug)',
+          style: TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }
