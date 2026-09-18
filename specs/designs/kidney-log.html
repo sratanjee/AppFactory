@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kidney Care Log — Pepper</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#eef6f4;-webkit-font-smoothing:antialiased}
+a{color:#0f766e}a:hover{color:#0b5c56}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #eef6f4; color: #1c1c1e; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+  <div style="padding: 62px 24px 0 24px; display: flex; flex-direction: column; gap: 2px;">
+    <div style="font-size: 15px; color: #4b5563;">Good evening. Pepper's day so far:</div>
+  </div>
+
+  <div style="margin: 24px 24px 0 24px; display: flex; align-items: center; gap: 20px;">
+    <div style="position: relative; width: 132px; height: 132px; flex-shrink: 0;">
+      <svg width="132" height="132" viewBox="0 0 132 132" aria-hidden="true">
+        <circle cx="66" cy="66" r="56" fill="none" stroke="#d6e8e4" stroke-width="12"/>
+        <circle cx="66" cy="66" r="56" fill="none" stroke="{{accent}}" stroke-width="12" stroke-linecap="round" stroke-dasharray="352" stroke-dashoffset="118" transform="rotate(-90 66 66)"/>
+      </svg>
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;">
+        <div style="font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1;">2/3</div>
+        <div style="font-size: 11px; color: #4b5563;">done</div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.3px;">Fluids tonight</div>
+      <div style="font-size: 14px; color: #4b5563;">100 mL sub-Q, usually around 9 PM. Warm the bag first.</div>
+    </div>
+  </div>
+
+  <div style="margin: 28px 24px 0 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+    <a href="#" style="height: 120px; border-radius: 20px; background: {{accent}}; color: #ffffff; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; box-sizing: border-box;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 700;">Food</div><div style="font-size: 11px; opacity: 0.85;">Ate all · 7:30</div></div>
+    </a>
+    <a href="#" style="height: 120px; border-radius: 20px; background: {{accent}}; color: #ffffff; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; box-sizing: border-box;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 700;">Meds</div><div style="font-size: 11px; opacity: 0.85;">Benazepril · 7:35</div></div>
+    </a>
+    <a href="#" style="height: 120px; border-radius: 20px; background: #ffffff; color: #1c1c1e; border: 2px dashed #9fc7bf; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; box-sizing: border-box;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 700;">Fluids</div><div style="font-size: 11px; color: #4b5563;">Tap when done</div></div>
+    </a>
+  </div>
+
+  <div style="margin: 28px 24px 0 24px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+      <div style="font-size: 17px; font-weight: 700;">Watching</div>
+      <a href="#" style="font-size: 14px; color: {{accent}}; font-weight: 600; text-decoration: none;">Vet summary</a>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #ffffff; border-radius: 16px;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 15px; font-weight: 600;">Weight</div>
+          <div style="font-size: 13px; color: #4b5563;">4.1 kg · steady 3 weeks</div>
+        </div>
+        <svg width="72" height="28" viewBox="0 0 72 28" aria-hidden="true"><polyline points="2,18 14,16 26,17 38,15 50,15 62,14 70,14" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #ffffff; border-radius: 16px;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 15px; font-weight: 600;">Water intake</div>
+          <div style="font-size: 13px; color: #b45309;">Up 20% this week · mention to vet</div>
+        </div>
+        <svg width="72" height="28" viewBox="0 0 72 28" aria-hidden="true"><polyline points="2,20 14,19 26,18 38,16 50,12 62,9 70,6" fill="none" stroke="#b45309" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #ffffff; border-radius: 16px;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 15px; font-weight: 600;">Last bloodwork</div>
+          <div style="font-size: 13px; color: #4b5563;">Aug 28 · creatinine 2.1 · SDMA 22</div>
+        </div>
+        <div style="font-size: 12px; font-weight: 600; color: {{accent}}; background: #d6e8e4; padding: 3px 9px; border-radius: 999px;">Stage 2</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <div style="padding: 0 24px 36px 24px; display: flex; justify-content: center; gap: 28px; font-size: 13px; font-weight: 600;">
+    <div style="color: {{accent}}; border-bottom: 2px solid {{accent}}; padding-bottom: 6px;">Today</div>
+    <div style="color: #6b7280; padding-bottom: 6px;">History</div>
+    <div style="color: #6b7280; padding-bottom: 6px;">Labs</div>
+    <div style="color: #6b7280; padding-bottom: 6px;">Pepper</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0f766e","options":["#0f766e","#0e7490","#15803d"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { accent: this.props.accent ?? '#0f766e' }; }
+}
+</script>
+</body>
+</html>
