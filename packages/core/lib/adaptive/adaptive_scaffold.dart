@@ -19,6 +19,7 @@ class AdaptiveScaffold extends StatelessWidget {
     this.tabBar,
     this.backgroundColor,
     this.titleDisplay = TitleDisplay.standard,
+    this.transitionBetweenRoutes = false,
     super.key,
   });
 
@@ -30,6 +31,18 @@ class AdaptiveScaffold extends StatelessWidget {
   final Widget? tabBar;
   final Color? backgroundColor;
   final TitleDisplay titleDisplay;
+
+  /// iOS-only: forwards to the underlying `CupertinoNavigationBar`'s
+  /// `transitionBetweenRoutes`.
+  ///
+  /// Defaults to `false` because the factory's common shape is a tab-shell
+  /// with several `AdaptiveScaffold`s co-existing in an `IndexedStack`. All
+  /// four of those Cupertino nav bars share the default hero tag, which the
+  /// framework refuses to render (`multiple heroes with the same tag`).
+  /// Opting out of the hero-based nav-bar transition is the standard fix
+  /// and matches Apple's behaviour for tab-rooted screens. A single-screen
+  /// pushed-route app can opt back in per-instance.
+  final bool transitionBetweenRoutes;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +69,7 @@ class AdaptiveScaffold extends StatelessWidget {
             trailing: trailing == null
                 ? null
                 : Row(mainAxisSize: MainAxisSize.min, children: trailing),
+            transitionBetweenRoutes: transitionBetweenRoutes,
           ),
           SliverToBoxAdapter(child: body),
         ],
@@ -77,6 +91,7 @@ class AdaptiveScaffold extends StatelessWidget {
               trailing: trailing == null
                   ? null
                   : Row(mainAxisSize: MainAxisSize.min, children: trailing),
+              transitionBetweenRoutes: transitionBetweenRoutes,
             )
           : null,
       backgroundColor: backgroundColor,
