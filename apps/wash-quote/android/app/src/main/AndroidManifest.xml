@@ -1,4 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Camera: before/after photos on the quote and invoice PDF.
+         Runtime prompt fires in-context on first hero-card tap (PLAN §9). -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+
+    <!-- Notifications: local follow-up reminder 3 days after a quote is sent.
+         Runtime prompt (Android 13+) fires after first PDF send, not on launch. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:label="wash_quote"
         android:name="${applicationName}"
@@ -20,11 +29,42 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Opt into Flutter's built-in deep-link routing so go_router
+                 receives the URI path (e.g. /quote/new) from the intent below. -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="true"
+              />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- washquote://... deep links from the QS tile and Shortcuts. -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="washquote"/>
+            </intent-filter>
         </activity>
+
+        <!-- Quick Settings tile: "New quote" opens the quote builder with
+             the camera armed. Uses the app accent as fallback tint;
+             dynamic color applies automatically on Android 12+. -->
+        <service
+            android:name=".NewQuoteTileService"
+            android:label="@string/qs_tile_label_new_quote"
+            android:icon="@drawable/ic_qs_tile_new_quote"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="false"/>
+        </service>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

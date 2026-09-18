@@ -4,6 +4,27 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Photos of the surface go on the PDF so the price makes sense.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Pick a saved before or after photo to attach to a quote or invoice.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save the rendered PDF back to Photos when you share it.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.appfactory.washquote</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>washquote</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -25,13 +25,41 @@ Builder implementation landed on `app/wash-quote`.
   notification, iCloud/Drive backup + PDF/CSV export, and analytics wiring
   for the five standard events plus `pdf_sent` and `deposit_link_created`.
 
+## Native surfaces
+
+- iOS: `NewQuoteIntent` App Intent + `WashQuoteShortcuts` App Shortcut
+  provider in `ios/Runner/WashQuoteIntents.swift`. Runs "New quote" from
+  the Shortcuts app and Siri; opens the app and deep-links via
+  `washquote:///quote/new`, arming the camera. SF Symbol
+  `camera.viewfinder`.
+- iOS permission strings in `ios/Runner/Info.plist`:
+  `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`,
+  `NSPhotoLibraryAddUsageDescription`. Copy from PLAN §6.
+- iOS URL scheme `washquote` registered in `CFBundleURLTypes` with
+  `FlutterDeepLinkingEnabled` so go_router receives the path.
+- Android: `NewQuoteTileService` Quick Settings tile in
+  `android/app/src/main/kotlin/.../NewQuoteTileService.kt`. Tile fires
+  `washquote:///quote/new` deep link; label `New quote`; Material
+  camera glyph in `res/drawable/ic_qs_tile_new_quote.xml`.
+- Android manifest: `android.permission.CAMERA` +
+  `android.permission.POST_NOTIFICATIONS`; MainActivity
+  intent-filter for `washquote://…`; `flutter_deeplinking_enabled`
+  meta-data.
+- Android build: enabled core library desugaring (needed by
+  `flutter_local_notifications` for the follow-up reminder), added
+  `com.android.tools:desugar_jdk_libs:2.1.4`, pinned `minSdk=29` per
+  spec §1 (Android 10+).
+
 ## Cut (not built)
 
 - Home screen widget / lock widget / Live Activity / watch complication —
   spec §5 excludes.
 - Weekly subscription tier — spec §6 excludes.
 - Supabase multi-device sync — spec §11.
-- App Shortcut and Quick Settings tile — native-builder's task list.
+- iOS Control Center control — PLAN §9 iOS task 2 lists it, but it
+  requires a separate WidgetKit extension target with its own bundle
+  and entitlements. Deferred until the factory adds a `widgets_ios`
+  extension scaffolder; App Shortcut alone is what spec §5 requires.
 
 ## Deferred (pending decisions)
 
