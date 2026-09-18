@@ -144,16 +144,11 @@ void main() {
       final now = DateTime.now().millisecondsSinceEpoch;
       final fakeJob = Job(
         id: 1,
-        customerId: null,
         status: JobStatus.paid.code,
         number: 1001,
         createdAt: now,
-        sentAt: null,
-        acceptedAt: null,
         paidAt: now,
         depositPct: 25,
-        notes: null,
-        stripeLinkUrl: null,
       );
       final summary = JobSummary(
         job: fakeJob,

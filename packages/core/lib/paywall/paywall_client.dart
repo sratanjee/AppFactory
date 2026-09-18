@@ -136,6 +136,12 @@ class Paywall {
 
   bool get _isReal => !_config.isDisabled && _testOffering == null;
 
+  /// True when no RevenueCat keys are wired and no test offering was
+  /// injected — i.e. the app is running on a factory-scaffold default with
+  /// paywall config still empty. Consumers can use this to open gated
+  /// actions in dev/preview builds instead of dead-ending.
+  bool get isDisabled => _config.isDisabled && _testOffering == null;
+
   // ---- Lifecycle --------------------------------------------------------
 
   /// Configures the RevenueCat SDK. Idempotent — safe to call multiple
@@ -180,6 +186,11 @@ class Paywall {
   // ---- Entitlement -----------------------------------------------------
 
   Future<bool> hasEntitlement() async {
+    // Debug/preview builds with no RC keys wired: pretend the user is
+    // entitled so gated actions still open. Real (release-mode) builds
+    // with missing keys stay strict — that's a misconfiguration to catch.
+    // Web builds have no RC SDK at all, so the same relaxation applies.
+    if (isDisabled && (kDebugMode || kIsWeb)) return true;
     if (!_isReal) return false;
     try {
       await initialize();
