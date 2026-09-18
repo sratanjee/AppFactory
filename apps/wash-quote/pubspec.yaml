@@ -1,7 +1,7 @@
 name: wash_quote
 description: Wash Quote & Invoice.
 publish_to: none
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.13.0
@@ -31,6 +31,7 @@ dev_dependencies:
   alchemist: ^0.14.0
   build_runner: ^2.4.0
   drift_dev: ^2.35.0
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
   integration_test:
