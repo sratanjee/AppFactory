@@ -145,6 +145,104 @@ const shorebirdYamlTemplate = r'''
 app_id: TODO_SHOREBIRD_APP_ID
 ''';
 
+const runShTemplate = r'''
+#!/usr/bin/env bash
+# Runs ${slug} with --dart-define values sourced from factory.config so
+# RevenueCat / PostHog keys land in app_config.dart's String.fromEnvironment
+# reads. Pass any extra args through to `flutter run`.
+#
+# Per-slug key lookup: REVENUECAT_IOS_KEY_${slugUnderscored} /
+# REVENUECAT_ANDROID_KEY_${slugUnderscored} are the canonical names in
+# factory.config. This wrapper resolves them into REVENUECAT_IOS_KEY /
+# REVENUECAT_ANDROID_KEY for the app to consume.
+set -euo pipefail
+
+APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$APP_DIR/../.." && pwd)"
+
+# shellcheck disable=SC1090
+source "$REPO_ROOT/factory.config"
+if [[ -f "$REPO_ROOT/factory.config.local" ]]; then
+  # shellcheck disable=SC1090
+  source "$REPO_ROOT/factory.config.local"
+fi
+
+SLUG="${slugUnderscored}"
+RC_IOS_VAR="REVENUECAT_IOS_KEY_${SLUG}"
+RC_ANDROID_VAR="REVENUECAT_ANDROID_KEY_${SLUG}"
+RC_IOS_KEY="${!RC_IOS_VAR:-}"
+RC_ANDROID_KEY="${!RC_ANDROID_VAR:-}"
+
+cd "$APP_DIR"
+exec fvm flutter run \
+  --dart-define=REVENUECAT_IOS_KEY="$RC_IOS_KEY" \
+  --dart-define=REVENUECAT_ANDROID_KEY="$RC_ANDROID_KEY" \
+  --dart-define=POSTHOG_KEY="${POSTHOG_KEY:-}" \
+  "$@"
+''';
+
+const codemagicYamlTemplate = r'''
+# Codemagic lane for ${slug}. iOS ships to TestFlight; Android to
+# Play internal testing. Both builds resolve the RC key per-slug from
+# factory.config's REVENUECAT_IOS_KEY_${slugUnderscored} and
+# REVENUECAT_ANDROID_KEY_${slugUnderscored} values and pass them as
+# --dart-define during the flutter build step.
+#
+# Fills the Codemagic env vars from a shared group named
+# "app-factory-secrets" that mirrors factory.config's non-committed values.
+# See tools/monetize/ for how RC keys are provisioned.
+
+workflows:
+  ios-testflight:
+    name: ${slug} — iOS TestFlight
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: ${flutterVersion}
+      xcode: latest
+    scripts:
+      - name: Resolve per-slug RC keys
+        script: |
+          # Codemagic exposes group vars as env directly. The vars in
+          # app-factory-secrets are named REVENUECAT_IOS_KEY_<slug>.
+          eval "export RC_IOS_KEY=\$REVENUECAT_IOS_KEY_${slugUnderscored}"
+      - name: Build IPA
+        script: |
+          cd apps/${slug}
+          fvm flutter build ipa --release \
+            --dart-define=REVENUECAT_IOS_KEY="$RC_IOS_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to TestFlight
+        script: |
+          app-store-connect publish \
+            --path build/ios/ipa/*.ipa \
+            --testflight
+
+  android-internal:
+    name: ${slug} — Play internal
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: ${flutterVersion}
+    scripts:
+      - name: Resolve per-slug RC keys
+        script: |
+          eval "export RC_ANDROID_KEY=\$REVENUECAT_ANDROID_KEY_${slugUnderscored}"
+      - name: Build AAB
+        script: |
+          cd apps/${slug}
+          fvm flutter build appbundle --release \
+            --dart-define=REVENUECAT_ANDROID_KEY="$RC_ANDROID_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to Play internal
+        script: |
+          google-play publish \
+            --track internal \
+            build/app/outputs/bundle/release/*.aab
+''';
+
 const analysisOptionsTemplate = r'''
 include: package:very_good_analysis/analysis_options.yaml
 

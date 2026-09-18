@@ -111,6 +111,15 @@ class Generator {
     await _writeFile('lib/router.dart', render(routerDartTemplate, ctx));
     await _writeFile('lib/screens/home_screen.dart', render(homeScreenTemplate, ctx));
     await _writeFile('.shorebird/shorebird.yaml', render(shorebirdYamlTemplate, ctx));
+    // Per-slug run.sh that resolves REVENUECAT_IOS_KEY_<slug> /
+    // REVENUECAT_ANDROID_KEY_<slug> from factory.config and passes them
+    // as --dart-define values for the app to consume.
+    final runSh = File(p.join(_appDir, 'tool/run.sh'));
+    await runSh.parent.create(recursive: true);
+    await runSh.writeAsString(render(runShTemplate, ctx));
+    await Process.run('chmod', ['+x', runSh.path]);
+    // Codemagic workflow file with the same per-slug RC-key pattern.
+    await _writeFile('codemagic.yaml', render(codemagicYamlTemplate, ctx));
 
     // flutter create leaves behind a stub widget_test.dart that references
     // its own MyApp scaffold. Replace it with a mount-only smoke test.
