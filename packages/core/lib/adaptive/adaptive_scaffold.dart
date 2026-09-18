@@ -46,6 +46,13 @@ class AdaptiveScaffold extends StatelessWidget {
     final backgroundColor = this.backgroundColor;
     final body = this.body;
 
+    // When there's no title but the caller passes leading/trailing widgets
+    // (an overflow menu, a Back arrow), still render a translucent nav bar
+    // so those toolbar items appear. Previously an untitled screen dropped
+    // trailing entirely — the seizure-log home screen hit this landmine.
+    final hasBarItems =
+        leading != null || (trailing != null && trailing.isNotEmpty);
+
     Widget content;
     if (title != null && titleDisplay == TitleDisplay.large) {
       content = CustomScrollView(
@@ -64,13 +71,15 @@ class AdaptiveScaffold extends StatelessWidget {
       // CupertinoPageScaffold lets body draw under the translucent nav
       // bar — per DESIGN_GUIDE §1 the scaffold, not the app, offsets by
       // the nav bar height so content isn't hidden.
-      content = title != null
+      content = (title != null || hasBarItems)
           ? SafeArea(bottom: false, child: body)
           : body;
     }
 
+    final showStandardNavBar = titleDisplay == TitleDisplay.standard &&
+        (title != null || hasBarItems);
     final scaffold = CupertinoPageScaffold(
-      navigationBar: (title != null && titleDisplay == TitleDisplay.standard)
+      navigationBar: showStandardNavBar
           ? CupertinoNavigationBar(
               middle: title,
               leading: leading,
