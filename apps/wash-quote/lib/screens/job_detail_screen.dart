@@ -9,6 +9,7 @@ import 'package:wash_quote/data/app_database.dart';
 import 'package:wash_quote/data/business_repo.dart';
 import 'package:wash_quote/data/customer_repo.dart';
 import 'package:wash_quote/data/job_repo.dart';
+import 'package:wash_quote/features/followup_notifications.dart';
 import 'package:wash_quote/features/money_format.dart';
 import 'package:wash_quote/features/pdf_renderer.dart';
 import 'package:wash_quote/features/pdf_share.dart';
@@ -104,6 +105,15 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     });
     if (bundle.job.status == JobStatus.quote.code) {
       await ref.read(jobRepoProvider).setStatus(bundle.job.id, JobStatus.sent);
+      // Fire a 3-day follow-up reminder. Permission was requested once
+      // globally after the first successful send; if the user declined,
+      // the schedule call is a no-op.
+      final notifier = ref.read(followUpNotificationsProvider);
+      await notifier.scheduleFollowUp(
+        jobNumber: bundle.job.number,
+        customerName: bundle.customer?.name ?? 'the customer',
+        fireAt: DateTime.now().add(const Duration(days: 3)),
+      );
     }
   }
 
@@ -111,6 +121,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     await ref
         .read(jobRepoProvider)
         .setStatus(bundle.job.id, JobStatus.invoiced);
+    await ref
+        .read(followUpNotificationsProvider)
+        .cancelFollowUp(bundle.job.number);
     setState(() => _pdfBytes = null);
   }
 
@@ -163,6 +176,14 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
 
   Future<void> _setStatus(_JobBundle bundle, JobStatus status) async {
     await ref.read(jobRepoProvider).setStatus(bundle.job.id, status);
+    // Terminal statuses (anything past `sent`) invalidate the pending
+    // follow-up reminder; cancel it so the reminder doesn't fire on a
+    // closed job.
+    if (status != JobStatus.quote && status != JobStatus.sent) {
+      await ref
+          .read(followUpNotificationsProvider)
+          .cancelFollowUp(bundle.job.number);
+    }
     setState(() => _pdfBytes = null);
   }
 }

@@ -25,6 +25,7 @@ dependencies:
   path_provider: ^2.1.6
   pdf: ^3.13.0
   share_plus: ^13.3.0
+  timezone: ^0.11.1
 
 dev_dependencies:
   alchemist: ^0.14.0
