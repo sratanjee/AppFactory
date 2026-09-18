@@ -16,10 +16,20 @@ Map<String, String> buildContext({
   required Spec spec,
   required String bundlePrefix,
   required String flutterVersion,
+  String privacyUrlBase = '',
 }) {
   final className = _pascal(spec.slug);
   final accentHexClean = spec.designNotes.accentHex.replaceFirst('#', '');
   final accentHex = accentHexClean.length == 6 ? 'FF$accentHexClean' : accentHexClean;
+  // Derive privacy / terms URLs. Terms is shared across the fleet;
+  // privacy is per-slug. Both fall back to a factory placeholder if
+  // PRIVACY_URL_BASE isn't set (dev builds don't need real URLs).
+  final base = privacyUrlBase.replaceAll(RegExp(r'/+$'), '');
+  final privacyUrl = base.isEmpty
+      ? 'https://example.test/privacy'
+      : '$base/${spec.slug}/privacy.html';
+  final termsUrl =
+      base.isEmpty ? 'https://example.test/terms' : '$base/terms.html';
   return {
     'slug': spec.slug,
     'slugUnderscored': spec.slugUnderscored,
@@ -40,6 +50,8 @@ Map<String, String> buildContext({
     'iosLongDescription': _iosLongDescription(spec),
     'androidLongDescription': _androidLongDescription(spec),
     'screenshotStoryList': _numberedList(spec.storeSeeds.screenshotStory),
+    'privacyUrl': privacyUrl,
+    'termsUrl': termsUrl,
   };
 }
 

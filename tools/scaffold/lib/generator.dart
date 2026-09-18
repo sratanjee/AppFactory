@@ -40,6 +40,7 @@ class Generator {
       spec: spec,
       bundlePrefix: config.require('BUNDLE_PREFIX'),
       flutterVersion: config.require('FLUTTER_VERSION'),
+      privacyUrlBase: config.get('PRIVACY_URL_BASE'),
     );
 
     if (options.dryRun) {

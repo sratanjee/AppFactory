@@ -95,8 +95,8 @@ abstract final class AppConfig {
         iosApiKey: revenueCatIosKey,
         androidApiKey: revenueCatAndroidKey,
         benefits: ${benefitsList},
-        termsUrl: Uri.parse('https://example.test/terms'),
-        privacyUrl: Uri.parse('https://example.test/privacy'),
+        termsUrl: Uri.parse('${termsUrl}'),
+        privacyUrl: Uri.parse('${privacyUrl}'),
       );
 }
 ''';
