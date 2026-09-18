@@ -119,7 +119,7 @@ Future<void> _runAsc(AscClient asc, Spec spec, ProductPlan plan) async {
   final existing = await asc.listExistingProductIds(appId);
   for (final p in plan.products) {
     if (existing.contains(p.storeProductId)) {
-      stdout.writeln('ASC: ${p.storeProductId} already exists — skipping.');
+      stdout.writeln('ASC: ${p.storeProductId} already exists — skipping create.');
       continue;
     }
     if (p.kind == ProductKind.nonConsumable) {
@@ -138,6 +138,111 @@ Future<void> _runAsc(AscClient asc, Spec spec, ProductPlan plan) async {
     }
     stdout.writeln('ASC: created ${p.storeProductId}');
   }
+
+  // Resource IDs (subs + IAPs) — needed for prices, localizations,
+  // intro offers. `listExistingProductIds` only returns product-id strings.
+  final resources = await asc.listExistingProducts(appId);
+  for (final p in plan.products) {
+    final entry = resources[p.storeProductId];
+    if (entry == null) {
+      stderr.writeln('ASC: ${p.storeProductId} not found on server after '
+          'create — skipping localization/pricing.');
+      continue;
+    }
+    final resourceId = entry['id']!;
+    final isSubscription = p.kind == ProductKind.autoRenewableSubscription;
+
+    try {
+      final locName = _shortName(p);
+      if (isSubscription) {
+        await asc.addSubscriptionLocalization(
+          subscriptionId: resourceId,
+          locale: 'en-US',
+          name: locName,
+          description: '${spec.appName} Pro membership.',
+        );
+      } else {
+        await asc.addInAppPurchaseLocalization(
+          iapId: resourceId,
+          locale: 'en-US',
+          name: locName,
+          description: '${spec.appName} Pro — one-time unlock.',
+        );
+      }
+      stdout.writeln('ASC: en-US localization set for ${p.storeProductId}');
+    } catch (e) {
+      stderr.writeln('ASC: localization failed for ${p.storeProductId}: $e');
+    }
+
+    if (isSubscription) {
+      try {
+        await asc.ensureSubscriptionAvailableInUsa(subscriptionId: resourceId);
+      } catch (e) {
+        stderr.writeln('ASC: availability failed for ${p.storeProductId}: $e');
+      }
+    }
+
+    try {
+      final pricePointId = isSubscription
+          ? await asc.findSubscriptionUsdPricePoint(
+              subscriptionId: resourceId,
+              priceUsd: p.priceUsd,
+            )
+          : await asc.findInAppPurchaseUsdPricePoint(
+              iapId: resourceId,
+              priceUsd: p.priceUsd,
+            );
+      if (pricePointId == null) {
+        stderr.writeln(
+            'ASC: no USD price point matched \$${p.priceUsd.toStringAsFixed(2)} '
+            'for ${p.storeProductId} — skipping price.');
+      } else if (isSubscription) {
+        await asc.setSubscriptionPrice(
+          subscriptionId: resourceId,
+          pricePointId: pricePointId,
+        );
+        stdout.writeln('ASC: price set on ${p.storeProductId} '
+            '(\$${p.priceUsd.toStringAsFixed(2)})');
+      } else {
+        await asc.setInAppPurchasePriceSchedule(
+          iapId: resourceId,
+          pricePointId: pricePointId,
+        );
+        stdout.writeln('ASC: price schedule set on ${p.storeProductId} '
+            '(\$${p.priceUsd.toStringAsFixed(2)})');
+      }
+    } catch (e) {
+      stderr.writeln('ASC: pricing failed for ${p.storeProductId}: $e');
+    }
+
+    if (isSubscription && p.freeTrialDays > 0) {
+      try {
+        await asc.addFreeTrialIntroductoryOffer(
+          subscriptionId: resourceId,
+          trialDays: p.freeTrialDays,
+        );
+        stdout.writeln('ASC: ${p.freeTrialDays}-day free trial added on '
+            '${p.storeProductId}');
+      } catch (e) {
+        stderr.writeln('ASC: intro offer failed for ${p.storeProductId}: $e');
+      }
+    }
+  }
+}
+
+String _shortName(Product p) {
+  switch (p.rcPackageId) {
+    case r'$rc_monthly':
+      return 'Pro Monthly';
+    case r'$rc_annual':
+      return 'Pro Annual';
+    case r'$rc_lifetime':
+      return 'Pro Lifetime';
+    case r'$rc_weekly':
+      return 'Pro Weekly';
+    default:
+      return p.displayName;
+  }
 }
 
 Future<void> _runRc(RcClient rc, Spec spec, ProductPlan plan) async {
@@ -154,6 +259,67 @@ Future<void> _runRc(RcClient rc, Spec spec, ProductPlan plan) async {
       displayName: p.displayName,
     );
     stdout.writeln('RC: package ${p.rcPackageId} ensured');
+  }
+
+  final apps = await rc.listApps();
+  final iosAppId = apps.entries
+      .firstWhere(
+        (e) => e.value == 'app_store',
+        orElse: () => const MapEntry('', ''),
+      )
+      .key;
+  if (iosAppId.isEmpty) {
+    stderr.writeln('RC: no app_store app under project — provision the iOS '
+        'RC app first, then re-run to attach product linkage.');
+    return;
+  }
+
+  for (final p in plan.products) {
+    final productId = await rc.upsertProduct(
+      rcAppId: iosAppId,
+      storeIdentifier: p.storeProductId,
+      productType: p.kind == ProductKind.nonConsumable
+          ? 'non_consumable'
+          : 'subscription',
+      displayName: p.displayName,
+      subscriptionLookupKey: _rcSubscriptionDuration(p),
+    );
+    stdout.writeln('RC: product ${p.storeProductId} upserted → $productId');
+
+    final packageId = await rc.findPackageId(
+      offeringId: offeringId,
+      packageLookupKey: p.rcPackageId,
+    );
+    if (packageId == null) {
+      stderr.writeln('RC: package ${p.rcPackageId} not found — cannot attach '
+          '${p.storeProductId}.');
+      continue;
+    }
+    try {
+      await rc.attachProductToPackage(
+        offeringId: offeringId,
+        packageId: packageId,
+        productId: productId,
+      );
+      stdout.writeln('RC: attached ${p.storeProductId} → ${p.rcPackageId}');
+    } catch (e) {
+      stderr.writeln('RC: attach failed ${p.storeProductId} → '
+          '${p.rcPackageId}: $e');
+    }
+  }
+}
+
+String? _rcSubscriptionDuration(Product p) {
+  if (p.kind != ProductKind.autoRenewableSubscription) return null;
+  switch (p.rcPackageId) {
+    case r'$rc_weekly':
+      return 'P1W';
+    case r'$rc_monthly':
+      return 'P1M';
+    case r'$rc_annual':
+      return 'P1Y';
+    default:
+      return null;
   }
 }
 
