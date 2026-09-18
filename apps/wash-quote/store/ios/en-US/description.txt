@@ -26,5 +26,5 @@ Not scheduling, not routing, not team management, not accounting sync. If you wa
 Subscription details
 Auto-renews unless cancelled at least 24 hours before the period ends. Manage or cancel any time in App Store settings. The 7-day free trial applies to the annual plan.
 
-Privacy policy: https://sratanjee.github.io/appfactory-site/wash-quote/privacy
-Terms of use: https://sratanjee.github.io/appfactory-site/wash-quote/terms
+Privacy policy: https://sratanjee.github.io/appfactory-site/wash-quote/privacy.html
+Terms of use: https://sratanjee.github.io/appfactory-site/terms.html
