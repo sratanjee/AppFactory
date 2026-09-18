@@ -201,6 +201,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       onTap: () =>
                           setState(() => _selectedId = pkg.identifier),
                     ),
+                  if (config.smallPrint != null) ...[
+                    SizedBox(height: theme.spacing.md),
+                    Text(
+                      config.smallPrint!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF6E6E73),
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                   if (_error != null) ...[
                     SizedBox(height: theme.spacing.md),
                     Text(

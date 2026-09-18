@@ -14,6 +14,7 @@ class PaywallConfig {
     this.termsUrl,
     this.privacyUrl,
     this.benefits = const [],
+    this.smallPrint,
   });
 
   /// No-op mode. Apps use this when a real RevenueCat project isn't wired
@@ -46,6 +47,12 @@ class PaywallConfig {
   /// Three lines of benefit copy in the user's words (spec §6). More than
   /// three is a warning; fewer is fine.
   final List<String> benefits;
+
+  /// Optional compliance / safety footer rendered above the primary button.
+  /// Health-adjacent SKUs use this for Apple 1.4.2 disclaimers ("Talk to
+  /// your vet before changing any medication."). Kept out of `benefits` so
+  /// it renders in muted grey and never reads as a sales point.
+  final String? smallPrint;
 
   bool get isDisabled => iosApiKey.isEmpty && androidApiKey.isEmpty;
 }
