@@ -76,8 +76,8 @@ class ReportGenerator {
         ['Pet summary'],
         ['Name', data.pet.name],
         ['Species', data.pet.species],
-        if (data.pet.breed != null) ['Breed', data.pet.breed!],
-        if (data.pet.weightKg != null) ['Weight (kg)', data.pet.weightKg!],
+        if (data.pet.breed != null) ['Breed', data.pet.breed],
+        if (data.pet.weightKg != null) ['Weight (kg)', data.pet.weightKg],
         ['Period', '${_isoDate(data.from)} to ${_isoDate(data.to)}'],
         [config.disclaimer],
       ];
