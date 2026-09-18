@@ -1,0 +1,59 @@
+# Codemagic lane for wash-quote. iOS ships to TestFlight; Android to
+# Play internal testing. Both builds resolve the RC key per-slug from
+# factory.config's REVENUECAT_IOS_KEY_wash_quote and
+# REVENUECAT_ANDROID_KEY_wash_quote values and pass them as
+# --dart-define during the flutter build step.
+#
+# Fills the Codemagic env vars from a shared group named
+# "app-factory-secrets" that mirrors factory.config's non-committed values.
+# See tools/monetize/ for how RC keys are provisioned.
+
+workflows:
+  ios-testflight:
+    name: wash-quote — iOS TestFlight
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+      xcode: latest
+    scripts:
+      - name: Resolve per-slug RC keys
+        script: |
+          # Codemagic exposes group vars as env directly. The vars in
+          # app-factory-secrets are named REVENUECAT_IOS_KEY_<slug>.
+          eval "export RC_IOS_KEY=\$REVENUECAT_IOS_KEY_wash_quote"
+      - name: Build IPA
+        script: |
+          cd apps/wash-quote
+          fvm flutter build ipa --release \
+            --dart-define=REVENUECAT_IOS_KEY="$RC_IOS_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to TestFlight
+        script: |
+          app-store-connect publish \
+            --path build/ios/ipa/*.ipa \
+            --testflight
+
+  android-internal:
+    name: wash-quote — Play internal
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+    scripts:
+      - name: Resolve per-slug RC keys
+        script: |
+          eval "export RC_ANDROID_KEY=\$REVENUECAT_ANDROID_KEY_wash_quote"
+      - name: Build AAB
+        script: |
+          cd apps/wash-quote
+          fvm flutter build appbundle --release \
+            --dart-define=REVENUECAT_ANDROID_KEY="$RC_ANDROID_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to Play internal
+        script: |
+          google-play publish \
+            --track internal \
+            build/app/outputs/bundle/release/*.aab

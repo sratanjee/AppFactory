@@ -1,0 +1,21 @@
+"I want to price a job while I'm standing in the customer's driveway and send them a PDF before I drive off, so that I stop losing jobs to the guy who quoted first."
+
+For Solo pressure-washing / exterior-cleaning operator (one truck, ~32,000 such US businesses) currently paying Jobber Core ($29–49/mo) or capped at 3–5 documents/month on Invoice Simple / Joist..
+
+What it does
+
+• Large "Jobs" title with a Quotes / Invoices segmented toggle; full-width accent hero card "New quote from the driveway" with camera glyph; horizontal row of photo-thumbnail quote cards under "Waiting on the customer · 4 · $1,865"; simple list "Accepted this week"; four-tab bar Jobs / Customers / Services / Money
+• Customer, service lines from the operator's price list, quantities (sq ft / linear ft / flat), deposit %, "pay via" free-text field, before photos
+• Rendered branded PDF (logo, business name, lines, deposit line, pay-via text, photo pages); status Sent / Accepted / Invoiced / Paid
+• Operator's own services and unit prices, reused on every quote
+• Totals by week / month: quoted, accepted, invoiced, paid
+
+Why people use it
+
+Everything is gated. Business setup (onboarding) is free; the first quote requires `pro`.
+
+Subscription
+
+Free trial: 7-day, on annual only. Weekly: none (monthly instead: $9.99/mo). Annual: $59.99/yr (pre-selected, saving shown against monthly).
+Auto-renews unless cancelled.
+Manage in App Store settings.
