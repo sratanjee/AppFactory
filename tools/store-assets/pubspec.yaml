@@ -1,0 +1,18 @@
+name: store_assets
+description: Generates placeholder store assets (icons, feature graphic, screenshots) from a slug + accent + name. Replaced by the release agent.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  args: ^2.7.0
+  image: ^4.5.4
+  path: ^1.9.1
+
+dev_dependencies:
+  very_good_analysis: ^11.0.0
+
+executables:
+  gen: gen
