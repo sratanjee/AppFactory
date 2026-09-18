@@ -48,7 +48,10 @@ Future<void> main(List<String> argv) async {
 
   final Spec spec;
   try {
-    spec = SpecParser(await specFile.readAsString()).parse();
+    spec = SpecParser(
+      await specFile.readAsString(),
+      bundlePrefix: config.require('BUNDLE_PREFIX'),
+    ).parse();
   } on SpecParseException catch (e) {
     stderr.writeln('Spec parse failed: $e');
     exit(1);

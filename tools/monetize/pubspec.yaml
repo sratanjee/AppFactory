@@ -1,0 +1,22 @@
+name: monetize
+description: Creates in-app products in App Store Connect, Google Play, and RevenueCat from a spec §6. Idempotent.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  args: ^2.7.0
+  dart_jsonwebtoken: ^3.2.0
+  http: ^1.5.0
+  path: ^1.9.1
+  scaffold:
+    path: ../scaffold
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^11.0.0
+
+executables:
+  monetize: monetize

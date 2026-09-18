@@ -113,4 +113,38 @@ void main() {
       throwsA(isA<SpecParseException>()),
     );
   });
+
+  test('[YOUR STUDIO] bundle-ID placeholder is substituted with the prefix',
+      () {
+    const content = '''
+## 1. Identity
+
+| Field | Value |
+|---|---|
+| App name | Sample |
+| Slug | sample |
+| Bundle ID / Application ID | `com.[YOUR STUDIO].sample` |
+''';
+    final s = SpecParser(content, bundlePrefix: 'com.appfactory').parse();
+    expect(s.bundleIdRaw, 'com.appfactory.sample');
+    expect(s.bundleIdRaw, isNot(contains('[YOUR STUDIO]')));
+  });
+
+  test('accent hex is extracted from a decorated §8 line', () {
+    const content = '''
+## 1. Identity
+
+| Field | Value |
+|---|---|
+| App name | Sample |
+| Slug | sample |
+| Bundle ID / Application ID | com.appfactory.sample |
+
+## 8. Design notes
+
+- Accent color (one hex): `#0a6ea8` (from artboard data-props; alternates #0b7a75 not used)
+''';
+    final s = SpecParser(content).parse();
+    expect(s.designNotes.accentHex, '#0a6ea8');
+  });
 }

@@ -1,0 +1,25 @@
+name: condition_log
+description: Shared engine for factory condition-log apps (seizure, diabetes, kidney). Owns the schema, repo, and configurable report generator.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.4 <3.48.0"
+
+dependencies:
+  csv: ^8.0.0
+  drift: ^2.35.0
+  factory_core:
+    path: ../core
+  flutter:
+    sdk: flutter
+  path_provider: ^2.1.6
+  pdf: ^3.13.0
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  drift_dev: ^2.35.0
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0

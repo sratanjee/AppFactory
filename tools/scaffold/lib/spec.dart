@@ -175,9 +175,10 @@ class StoreSeedsSpec {
 }
 
 class SpecParser {
-  SpecParser(this._content);
+  SpecParser(this._content, {this.bundlePrefix = 'com.appfactory'});
 
   final String _content;
+  final String bundlePrefix;
   late final List<String> _lines = _content.split('\n');
 
   Spec parse() {
@@ -204,8 +205,13 @@ class SpecParser {
       androidShortDescription: identity['Subtitle'] ?? '',
       slug: _requireField(identity, 'Slug'),
       // SPEC_TEMPLATE.md renders the bundle ID as `com.studio.slug` with
-      // backticks (Markdown code style); strip them.
-      bundleIdRaw: _stripBackticks(_requireField(identity, 'Bundle ID')),
+      // backticks (Markdown code style); strip them. Human-authored specs
+      // frequently substitute `[YOUR STUDIO]` for the studio segment —
+      // auto-substitute BUNDLE_PREFIX so the queue can run through
+      // without hand-editing every spec.
+      bundleIdRaw: _substituteStudio(
+        _stripBackticks(_requireField(identity, 'Bundle ID')),
+      ),
       storeCategory: identity['Category'] ?? '',
       developerAccount: identity['Developer account'] ?? '',
       factoryCategory: identity['Factory category'] ?? '',
@@ -427,7 +433,12 @@ class SpecParser {
     for (final line in lines) {
       final t = line.trim();
       if (t.startsWith('- Accent color')) {
-        accent = _afterColon(t);
+        // Line often reads "- Accent color (one hex): `#0a6ea8`
+        // (from artboard data-props; alternates ...)".
+        // Extract the first #RRGGBB or #RRGGBBAA occurrence.
+        final match = RegExp(r'#([0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?)')
+            .firstMatch(_afterColon(t));
+        accent = match?.group(0);
       } else if (t.startsWith('- Icon concept')) {
         icon = _afterColon(t);
       } else if (t.startsWith('- Tone of copy')) {
@@ -517,4 +528,17 @@ class SpecParser {
 
   String _stripBackticks(String s) =>
       s.replaceAll('`', '').trim();
+
+  /// Replace `com.[YOUR STUDIO]...` (or lowercase variants) with the
+  /// configured bundle prefix. Also strips any trailing commentary
+  /// after the last valid bundle-ID token.
+  String _substituteStudio(String s) {
+    var out = s;
+    final placeholder = RegExp(
+      r'com\.\[?your ?studio\]?',
+      caseSensitive: false,
+    );
+    out = out.replaceAll(placeholder, bundlePrefix);
+    return out.trim();
+  }
 }
