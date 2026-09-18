@@ -8,8 +8,33 @@ class AdaptiveLoading extends StatelessWidget {
 
   final double size;
 
+  /// When true, [AdaptiveLoading] renders a stationary dot instead of an
+  /// animated spinner. `pumpAndSettle` waits for animations to end, and
+  /// [CupertinoActivityIndicator] never stops on its own, which deadlocks
+  /// any widget test that pumps a screen with a loading branch. Tests
+  /// (including the factory's per-app tester agent) flip this to `true`
+  /// in `flutter_test_config.dart` so `pumpAndSettle` returns.
+  ///
+  /// Production callers never touch this. If a real app ever needs a
+  /// non-animating fallback it should build one; this flag is not the
+  /// hook for that.
+  static bool testMode = false;
+
   @override
   Widget build(BuildContext context) {
+    if (testMode) {
+      final theme = context.adaptiveTheme;
+      return Center(
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: theme.accent.withValues(alpha: 0.5),
+          ),
+        ),
+      );
+    }
     return Center(
       child: CupertinoActivityIndicator(radius: size / 2),
     );
