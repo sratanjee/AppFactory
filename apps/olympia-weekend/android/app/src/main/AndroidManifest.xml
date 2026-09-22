@@ -41,5 +41,17 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Instagram deep link (openInstagram helper) -->
+        <package android:name="com.instagram.android" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="instagram" />
+        </intent>
+        <!-- Google Maps deep link (openDirections helper) -->
+        <package android:name="com.google.android.apps.maps" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
     </queries>
 </manifest>

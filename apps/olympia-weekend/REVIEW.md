@@ -128,6 +128,70 @@ Partial / deferred:
 - **Terms / Privacy URLs** — factory template still references
   `example.test`.
 
+## Native-builder pass (2026-09-22)
+
+Spec §5 and PLAN §9 both call for zero native surfaces in v1 (no widgets,
+no Live Activities, no Glance, no Quick Settings tile, no watch). The
+native-builder pass only prepared the store-build entitlements the
+Instagram / Directions helpers need at store-submit time and lifted the
+platform deployment floors to match spec §1 ("iOS 17+", "Android 10+").
+
+### Files changed
+
+- `apps/olympia-weekend/ios/Runner/Info.plist` — added
+  `LSApplicationQueriesSchemes` array with `instagram`, `comgooglemaps`,
+  `maps` so `openInstagram` and the iOS Directions action sheet can
+  detect installed apps before falling back to the web URL.
+- `apps/olympia-weekend/ios/Runner.xcodeproj/project.pbxproj` — bumped
+  `IPHONEOS_DEPLOYMENT_TARGET` from 15.0 → 17.0 in all three build
+  configurations (Debug, Profile, Release) to match spec §1.
+- `apps/olympia-weekend/ios/Podfile` — uncommented and set
+  `platform :ios, '17.0'`.
+- `apps/olympia-weekend/android/app/src/main/AndroidManifest.xml` — added
+  `<package>` and `<intent>` entries inside the existing `<queries>` block
+  for `com.instagram.android`, `com.google.android.apps.maps`, plus
+  `VIEW` intents for the `instagram://` and `geo:` schemes so the
+  helpers can `canLaunchUrl` under Android 11+ package-visibility rules.
+- `apps/olympia-weekend/android/app/build.gradle.kts` — pinned
+  `minSdk = 29` (Android 10) instead of `flutter.minSdkVersion`.
+
+### Deliberately not changed
+
+- **Google Maps API-key `meta-data` / `GMSApiKey`.** Skipped for v1 as
+  the Venues screen ships the text-list fallback (see partial task 10
+  above). When the reviewer wires the `GoogleMap` widget the keys land
+  as `${GOOGLE_MAPS_ANDROID_KEY}` / iOS `GMSApiKey` (or the runtime
+  `String.fromEnvironment` path); the referrer / bundle restrictions on
+  both keys are already configured server-side.
+- **`NSLocationWhenInUseUsageDescription`.** No location API is called
+  in v1. Deferred to v1.1 alongside the "nearest venue" idea.
+- **`NSAppTransportSecurity`.** All Supabase + Vercel + Mixpanel traffic
+  is HTTPS; default ATS is fine.
+- **`widgets_ios/` and `widgets_android/`.** Not touched — spec §5
+  ticks every widget/watch/tile/complication row as "no".
+
+### Bundle-ID sanity
+
+- iOS `PRODUCT_BUNDLE_IDENTIFIER` = `com.appfactory.olympiaweekend`
+  across every build configuration in `project.pbxproj`.
+- Android `applicationId` = `namespace` = `com.appfactory.olympiaweekend`.
+- Both match spec §1. No drift.
+
+### Local build verification
+
+- `flutter analyze --no-fatal-infos` — clean; only the pre-existing
+  builder-pass info-level lints remain (65 issues, all `info`).
+- `flutter build web --release` (with all four `--dart-define`s stubbed)
+  — succeeds; output in `build/web/`.
+- `flutter build ios --debug --no-codesign` — succeeds against the
+  Simulator SDK after the deployment-target bump. `pod install`
+  auto-runs and picks up the new `platform :ios, '17.0'`.
+- `flutter build apk --debug` — fails on the known Shorebird engine
+  hash mismatch (`io.flutter:flutter_embedding_debug` descriptor vs
+  requested hash disagree via `download.flutter.io`). This is a local
+  Shorebird / Flutter tool-cache issue, not a native-config bug.
+  Codemagic starts from a fresh install so this does not repro on CI.
+
 ## Not built (from PLAN §10, kept)
 
 - Push notifications on web.
