@@ -54,7 +54,11 @@ class _OlympiaWeekendAppState extends ConsumerState<OlympiaWeekendApp> {
   }
 
   void _go(GoRouter router, Uri uri) {
-    // olympia://schedule → /schedule ; olympia:///athletes → /athletes.
+    // Only route custom-scheme URLs (`olympia://schedule` → `/schedule`).
+    // On web the browser URL already drives go_router; parsing http(s)
+    // URIs here would treat the host ("localhost") as a route segment
+    // and 404 before the app finishes booting.
+    if (uri.scheme != 'olympia') return;
     final segments = [uri.host, ...uri.pathSegments].where((s) => s.isNotEmpty);
     if (segments.isEmpty) return;
     router.go('/${segments.join('/')}');
