@@ -36,12 +36,22 @@ non-negotiables 2 and 3:
   `recompute-athlete-status` deployed with JWT verification on; seed
   file `olympia-live/athletes.seed.json` uploaded; a manual invocation
   primed `olympia-live/athletes.json`.
-- **Google Maps** — three unrestricted-domain API keys in
-  `appfactory-509001` (all three landed in `factory.config` as
-  `GOOGLE_MAPS_{WEB,IOS,ANDROID}_KEY_olympiaweekend`). Each key is
-  API-scope restricted (web = Maps JS + Places, iOS = Maps SDK iOS,
-  Android = Maps SDK Android). **Application restrictions still
-  needed** — see below.
+- **Google Maps** — three API keys in `appfactory-509001`, values in
+  `factory.config` as `GOOGLE_MAPS_{WEB,IOS,ANDROID}_KEY_olympiaweekend`.
+  Each has an API-scope restriction (web = Maps JS + Places, iOS =
+  Maps SDK iOS, Android = Maps SDK Android).
+  - Web key HTTP referrer allowlist:
+    `https://olympia-weekend.vercel.app/*`,
+    `https://olympia-weekend-*.vercel.app/*` (preview URLs),
+    `http://localhost:*/*`, `http://127.0.0.1:*/*`. Replace with the
+    real custom domain once picked.
+  - iOS key bundle allowlist: `com.appfactory.olympiaweekend`.
+  - Android key application restriction: **still open**. Needs
+    package `com.appfactory.olympia_weekend` + the release keystore
+    SHA-1 (add via `gcloud alpha services api-keys update
+    projects/appfactory-509001/locations/global/keys/0240a479-5976-48b5-80d5-3872e080ec1c
+    --allowed-application=sha1_fingerprint=<SHA>,package_name=com.appfactory.olympia_weekend`
+    once the release keystore exists).
 
 ## Open at scaffold time
 
@@ -50,13 +60,11 @@ not blocking."
 
 - **Shorebird app ID** — `.shorebird/shorebird.yaml` still says
   `TODO_SHOREBIRD_APP_ID`. Wire before the store builds.
-- **Maps key application restrictions** — the three keys are only
-  API-scope restricted so they work before the Vercel domain is
-  picked. Before the public link ships, add: web key → HTTP referrer
-  restriction to the Vercel domain (+ `localhost:*` for dev); iOS key
-  → bundle ID `com.appfactory.olympiaweekend`; Android key → package
-  name `com.appfactory.olympia_weekend` (Flutter's underscore-form
-  application id) with the release keystore SHA-1.
+- **Android Maps key SHA-1** — see the "Provisioned" note above.
+  Blocking only for the Play internal build later this week.
+- **Custom Vercel domain** — swap the `olympia-weekend.vercel.app`
+  placeholder in the web key referrer list for the real domain once
+  picked.
 - **Web deploy domain** — `WEB_DEPLOY_DOMAIN_olympiaweekend` in
   `factory.config` is empty; pick a Vercel domain before the Thursday
   deadline.
