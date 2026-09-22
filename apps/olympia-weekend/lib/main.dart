@@ -1,6 +1,8 @@
 import 'package:factory_core/shorebird/shorebird.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:olympia_weekend/app.dart';
 import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
@@ -12,6 +14,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    // Clean shareable URLs — olympia-weekend.vercel.app/e/<id> instead
+    // of /#/e/<id>. Requires the vercel.json rewrite rule that routes
+    // every path back to index.html.
+    usePathUrlStrategy();
+  }
   bootstrapShorebird();
   initVegasTimeZone();
 

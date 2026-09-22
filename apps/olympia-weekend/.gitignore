@@ -56,3 +56,5 @@ ios/Runner.xcworkspace/xcshareddata/swiftpm/
 
 # Playwright screenshot output (tester run).
 screenshots/
+.vercel
+.env*

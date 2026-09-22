@@ -31,7 +31,7 @@ Widget createVenueMap({
         (lats.first + lats.last) / 2,
         (lngs.first + lngs.last) / 2,
       ),
-      zoom: 11.5,
+      zoom: venues.length == 1 ? 15 : 11.5,
     ),
     markers: markers,
     myLocationButtonEnabled: false,

@@ -1,4 +1,6 @@
 import 'package:factory_core/adaptive/adaptive.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,14 +8,15 @@ import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:olympia_weekend/features/directions.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/saved_events.dart';
+import 'package:olympia_weekend/features/venue_map.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/access_tag.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
-import 'package:olympia_weekend/features/directions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailScreen extends ConsumerWidget {
@@ -188,6 +191,15 @@ class EventDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if (venue != null) ...[
+            const SizedBox(height: 24),
+            _sectionTitle(context, AppStrings.eventLocation),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: _LocationCard(venue: venue, room: event.room),
+            ),
+          ],
           if ((event.vipEntry != null && event.vipEntry!.isNotEmpty) ||
               (event.generalEntry != null &&
                   event.generalEntry!.isNotEmpty)) ...[
@@ -452,6 +464,85 @@ class _FactAccess extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           AccessTag(access: access),
+        ],
+      ),
+    );
+  }
+}
+
+/// Location card — venue name, sub-room (Pearl Theater etc), address,
+/// mini map, drive-from-Palms subtitle. Sits between the fact strip and
+/// the entry / running-order sections so users see "where + how far"
+/// before they read the schedule details.
+class _LocationCard extends StatelessWidget {
+  const _LocationCard({required this.venue, required this.room});
+
+  final Venue venue;
+  final String? room;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final key = kIsWeb
+        ? AppConfig.googleMapsWebKey
+        : (defaultTargetPlatform == TargetPlatform.iOS
+            ? AppConfig.googleMapsIosKey
+            : AppConfig.googleMapsAndroidKey);
+    final hasKey = key.isNotEmpty && key != 'stub';
+    return OlympiaCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (hasKey)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(18),
+              ),
+              child: SizedBox(
+                height: 160,
+                child: buildVenueMap(
+                  venues: [venue],
+                  apiKey: key,
+                  onPinTap: (_) {},
+                ),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  venue.name,
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (room != null && room!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    room!,
+                    style: context.olympiaText.caption.copyWith(
+                      color: colors.text,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 4),
+                Text(venue.address, style: context.olympiaText.caption),
+                if (venue.driveFromPalmsMin != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${venue.driveFromPalmsMin} min from Palms'
+                    '${venue.shuttle ? ' · shuttle' : ''}',
+                    style: context.olympiaText.caption.copyWith(
+                      color: colors.textFaint,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
