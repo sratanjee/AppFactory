@@ -45,14 +45,14 @@ class AppShell extends StatelessWidget {
               label: AppStrings.tabAthletes,
             ),
             OlympiaTabDestination(
+              icon: AdaptiveIconName.bag,
+              selectedIcon: AdaptiveIconName.bag,
+              label: AppStrings.tabExpo,
+            ),
+            OlympiaTabDestination(
               icon: AdaptiveIconName.info,
               selectedIcon: AdaptiveIconName.info,
               label: AppStrings.tabVenues,
-            ),
-            OlympiaTabDestination(
-              icon: AdaptiveIconName.star,
-              selectedIcon: AdaptiveIconName.starFill,
-              label: AppStrings.tabSaved,
             ),
           ],
           currentIndex: navigationShell.currentIndex,

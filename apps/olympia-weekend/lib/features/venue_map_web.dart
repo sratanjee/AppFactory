@@ -16,27 +16,35 @@ Widget createVenueMap({
   required List<Venue> venues,
   required String apiKey,
   required void Function(Venue venue) onPinTap,
+  String? query,
 }) {
   if (apiKey.isEmpty) {
     return const SizedBox.shrink();
   }
-  final viewType = 'olympia-venue-map-${venues.map((v) => v.id).join('-')}';
+  final viewType =
+      'olympia-venue-map-${venues.map((v) => v.id).join('-')}-${query ?? ''}';
   Uri url;
   if (venues.length == 1) {
-    // Single venue → `place` mode with the labelled pin. Prefer real
-    // `place_id:` (best marker fidelity), then fall back to lat/lng
-    // when placeId is empty or still holds the seed stub
-    // (`ChIJ__<TOKEN>__LOOKUP_AT_BUILD`) that was never resolved.
+    // Single venue → `place` mode with the labelled pin. Resolution
+    // order (best → worst marker fidelity):
+    //   1. Explicit query passed by the caller (e.g. an event's
+    //      "Palms Casino Resort Pearl Theater" — lands on the room,
+    //      not the resort entrance).
+    //   2. Real `place_id:`.
+    //   3. Seed stub (`ChIJ__<TOKEN>__LOOKUP_AT_BUILD`) → treat as
+    //      empty and fall back to lat/lng.
     final v = venues.first;
     final hasRealPlaceId =
         v.placeId.isNotEmpty && !v.placeId.startsWith('ChIJ__');
-    final q = hasRealPlaceId
-        ? 'place_id:${v.placeId}'
-        : '${v.lat},${v.lng}';
+    final q = (query != null && query.isNotEmpty)
+        ? query
+        : hasRealPlaceId
+            ? 'place_id:${v.placeId}'
+            : '${v.lat},${v.lng}';
     url = Uri.https('www.google.com', '/maps/embed/v1/place', {
       'key': apiKey,
       'q': q,
-      'zoom': '15',
+      'zoom': '16',
       'maptype': 'roadmap',
     });
   } else {

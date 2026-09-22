@@ -103,9 +103,20 @@ void main() {
     await binding.takeScreenshot('venues');
   });
 
+  testWidgets('Capture screenshots — Expo screen', (tester) async {
+    await pumpApp(tester);
+    await goTab(tester, 'Expo');
+    await binding.takeScreenshot('expo');
+  });
+
   testWidgets('Capture screenshots — Saved screen (empty)', (tester) async {
     await pumpApp(tester);
-    await goTab(tester, 'Saved');
+    // Saved is no longer a tab — reach it via the heart action on the
+    // Now header. The semantic label on the pressable is "Saved".
+    await tester.tap(
+      find.bySemanticsLabel(RegExp(r'^Saved(, \d+ saved)?$')).last,
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 3));
     await binding.takeScreenshot('saved');
   });
 

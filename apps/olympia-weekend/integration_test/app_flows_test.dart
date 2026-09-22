@@ -77,12 +77,13 @@ void main() {
     // The app title "Olympia Weekend" must appear on the Now screen.
     expect(find.text('Olympia Weekend'), findsOneWidget);
 
-    // Five tab labels must be visible.
+    // Five tab labels must be visible. Saved moved to a heart-icon
+    // action on the Now header; Expo is now a first-class tab.
     expect(find.text('Now'), findsOneWidget);
     expect(find.text('Schedule'), findsOneWidget);
     expect(find.text('Athletes'), findsOneWidget);
+    expect(find.text('Expo'), findsOneWidget);
     expect(find.text('Venues'), findsOneWidget);
-    expect(find.text('Saved'), findsOneWidget);
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -125,14 +126,18 @@ void main() {
     expect(find.text('Save to my day'), findsNothing,
         reason: 'Save button must change label after tapping');
 
-    // Navigate to Saved tab. After saving, the button reads "Saved" and the
-    // bottom-nav tab also reads "Saved". Use .last to hit the nav tab.
-    await tester.tap(find.text('Saved').last);
+    // Saved is no longer a tab — the Saved screen lives at /saved and
+    // is reached from the heart action on the Now header. Use the
+    // semantic label on the heart button (see `_SavedHeartAction`)
+    // to jump there. matchRoot pierces the ExcludeSemantics wrapper.
+    await tester.tap(
+      find.bySemanticsLabel(RegExp(r'^Saved(, \d+ saved)?$')).last,
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // Event must be listed in Saved.
     expect(find.text("Dragon's Lair Pop-Up Gym"), findsOneWidget,
-        reason: 'Saved event must appear in Saved tab');
+        reason: 'Saved event must appear in the Saved list');
   });
 
   testWidgets('Flow B-2: unsave an event — Save button toggles correctly',

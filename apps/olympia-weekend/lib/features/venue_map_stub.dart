@@ -6,5 +6,6 @@ Widget createVenueMap({
   required List<Venue> venues,
   required String apiKey,
   required void Function(Venue venue) onPinTap,
+  String? query,
 }) =>
     const SizedBox.shrink();

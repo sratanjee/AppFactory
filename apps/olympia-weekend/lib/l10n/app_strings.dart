@@ -57,6 +57,7 @@ abstract final class AppStrings {
   static const String eventAccess = 'Access';
   static const String eventPresentedBy = 'Presented by';
   static const String eventLocation = 'Location';
+  static const String eventDivisionsOrder = 'Order';
   static const String eventEntry = 'Entry';
   static const String eventEntryVip = 'VIP';
   static const String eventEntryGeneral = 'General public';

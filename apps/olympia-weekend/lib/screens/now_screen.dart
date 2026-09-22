@@ -7,6 +7,7 @@ import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/now_state.dart';
+import 'package:olympia_weekend/features/saved_events.dart';
 import 'package:olympia_weekend/features/vegas_time.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:olympia_weekend/l10n/app_strings.dart';
@@ -344,21 +345,92 @@ class _NowScreenState extends ConsumerState<NowScreen> {
   }
 }
 
-class _Header extends StatelessWidget {
+class _Header extends ConsumerWidget {
   const _Header({required this.now});
   final tz.TZDateTime now;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final savedCount = ref.watch(savedEventsProvider).length;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(_longDate(now), style: context.olympiaText.caption),
-          const SizedBox(height: 6),
-          Text(AppStrings.appTitle, style: context.olympiaText.title),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_longDate(now), style: context.olympiaText.caption),
+                const SizedBox(height: 6),
+                Text(AppStrings.appTitle, style: context.olympiaText.title),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          _SavedHeartAction(count: savedCount),
         ],
+      ),
+    );
+  }
+}
+
+/// Heart button that jumps to `/saved`. When the user has one or more
+/// saved events we render a small numeric badge on the top-right so
+/// there's a visible reminder — Saved isn't a tab anymore, so this is
+/// the only affordance surfacing the state.
+class _SavedHeartAction extends StatelessWidget {
+  const _SavedHeartAction({required this.count});
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final hasSaved = count > 0;
+    return OlympiaPressable(
+      onTap: () => context.goNamed(Routes.saved),
+      semanticsLabel: hasSaved
+          ? '${AppStrings.savedTitle}, $count saved'
+          : AppStrings.savedTitle,
+      minSize: const Size(44, 44),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            AdaptiveIcon(
+              hasSaved ? AdaptiveIconName.heartFill : AdaptiveIconName.heart,
+              size: 24,
+              color: hasSaved ? const Color(0xFFe2231a) : colors.text,
+            ),
+            if (hasSaved)
+              Positioned(
+                top: -6,
+                right: -8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 1,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFe2231a),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

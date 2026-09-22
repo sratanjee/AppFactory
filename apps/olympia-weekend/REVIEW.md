@@ -768,3 +768,27 @@ that way — pressable state now visible, but padding unchanged.
   the semantics label. Passable for VoiceOver but not ideal; a
   future pass could resolve to the display name.
 
+
+## Expo hub restructure (2026-09-22 late pass)
+
+- Consolidated the old `/expo/exhibitors` + `/expo/events` pair into a
+  single `/expo` hub with three segments (Exhibitors, Events, Floor
+  plan). Segments render inside one `ListView` — no nested scroll.
+- Promoted `Expo` into the bottom tab bar as the 4th destination
+  (Now / Schedule / Athletes / Expo / Venues). Saved moved to a heart
+  action on the Now header — the icon flips to `heartFill` in the
+  brand red when count > 0 and shows a small numeric badge.
+- Legacy routes `/expo/exhibitors` and `/expo/events` now redirect to
+  `/expo?tab=exhibitors` and `/expo?tab=events` so bookmarks + shared
+  links still work.
+- `assets/data/exhibitors.json` now carries a `category` field on
+  every one of the 154 rows (13-value taxonomy from spec). Category
+  chips filter the exhibitor list alongside the search box; the chip
+  strip is sorted by descending count so `Supplements` (41) leads.
+- **Floor plan**: the segment currently renders a placeholder card
+  ("Floor plan drops here…") when `WEB_DEPLOY_DOMAIN` is unset. Once
+  the PNG is dropped at `web/expo-floor-plan.png` and the site is
+  built with `--dart-define=WEB_DEPLOY_DOMAIN=…`, the segment fetches
+  it via `Image.network`. **No image asset was bundled in this pass**
+  — per spec direction the plan is to serve it as a static file on
+  the web deploy domain rather than a bundled asset.

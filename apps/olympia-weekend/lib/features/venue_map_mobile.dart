@@ -10,7 +10,13 @@ Widget createVenueMap({
   required List<Venue> venues,
   required String apiKey,
   required void Function(Venue venue) onPinTap,
+  String? query,
 }) {
+  // `query` is a hint the web build uses to sub-locate inside a
+  // resort (Palms Casino Resort → Pearl Theater). On mobile the
+  // native `google_maps_flutter` doesn't have a room-precise place
+  // API, so we just zoom in a bit tighter when a query is provided.
+  final singleZoom = query != null && query.isNotEmpty ? 17.0 : 15.0;
   if (apiKey.isEmpty || venues.isEmpty) {
     return const SizedBox.shrink();
   }
@@ -31,7 +37,7 @@ Widget createVenueMap({
         (lats.first + lats.last) / 2,
         (lngs.first + lngs.last) / 2,
       ),
-      zoom: venues.length == 1 ? 15 : 11.5,
+      zoom: venues.length == 1 ? singleZoom : 11.5,
     ),
     markers: markers,
     myLocationButtonEnabled: false,

@@ -111,7 +111,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                             // sub-action, not a peer venue.
                             if (venues[i].id == 'lvcc')
                               _ExpoLinkRow(
-                                onTap: () => context.go('/expo/exhibitors'),
+                                onTap: () => context.go('/expo'),
                               ),
                             if (i != venues.length - 1)
                               const OlympiaDivider(indent: 18),

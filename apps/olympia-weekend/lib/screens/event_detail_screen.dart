@@ -158,14 +158,41 @@ class EventDetailScreen extends ConsumerWidget {
             ),
           ],
           if (event.divisions.isNotEmpty) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 24),
+            _sectionTitle(context, AppStrings.eventDivisionsOrder),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                event.divisions.join(', '),
-                style: context.olympiaText.row.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: colors.textMuted,
+              child: OlympiaCard(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < event.divisions.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 28,
+                              child: Text(
+                                '${i + 1}',
+                                style: context.olympiaText.timeCell.copyWith(
+                                  color: colors.textFaint,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                event.divisions[i],
+                                style: context.olympiaText.row,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -184,7 +211,11 @@ class EventDetailScreen extends ConsumerWidget {
                   _FactDivider(color: colors.divider),
                   _Fact(
                       label: AppStrings.eventVenue,
-                      value: venue?.short ?? event.venueId),
+                      value: [
+                        venue?.short ?? event.venueId,
+                        if (event.room != null && event.room!.isNotEmpty)
+                          event.room!,
+                      ].join(' · ')),
                   _FactDivider(color: colors.divider),
                   _FactAccess(access: event.access),
                 ],
@@ -500,11 +531,17 @@ class _LocationCard extends StatelessWidget {
                 top: Radius.circular(18),
               ),
               child: SizedBox(
-                height: 160,
+                height: 180,
                 child: buildVenueMap(
                   venues: [venue],
                   apiKey: key,
                   onPinTap: (_) {},
+                  // Pass the sub-room so a Palms event opens on
+                  // "Palms Casino Resort Pearl Theater" rather than
+                  // the resort's main entrance.
+                  query: (room != null && room!.isNotEmpty)
+                      ? '${venue.name} ${room!}'
+                      : null,
                 ),
               ),
             ),

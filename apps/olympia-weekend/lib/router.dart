@@ -5,8 +5,7 @@ import 'package:olympia_weekend/screens/app_shell.dart';
 import 'package:olympia_weekend/screens/athlete_detail_screen.dart';
 import 'package:olympia_weekend/screens/athletes_screen.dart';
 import 'package:olympia_weekend/screens/event_detail_screen.dart';
-import 'package:olympia_weekend/screens/exhibitors_screen.dart';
-import 'package:olympia_weekend/screens/expo_events_screen.dart';
+import 'package:olympia_weekend/screens/expo_screen.dart';
 import 'package:olympia_weekend/screens/now_screen.dart';
 import 'package:olympia_weekend/screens/saved_screen.dart';
 import 'package:olympia_weekend/screens/schedule_screen.dart';
@@ -18,11 +17,10 @@ abstract final class Routes {
   static const String schedule = 'schedule';
   static const String athletes = 'athletes';
   static const String venues = 'venues';
+  static const String expo = 'expo';
   static const String saved = 'saved';
   static const String event = 'event';
   static const String athlete = 'athlete';
-  static const String expoExhibitors = 'expoExhibitors';
-  static const String expoEvents = 'expoEvents';
 }
 
 /// Singleton GoRouter — exposed so incoming deep links (`olympia://schedule`)
@@ -49,21 +47,23 @@ GoRouter buildRouter() {
           AthleteDetailScreen(athleteId: state.pathParameters['id']!),
         ),
       ),
+      // Saved lives outside the shell now — a heart action on the Now
+      // header opens `/saved`. Keeping the URL means saved-links from
+      // Mixpanel emails etc. still land somewhere useful.
+      GoRoute(
+        path: '/saved',
+        name: Routes.saved,
+        pageBuilder: (_, state) => _slidePage(state, const SavedScreen()),
+      ),
+      // Legacy aliases so old bookmarks / share sheets still work.
+      // Both point at the new hub with a preselected segment.
       GoRoute(
         path: '/expo/exhibitors',
-        name: Routes.expoExhibitors,
-        pageBuilder: (_, state) => _slidePage(
-          state,
-          const ExhibitorsScreen(),
-        ),
+        redirect: (_, _) => '/expo?tab=exhibitors',
       ),
       GoRoute(
         path: '/expo/events',
-        name: Routes.expoEvents,
-        pageBuilder: (_, state) => _slidePage(
-          state,
-          const ExpoEventsScreen(),
-        ),
+        redirect: (_, _) => '/expo?tab=events',
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
@@ -98,18 +98,20 @@ GoRouter buildRouter() {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/venues',
-                name: Routes.venues,
-                builder: (_, _) => const VenuesScreen(),
+                path: '/expo',
+                name: Routes.expo,
+                builder: (_, state) => ExpoScreen(
+                  initialTab: state.uri.queryParameters['tab'],
+                ),
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/saved',
-                name: Routes.saved,
-                builder: (_, _) => const SavedScreen(),
+                path: '/venues',
+                name: Routes.venues,
+                builder: (_, _) => const VenuesScreen(),
               ),
             ],
           ),
