@@ -87,6 +87,15 @@ abstract final class AppStrings {
   static const String athleteReported = 'Reported';
   static const String athleteISawThis = 'I saw this';
   static const String athleteReportBooth = 'Report a booth or time';
+  static const String athleteReportTitle = 'Report a booth or time';
+  static const String athleteReportBody =
+      'Add a booth or meet-and-greet for the crowd. Others confirm it '
+      'when they tap "I saw this".';
+  static const String athleteReportBoothLabel = 'Booth';
+  static const String athleteReportBoothHint = 'e.g. B4';
+  static const String athleteReportDay = 'Day';
+  static const String athleteReportStart = 'Start time';
+  static const String athleteReportSubmit = 'Submit';
   static const String athleteFooter =
       'Booth and meet-and-greet times come from expo signage and athlete posts. If you see one, tap the athlete and confirm it for everyone.';
   static const String athleteSightingFailed =

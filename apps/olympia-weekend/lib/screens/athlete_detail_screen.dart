@@ -175,7 +175,23 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             ),
           ],
         ],
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: GestureDetector(
+            onTap: () => _openReportSheet(athlete),
+            child: Text(
+              AppStrings.athleteReportBooth,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFFe2231a),
+              ),
+            ),
+          ),
+        ),
         if (_errorMsg != null) ...[
+          const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
@@ -183,11 +199,56 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
               style: const TextStyle(fontSize: 13, color: Color(0xFFe2231a)),
             ),
           ),
-          const SizedBox(height: 12),
         ],
         const SizedBox(height: 40),
       ],
     );
+  }
+
+  Future<void> _openReportSheet(Athlete athlete) async {
+    final report = await AdaptiveSheet.show<_Report>(
+      context,
+      child: _ReportSheet(athleteName: athlete.name),
+    );
+    if (report == null || !mounted) return;
+    setState(() => _errorMsg = null);
+    // Reviewer round 1 blocker 6: for v1 a report goes through the
+    // same insert path as a confirm — sightings.appearance_key is a
+    // composite that already carries booth + start, so a fresh row
+    // means a user seeded a new location.
+    final appearance = Appearance(
+      date: report.date,
+      start: report.start,
+      venueId: 'lvcc',
+      booth: report.booth,
+      status: AppearanceStatus.reported,
+      confirmations: 0,
+      source: 'user_reported',
+    );
+    ref.read(mixpanelProvider).reportSighting(athlete.id);
+    final result = await ref.read(sightingsRepoProvider).confirm(
+          athleteId: athlete.id,
+          appearance: appearance,
+        );
+    if (!mounted) return;
+    switch (result) {
+      case ConfirmSightingResult.inserted:
+      case ConfirmSightingResult.duplicate:
+      case ConfirmSightingResult.disabled:
+        break;
+      case ConfirmSightingResult.rateLimited:
+        setState(() => _errorMsg = AppStrings.athleteSightingRateLimited);
+        ref.read(mixpanelProvider).error(
+              where: 'report_sighting',
+              message: 'rate_limited',
+            );
+      case ConfirmSightingResult.failed:
+        setState(() => _errorMsg = AppStrings.athleteSightingFailed);
+        ref.read(mixpanelProvider).error(
+              where: 'report_sighting',
+              message: 'network',
+            );
+    }
   }
 
   Future<void> _handleSaw(Athlete athlete, Appearance appearance) async {
@@ -226,6 +287,196 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
           );
     }
   }
+}
+
+/// User input from the "Report a booth or time" sheet.
+class _Report {
+  const _Report({
+    required this.booth,
+    required this.date,
+    required this.start,
+  });
+  final String booth;
+  final String date;
+  final String start;
+}
+
+class _ReportSheet extends StatefulWidget {
+  const _ReportSheet({required this.athleteName});
+  final String athleteName;
+
+  @override
+  State<_ReportSheet> createState() => _ReportSheetState();
+}
+
+class _ReportSheetState extends State<_ReportSheet> {
+  final _boothController = TextEditingController();
+  String _date = '2026-09-25';
+  int _hour = 13;
+
+  static const _days = [
+    ('2026-09-23', 'Wed'),
+    ('2026-09-24', 'Thu'),
+    ('2026-09-25', 'Fri'),
+    ('2026-09-26', 'Sat'),
+    ('2026-09-27', 'Sun'),
+  ];
+
+  @override
+  void dispose() {
+    _boothController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return ColoredBox(
+      color: colors.background,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: 24 + MediaQuery.viewInsetsOf(context).bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                AppStrings.athleteReportTitle,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: colors.text,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                AppStrings.athleteReportBody,
+                style: TextStyle(fontSize: 13, color: colors.textMuted),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                AppStrings.athleteReportBoothLabel,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 6),
+              AdaptiveInput(
+                controller: _boothController,
+                placeholder: AppStrings.athleteReportBoothHint,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.athleteReportDay,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final d in _days)
+                    _PillChoice(
+                      label: d.$2,
+                      active: _date == d.$1,
+                      onTap: () => setState(() => _date = d.$1),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.athleteReportStart,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final h in const [10, 11, 12, 13, 14, 15, 16, 17, 18])
+                    _PillChoice(
+                      label: _shortHour(h),
+                      active: _hour == h,
+                      onTap: () => setState(() => _hour = h),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              AdaptivePrimaryButton(
+                label: AppStrings.athleteReportSubmit,
+                onPressed: () {
+                  final booth = _boothController.text.trim();
+                  if (booth.isEmpty) return;
+                  Navigator.of(context).pop(_Report(
+                    booth: booth,
+                    date: _date,
+                    start: '${_hour.toString().padLeft(2, '0')}:00',
+                  ));
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PillChoice extends StatelessWidget {
+  const _PillChoice({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? colors.pillActiveBg : colors.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: colors.surfaceBorder),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+            color: active ? colors.pillActiveText : colors.text,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _shortHour(int h) {
+  final suffix = h >= 12 ? 'PM' : 'AM';
+  final h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h);
+  return '$h12 $suffix';
 }
 
 class _AppearanceCard extends StatelessWidget {
