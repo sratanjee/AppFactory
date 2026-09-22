@@ -664,3 +664,107 @@ Once pushed, Codemagic workflows watching `app/*` branches will start the
 - `VERCEL_TOKEN` and `VERCEL_TEAM` (for future web lane on Codemagic)
 - App Store Connect API key (for `app-store-connect publish` step)
 - Play Developer API service account JSON (for `google-play publish` step)
+
+## UX polish pass — 2026-09-22
+
+Tightening pass over the shipped web build. `flutter analyze` and
+`flutter test` remain clean; web release build and iOS simulator debug
+build both succeed under the same `--dart-define` set as CI.
+
+### What was tightened
+
+- `lib/widgets/pressable.dart` (new) — `OlympiaPressable` combines
+  `MouseRegion(SystemMouseCursors.click)` + `Listener` + `GestureDetector`
+  with a 90ms opacity dip (0.55) as the press state. Optional
+  `minSize` enforces a hit-target floor. Wraps the child in a
+  `Semantics(button: true, label: ..., selected: ...)` when a label
+  is provided.
+- `lib/widgets/filter_chip.dart` (new) — one source of truth for the
+  outline-chip pattern used by the schedule filters, athlete division
+  switcher, and the report-a-sighting sheet day/hour choices. Padding
+  bumped from `12×6` to `14×12` so the chip clears 44pt tall.
+- `lib/widgets/async_body.dart` (new) — 200ms `AnimatedSwitcher` that
+  every AsyncValue body funnels through, killing the spinner→data
+  white flash on cold loads.
+- `lib/widgets/olympia_tab_bar.dart` — dropped raw `GestureDetector`
+  for `OlympiaPressable`. Tab bar items now have a subtle opacity
+  press (0.5), the click cursor on web, and an enforced 48×48 hit
+  target. `StatefulShellRoute.indexedStack`'s `goBranch(..., initialLocation: true)`
+  already handles tapping the active tab → reset that branch to its
+  root, so no explicit scroll-to-top handler was needed.
+- `lib/widgets/event_row.dart` — now uses `OlympiaPressable` with a
+  spoken semantics label ("<title>, <venue>"). Row content already
+  clears 60px tall; no min-size bump needed.
+- `lib/widgets/day_pills.dart` — bumped pill vertical padding from
+  `9` to `14` so pills clear 44pt.
+- `lib/screens/schedule_screen.dart` — filters use `OlympiaFilterChip`;
+  the filter row is now a horizontal `ListView` so a wide accent
+  chip label ("Palms only") can't overflow on narrow phones. Loading
+  and error branches keyed and wrapped in `OlympiaAsyncBody`.
+- `lib/screens/athletes_screen.dart` — divisions row uses
+  `OlympiaFilterChip`; `_AthleteRow` uses `OlympiaPressable` with an
+  athlete-name semantics label. Old `_DivisionChip` removed.
+- `lib/screens/athlete_detail_screen.dart` — back link, Instagram
+  card, "Report a booth or time" link, and every pill in the report
+  sheet use `OlympiaPressable` / `OlympiaFilterChip`. Back and report
+  links get an explicit 44px min height so they read as buttons on
+  every viewport. Old `_PillChoice` removed.
+- `lib/screens/event_detail_screen.dart` — back and save chip use
+  `OlympiaPressable`. Save chip padding bumped from `12×6` to
+  `14×10`.
+- `lib/screens/venues_screen.dart` — venue row uses `OlympiaPressable`
+  with an "Open <name>, <role>" semantics label.
+- `lib/screens/now_screen.dart` — happening-now card, "Full day"
+  link, and install-hint CTA all use `OlympiaPressable`. Link
+  targets get an explicit 44pt min height.
+- `lib/router.dart` — event and athlete detail routes now push a
+  `CustomTransitionPage` (260ms slide+fade, `easeOutCubic`) so
+  detail pushes read consistently on iOS, Android, and web instead
+  of falling back to the platform's default (`MaterialPage` on web
+  = jarring instant swap).
+
+### Tap-target measurements (before → after)
+
+| Element | Before | After |
+|---|---|---|
+| Tab-bar item | ~50 × 60 (font+icon only, hit-tested via `HitTestBehavior.opaque`) | 48 × 60 min explicit constraint |
+| Day pill | Width auto × ~34 (padding 9v + 14/500 line-height) | Width auto × ~45 (padding 14v) |
+| Schedule / division filter chip | ~14 × 24 (padding 12h/6v) | ~14 × 42 (padding 14h/12v) |
+| Report-sheet pill (day / hour) | 40 × 28 | 40 × 42 |
+| Event detail save chip | ~64 × 24 | ~64 × 38 |
+| Event detail back link | text only, no min size | 48 × 44 min, 8v/4h padding |
+| Athlete detail back link | text only | 48 × 44 min, 8v/4h padding |
+| Athlete "Report a booth" link | text only | 44 min height, 10v/4h padding |
+| Now "Full day" link | text only | 44 min height, 8v padding |
+| Now install-hint "Get the app" | text only | 44 min height, 10v/4h padding |
+
+Rows (event / athlete / venue) were already >= 60px tall and stayed
+that way — pressable state now visible, but padding unchanged.
+
+### Left as-is with reasoning
+
+- **`BouncingScrollPhysics` on Android**: The spec calls for adaptive
+  UI, and Flutter's default already gives Cupertino a bounce on iOS
+  and Material a clamp on Android. Forcing a bounce on Android would
+  fight the platform's expected feel; I left the default so we match
+  each platform's convention.
+- **URL updates on tab change**: `StatefulShellRoute.indexedStack`
+  doesn't push per-branch routes to the browser history stack. The
+  deep-link handler already reads `/schedule`, `/athletes`, etc, so
+  a copy-pasted URL still works. Wiring the reverse (tab → URL)
+  requires a shell listener that races with the deep-link intake and
+  is a source of routing bugs I'd rather not add on the polish pass.
+  Deferred — noted for a future task.
+- **`ListView.builder` for athletes**: Athletes list is at most ~30
+  per division. Renders inside a single `OlympiaCard` `Column` for
+  the rounded stack. Converting to a lazy builder would need to
+  split the card into per-row surfaces or drop into `CustomScrollView`
+  + `SliverList`. Not worth the churn at the current scale.
+- **Right-click context menu on web**: Left alone. Users expect the
+  browser's context menu; overriding it usually annoys people who
+  want "open in new tab" on links.
+- **`_taglineWithCountry` semantics label**: When tagline is empty
+  I fall back to `athlete.divisionId` (a slug like "mens-open") in
+  the semantics label. Passable for VoiceOver but not ideal; a
+  future pass could resolve to the display name.
+
