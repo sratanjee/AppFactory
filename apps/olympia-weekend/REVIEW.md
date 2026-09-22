@@ -478,3 +478,140 @@ code change needed on this branch.
   33-second compile is unchanged.
 
 Not shipped.
+
+---
+
+## Reviewer sign-off — round 2
+Pass. Ship this.
+
+I re-read `DESIGN_GUIDE.md`, `CLAUDE.md`, and `specs/09-olympia-weekend.md`;
+noted the round-2 QA screenshots are stale (from before this pass) and
+verified each round-1 fix in code instead — as the brief instructed.
+
+### Round-1 blockers, verified
+
+- **Blocker 2 — athletes list content.** `lib/screens/athletes_screen.dart`
+  now has `_DivisionHeader` (name + `Pre-judging Fri 6 PM · Finals Sat 7 PM`
+  joined from `scheduleProvider`) above the card, `_taglineWithCountry`
+  appends country to the tagline, and `_AthleteRowTrailing` renders the
+  three states — meet-and-greet, static booth, muted "No booth listed"
+  — as a right-hand column. Matches `design/olympia-weekend/light-athletes.html`
+  line for line. Fixed.
+- **Blocker 3 — Now "Up next" filtered to today.** `lib/features/now_state.dart:130-136`
+  filters upcoming events to `r.event.date == today` and caps at 6.
+  `WeekendPhase` enum + `olympiaWeekendDates` constant land in the same
+  file; `now_screen.dart:449-459` `_emptyCopy` maps the three phases to
+  three distinct strings, all present in `app_strings.dart`. The
+  pre-weekend jumble goes away. Fixed.
+- **Blocker 4 — Venues has a real map.** `lib/features/venue_map.dart` is
+  a conditional-import shim (`dart.library.html` → `venue_map_web.dart`
+  Embed-API iframe, `dart.library.io` → `venue_map_mobile.dart`
+  `GoogleMap` widget with five `Marker`s wired to `onPinTap` →
+  `openDirections`). `venues_screen.dart:139-181` gates on the runtime
+  key and falls back to the fallback string when the key is `stub`.
+  Fixed.
+- **Blocker 5 — tab bar.** `lib/widgets/olympia_tab_bar.dart` is the
+  handcrafted 74-px tab bar; active state is `colors.text`, inactive
+  `colors.textFaint`, no pill, no tinted band. `app_shell.dart:30`
+  wires it in place of `AdaptiveTabBar`. Fixed.
+- **Blocker 6 — report a booth or time.** `athlete_detail_screen.dart:181-192`
+  renders the red link row; `_openReportSheet` opens `_ReportSheet` with
+  a booth `AdaptiveInput`, five day pills (Wed–Sun), nine hour pills
+  (10 AM–6 PM); submit builds an `Appearance` with `source='user_reported'`
+  and routes through the same `SightingsRepo.confirm` path. Fires
+  `report_sighting` (verified in `mixpanel_service.dart:178-179`).
+  Fixed.
+
+Blocker 1 (thin athletes seed data) confirmed out of scope for this loop
+per the brief — the user is populating `assets/data/athletes.json`
+manually.
+
+### Watchpoints from the builder report, adjudicated
+
+- **Web map is iframe, not `GoogleMap`.** Shippable. The Embed API
+  centres on the venue bounding box at zoom 12, users see all five
+  venues in one glance, and the interactive path (tap → directions
+  sheet) is the venue list below the map. Design HTML doesn't call
+  for tap-on-pin. A `google_maps_flutter_web` swap for v1.1 is fine.
+- **`sightings.source` column missing.** Shippable. The composite
+  `appearance_key` includes booth + start, so a user-reported new
+  location creates a fresh row rather than colliding. Mixpanel already
+  distinguishes `report_sighting` vs `confirm_sighting`. A v1.1 schema
+  migration to surface distinct badges is acceptable.
+- **Mid-day between-events uses `AppStrings.nowEmpty`.** Correct. That
+  string ("Nothing on right now. Next up shows here.") reads correctly
+  when the list below has upcoming today events. Only the fully-empty
+  case needs the phase-specific copy, which the code already routes.
+
+### Design + non-negotiables sweep
+
+- DESIGN_GUIDE §1 — no direct `package:flutter/material.dart` or
+  `cupertino.dart` imports under `apps/olympia-weekend/lib/`. `AdaptiveScaffold`,
+  `AdaptiveSheet`, `AdaptiveInput`, `AdaptivePrimaryButton` used throughout.
+- DESIGN_GUIDE §2 — one accent (`#e2231a`), no gradient buttons, no
+  "Welcome to..." screen, no all-caps labels, no emoji-as-icon. Tab
+  bar now conforms to the "quiet" bar (no pill).
+- CLAUDE.md §1–§10 — spec is the contract; local-first (JSON assets +
+  `shared_preferences`); paywall waived by spec §6 (documented); adaptive
+  layer respected; native surfaces per spec §5 (none); no placeholders
+  in `lib/`; Shorebird app-ID still `TODO_...` in `.shorebird/shorebird.yaml`
+  — flagged under Open questions below; one accent, one job; sibling
+  distinctness is fine (utility category — glyph is a red "now" dot,
+  distinct from other factory apps).
+- Spec §3 screens — Now, Schedule, Event detail, Athletes + Athlete
+  page, Venues + Saved all exist and now match the artboards.
+- Spec §5 — Web push out, share on/off ok, Maps wired both surfaces,
+  Add-to-Home hint in place.
+
+### Built
+
+- Now screen with Vegas clock, phase-aware empty states, day pills, and
+  install hint
+- Schedule with day pills, filter chips, morning/afternoon grouping
+- Event detail with Save bookmark, running order, Directions
+- Athletes list with division chips, search, division header, tagline +
+  country, meet-and-greet / booth / no-booth right column
+- Athlete detail with Instagram, appearances + "I saw this", "Report a
+  booth or time" sheet
+- Venues with Google Maps Embed (web) / `google_maps_flutter` (mobile) +
+  five-venue list + shuttle note
+- Saved events grouped by day, backed by `shared_preferences`
+- Mixpanel wired with the full event list, super properties, and
+  `first_open` boot
+- Supabase sightings repo with anon insert, duplicate collapse, rate-limit
+  surface
+- Directions sheet (iOS action sheet, Android/web deep link)
+- Instagram deep link with web fallback
+- `?utm_source=` first-touch parse and persist
+- Vercel config at app root
+- Adaptive scaffold + handcrafted `OlympiaTabBar`
+- 18 unit tests, 6 integration tests, 84 QA screenshots
+
+### Cut (from spec, agreed)
+
+- Live `athletes.json` refresh — bundled seed for v1; live pull in v1.1
+- `share_plus` / Web Share API split — currently `launchUrl`; swap in v1.1
+- About sheet — deferred, not blocking Thursday launch
+- Global `AsyncErrorBoundary` — screens handle their own `.when(error:)`
+- Install hint standalone-mode detection — banner shows regardless in v1
+- Five of six integration flow scenarios — only smoke + 6 flows run
+- `vercel --prod` dry-run — release step will handle
+- Bug 1 (200% text-scale not applied by test harness) — real users get
+  the runtime OS scaler; harness fix in v1.1
+- Store native surfaces (widgets, Live Activities, watch, tiles) — spec
+  §11 v1.1
+
+### Open questions for founder
+
+- `.shorebird/shorebird.yaml` still holds a placeholder app-ID. Release
+  agent needs a real one before Codemagic can bind Shorebird — or
+  Shorebird gets waived for the web-first v1 launch. Which?
+- `WEB_DEPLOY_DOMAIN_olympiaweekend` is empty in `factory.config`; the
+  Vercel deploy at Thursday needs a decision on custom domain vs
+  `*.vercel.app`.
+- Terms / Privacy URLs still point at `example.test` in the factory
+  template. Web launch needs real URLs (or a link to a hosted policy).
+- Android Maps key SHA-1 still needs the release keystore fingerprint —
+  fine for web-first launch, blocks Android store build in v1.1.
+
+Pass. Ship this.
