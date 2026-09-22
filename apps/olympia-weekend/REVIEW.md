@@ -264,3 +264,139 @@ The `screenshot-v2.mjs` script works around this by reloading the app (`page.got
 - Accounts / login / profiles.
 - iPad / tablet layouts.
 - Localisation beyond English.
+
+---
+
+## Reviewer feedback — round 1
+Not shipped.
+
+I read `DESIGN_GUIDE.md`, `CLAUDE.md`, `specs/09-olympia-weekend.md`, and
+swept the 84 QA screenshots against the 12 design HTML artboards before
+opening code. Findings are ordered by severity — items 1–3 are user-visible
+"is the app fake / broken?" issues; 4 is a spec §3 gap on the app's
+signature feature; 5–6 are DESIGN_GUIDE §2 misses on the tab bar that
+push it toward "templated".
+
+### Blockers (must fix before next review)
+
+1. **Athlete detail is a stub because the seed data is empty.** The
+   iOS-Sim shots at `apps/olympia-weekend/qa/ios-sim/iphone-17-pro/light-100/athlete.png`
+   and its dark/16e siblings show Derek Lunsford as just a name +
+   "Men's Open · USA" on an otherwise blank page. That's not a code
+   bug — `athletes_screen.dart` will render the Instagram row,
+   Appearances list, and "I saw this" button — the problem is
+   `apps/olympia-weekend/assets/data/athletes.json:17-20` ships only
+   three athletes, all with `instagram: null`, `booth: null`, and
+   `appearances: []`. Spec §2 sells the app as answering "which
+   athletes are at the expo," and spec §3 row 4 explicitly lists
+   booth, meet-and-greet time, Instagram, and appearances as the
+   Athletes surface. Right now that entire surface is empty. Fix:
+   populate at least 15–20 athletes across the six main divisions
+   with the fields the spec calls for (instagram, booth,
+   appearances where known) — even "reported" appearances with
+   `confirmations: 0` per the shape at line 22 are enough to prove
+   the flow. Without this, opening any athlete page is a bad user
+   experience regardless of what the UI looks like.
+
+2. **Athletes list screen is missing spec §3 content.** Compare
+   `apps/olympia-weekend/qa/web-chrome/light-100/athletes.png` to
+   `design/olympia-weekend/light-athletes.html:34-56`. Design has a
+   division section header ("Men's Open · Pre-judging Fri 6 PM ·
+   Finals Sat 7 PM") above the card, country appended to the tagline
+   ("Reigning champion · USA"), and a right-hand column per row
+   showing either "Meet & greet / Sat 1 PM · Booth B4", "Booth B12",
+   or "No booth listed". The screenshot has none of that — no
+   division header, no country, no right-hand column. `lib/screens/athletes_screen.dart:202-261`
+   (`_AthleteRow`) renders `athlete.tagline` OR `athlete.booth`,
+   never both, and never the meet-and-greet metadata. Add the
+   division header and re-lay-out the row to match the artboard.
+
+3. **Now screen "Up next" duplicates rows pre-weekend and hides
+   which day is which.** `apps/olympia-weekend/qa/web-chrome/light-100/now.png`
+   on today's date (Tue Sep 22) shows three separate "6 AM Dragon's
+   Lair Pop-Up Gym" rows plus "8 AM Amateur Olympia men's judging"
+   plus "12 PM Olympia Press Conference" plus "8:30 PM Olympia
+   Superstar Kickoff Party" — a jumble of Wed / Thu / Fri events
+   with no way for the user to tell which day each row belongs to.
+   The `computeNowState` in `lib/features/now_state.dart:107-110`
+   correctly gathers the next 6 upcoming events by absolute time,
+   but `EventRow` only renders `timeLabel` + title + venue. Two
+   options, either is fine: (a) filter "Up next" to same-Vegas-day
+   as `now`, and show the friendly empty-state text pre-weekend
+   ("Weekend starts Wednesday. Tap Schedule to see it."); or (b)
+   prefix the time cell with the weekday label when a row is not
+   today (`Wed 6 AM`, `Thu 12 PM`). Any user who lands on the app
+   before Wednesday will otherwise see what looks like a broken,
+   duplicated list.
+
+4. **Venues has no map.** Spec §3 row 5 and spec §5 both call for a
+   Google Map with five pins as the primary Venues surface.
+   `apps/olympia-weekend/qa/web-chrome/light-100/venues.png` shows a
+   placeholder container that reads "Map couldn't load. Venue list
+   still works." That's the text fallback from task 10 in the
+   builder notes. Given the Google Maps JS key is already
+   provisioned (see "Provisioned" section above) and the web build
+   ships to a public URL as the flagship deliverable, this needs to
+   be wired before Thursday. Fix: add the Google Maps JS SDK to
+   `web/index.html`, wire `apps/olympia-weekend/lib/screens/venues_screen.dart`
+   to render pins from `assets/data/venues.json`, and keep the
+   text-list below the map. If the store keys need more time, at
+   minimum ship the web build with the JS SDK so the public link on
+   Thursday has a map.
+
+5. **Bottom-tab-bar "selected" pill uses a red-tinted background —
+   design tokens say text-color background.** Compare the tab bar
+   in `apps/olympia-weekend/qa/web-chrome/light-100/now.png` (a
+   pale-pink pill around the Now icon on a pinkish background band)
+   to `design/olympia-weekend/light-main.html:81-87` (no pill, no
+   band — just the icon and label switching to `#141414` when
+   active, everything else `#9a9a96`). Spec §8 also states
+   explicitly: "Tab bar 84 px, five items, outline icons, **active
+   in text color (not red)**". The tab bar is the most-seen
+   surface in the app; a red-tint pill reads as templated Material
+   3 auto-styling rather than the deliberate quiet design in the
+   artboards. Remove the pill background and the tinted bar
+   background — active state is icon + label in `colors.text`.
+
+6. **Athlete detail is missing the "Report a booth or time" entry
+   point.** Spec §3 row 4 lists this alongside "I saw this" as the
+   two crowd-input affordances. `lib/screens/athlete_detail_screen.dart`
+   has neither the row nor the sheet. Even with empty seed data
+   from blocker 1 fixed, this is required so users can seed the
+   sightings table. It can be a small link row at the bottom of the
+   athlete page that opens an `AdaptiveSheet` with a `booth`
+   TextField + a start-time picker + a submit that goes through the
+   same `sightingsRepoProvider`.
+
+### Small, non-blocking notes
+
+- **Debug banner on iOS Sim shots.** All `qa/ios-sim/` screenshots
+  show the red Flutter DEBUG ribbon. That's from `flutter run` rather
+  than `--release`. Not a blocker (this is a QA capture, not a
+  shipping build), but the release job should verify a release-mode
+  screenshot for the store pass next week.
+- **Schedule row secondary text ellipsises "Convention Center · South
+  Hall".** See `qa/web-chrome/light-100/schedule.png`. Not
+  critical — venue+room lives elsewhere, and the row title carries
+  the load — but two chars more of horizontal room in `event_row.dart`
+  would let "South Hall" and "Expo stage" fit at 100%.
+- **Install-hint banner shows regardless of `display-mode:
+  standalone`.** Documented in PLAN task 21. Accepted for v1 — cheap
+  to fix in a v1.1 dot-release before the actual weekend.
+- **Text-scale-2.0 bug (Bug A above)** stays under "Not built" for
+  v1.1. Real users won't hit a broken 200% layout because the app
+  respects the OS scaler at runtime; the sweep only failed inside
+  the Playwright harness. Prioritise the six blockers above.
+- **About sheet, share_plus, athletes-live-refresh, AsyncErrorBoundary,
+  Vercel dry-run, 5 remaining integration tests** — all stay on the
+  deferred list. None of them are user-visible in a way that
+  changes the Thursday launch.
+
+The app is close. Blockers 1–3 are the ones that make it feel unfinished
+if a real Olympia fan opens the public link on Thursday; blocker 4 is
+the biggest missing native surface; 5–6 tighten the design bar and
+close the last spec §3 gap. Estimate: a focused round-2 pass can close
+these by end of Wednesday, leaving Thursday morning for the Vercel
+deploy and Lighthouse check.
+
+Not shipped.
