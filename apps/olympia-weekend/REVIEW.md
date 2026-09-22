@@ -400,3 +400,81 @@ these by end of Wednesday, leaving Thursday morning for the Vercel
 deploy and Lighthouse check.
 
 Not shipped.
+
+## Reviewer round 1 fixes (builder round 2)
+
+Five of the six reviewer blockers landed. Blocker 1 (empty athletes
+seed) is a data task the parent agent is handling in parallel — no
+code change needed on this branch.
+
+- **Blocker 5 — tab bar tint.** Replaced `AdaptiveTabBar` with a
+  hand-rolled `OlympiaTabBar` (`lib/widgets/olympia_tab_bar.dart`).
+  Selected icon + label now use `colors.text`; inactive uses
+  `colors.textFaint`. No indicator pill, no tinted band.
+  84 px tall (74 px + safe area), five outline icons, spec §8 line for
+  line.
+- **Blocker 3 — 'Up next' filtered to today.** `computeNowState` gains
+  a `phase` field (`WeekendPhase.{before, during, after}`) derived
+  from a shared `olympiaWeekendDates` constant. Up-next list filters
+  to same-Vegas-day only; when it's empty the Now screen shows one of
+  three empty-state copies:
+  * before Wed → "Weekend starts Wednesday. Tap Schedule to see it."
+  * after Sun → "That's a wrap. See you in 2027."
+  * during, but late-day → "That's it for today. Full schedule is one
+    tap away."
+  Two new tests cover before / after phases; the Friday-22:00 test now
+  asserts the today-only semantics.
+- **Blocker 2 — athletes list content.** `_AthleteRow` now renders
+  tagline + country ("Reigning champion · USA"), and a right-hand
+  column that switches between "Meet & greet / Sat 1 PM · Booth B4",
+  "Booth B12", or the muted "No booth listed". Added `_DivisionHeader`
+  above the card showing the division name plus pre-judging + finals
+  times joined from `athletes.json`'s `prejudging` / `finals` event
+  IDs against `scheduleProvider`. Footer copy from
+  `AppStrings.athleteFooter` now renders under the card.
+- **Blocker 6 — report a booth or time.** New red link row at the
+  bottom of the athlete page opens an AdaptiveSheet with a booth
+  TextField, Wed–Sun day pills and 10 AM–6 PM start-hour pills.
+  Submit builds an Appearance with `source='user_reported'` and
+  routes through the same `SightingsRepo.confirm` path — the
+  `appearance_key` composite already carries booth + start, so a
+  fresh row seeds a new location. Fires the `report_sighting`
+  Mixpanel event. Follow-up: once `sightings.source` exists, surface
+  reported vs confirmed with distinct badges.
+- **Blocker 4 — real Google Map on Venues.** New
+  `lib/features/venue_map.dart` is a conditional-import shim.
+  * web (`venue_map_web.dart`) uses Google Maps Embed API in an
+    `HtmlElementView` iframe. No JS SDK to inject, keeps the bundle
+    small. Iframe centres on the bounding box of the five venues at
+    zoom 12.
+  * mobile (`venue_map_mobile.dart`) renders `GoogleMap` with 5
+    `Marker`s. Marker tap wires into the existing directions sheet.
+    Reads Info.plist / AndroidManifest key at native runtime.
+  * stub keeps unit tests happy.
+  Panel picks the right key per platform via `kIsWeb` +
+  `defaultTargetPlatform` and falls back to the existing text-copy
+  when the runtime key is `stub` (dev / preview).
+
+### What round 2 did NOT touch (still deferred, still fine)
+
+- **Blocker 1 — athletes seed data.** Content, not code. Data lands
+  from the parent agent.
+- Bug 1 (text-scale 200% in tests), install-hint standalone-mode
+  detection, About sheet, `share_plus` swap, `AsyncErrorBoundary`,
+  live `athletes.json` refresh, `vercel --prod` dry-run, five spec
+  integration flows — all still on the v1.1 list per the reviewer's
+  own guidance.
+
+### Notes for round 2 reviewer
+
+- `google_maps_flutter_web` (transitively pulled by
+  `google_maps_flutter`) is *not* used on web — the Embed API iframe
+  is a simpler surface for one static "here are the venues" view and
+  avoids a runtime JS SDK inject. The trade-off is that pin taps
+  aren't supported on the web map; the venue list below the map is
+  the interactive path there. Reviewer can re-open this if the pin
+  interaction on web is important for Thursday.
+- Web build still succeeds with the four stub `--dart-define`s;
+  33-second compile is unchanged.
+
+Not shipped.
