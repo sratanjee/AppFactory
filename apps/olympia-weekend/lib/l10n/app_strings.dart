@@ -109,6 +109,23 @@ abstract final class AppStrings {
   static const String athleteSightingRateLimited =
       'Too many confirmations from this device. Try again in a bit.';
 
+  // Expo.
+  static const String expoTitle = 'Expo';
+  static const String expoSubtitle =
+      'Fri 9/25 + Sat 9/26 · LVCC South Hall · 154 booths';
+  static const String expoSearchHint = 'Search booths';
+  static const String expoSearchEmpty = 'No exhibitors match "{query}".';
+  static const String expoStageChip = 'See stage events';
+  static const String expoVenueLink = 'See exhibitors';
+  static const String expoEventsTitle = 'Expo stage & meet-and-greets';
+  static const String expoEventsFri = 'Friday · September 25';
+  static const String expoEventsSat = 'Saturday · September 26';
+  static const String expoEventsEmpty =
+      'Expo events post as the weekend gets closer.';
+  static const String expoFooter =
+      'Booth numbers are from the mrolympia.com floor plan and can shift '
+      'last-minute. Double-check signage at the door.';
+
   // Venues.
   static const String venuesTitle = 'Venues';
   static const String venuesSubtitle =

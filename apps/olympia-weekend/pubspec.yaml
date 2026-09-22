@@ -50,3 +50,5 @@ flutter:
     - assets/data/schedule.json
     - assets/data/venues.json
     - assets/data/athletes.json
+    - assets/data/exhibitors.json
+    - assets/data/expo_events.json

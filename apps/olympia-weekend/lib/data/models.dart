@@ -301,3 +301,66 @@ class Athlete {
         appearances: appearances ?? this.appearances,
       );
 }
+
+/// One entry in `assets/data/exhibitors.json` -> `exhibitors[]`.
+///
+/// The 154-booth expo floor at LVCC South Hall on Fri 9/25 and Sat 9/26.
+/// [keywords] is reserved for future search-boost tokens (e.g. category
+/// aliases) — v1 ships empty and searches only on [name].
+class Exhibitor {
+  const Exhibitor({
+    required this.id,
+    required this.name,
+    required this.booth,
+    required this.keywords,
+  });
+
+  factory Exhibitor.fromJson(Map<String, dynamic> json) => Exhibitor(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        booth: json['booth'] as String,
+        keywords: (json['keywords'] as List<dynamic>? ?? const [])
+            .cast<String>()
+            .toList(growable: false),
+      );
+
+  final String id;
+  final String name;
+  final String booth;
+  final List<String> keywords;
+}
+
+/// One entry in `assets/data/expo_events.json` -> `events[]`.
+///
+/// Expo-floor stage sessions and meet-and-greets sourced from
+/// mrolympia.com/content/world-fitness-expo-events plus the official
+/// weekend schedule. Fri/Sat only.
+class ExpoEvent {
+  const ExpoEvent({
+    required this.id,
+    required this.date,
+    required this.start,
+    required this.end,
+    required this.title,
+    required this.boothOrStage,
+    this.url,
+  });
+
+  factory ExpoEvent.fromJson(Map<String, dynamic> json) => ExpoEvent(
+        id: json['id'] as String,
+        date: json['date'] as String,
+        start: json['start'] as String,
+        end: json['end'] as String,
+        title: json['title'] as String,
+        boothOrStage: json['boothOrStage'] as String,
+        url: json['url'] as String?,
+      );
+
+  final String id;
+  final String date; // yyyy-MM-dd Vegas local
+  final String start; // HH:mm 24h
+  final String end; // HH:mm 24h
+  final String title;
+  final String boothOrStage;
+  final String? url;
+}

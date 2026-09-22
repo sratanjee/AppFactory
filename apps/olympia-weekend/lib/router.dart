@@ -5,6 +5,8 @@ import 'package:olympia_weekend/screens/app_shell.dart';
 import 'package:olympia_weekend/screens/athlete_detail_screen.dart';
 import 'package:olympia_weekend/screens/athletes_screen.dart';
 import 'package:olympia_weekend/screens/event_detail_screen.dart';
+import 'package:olympia_weekend/screens/exhibitors_screen.dart';
+import 'package:olympia_weekend/screens/expo_events_screen.dart';
 import 'package:olympia_weekend/screens/now_screen.dart';
 import 'package:olympia_weekend/screens/saved_screen.dart';
 import 'package:olympia_weekend/screens/schedule_screen.dart';
@@ -19,6 +21,8 @@ abstract final class Routes {
   static const String saved = 'saved';
   static const String event = 'event';
   static const String athlete = 'athlete';
+  static const String expoExhibitors = 'expoExhibitors';
+  static const String expoEvents = 'expoEvents';
 }
 
 /// Singleton GoRouter — exposed so incoming deep links (`olympia://schedule`)
@@ -43,6 +47,22 @@ GoRouter buildRouter() {
         pageBuilder: (_, state) => _slidePage(
           state,
           AthleteDetailScreen(athleteId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/expo/exhibitors',
+        name: Routes.expoExhibitors,
+        pageBuilder: (_, state) => _slidePage(
+          state,
+          const ExhibitorsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/expo/events',
+        name: Routes.expoEvents,
+        pageBuilder: (_, state) => _slidePage(
+          state,
+          const ExpoEventsScreen(),
         ),
       ),
       StatefulShellRoute.indexedStack(

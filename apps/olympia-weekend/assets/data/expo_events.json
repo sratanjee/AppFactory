@@ -1,0 +1,346 @@
+{
+  "events": [
+    {
+      "id": "expo-vip-entry-fri",
+      "date": "2026-09-25",
+      "start": "08:00",
+      "end": "09:00",
+      "title": "Expo VIP entry",
+      "boothOrStage": "LVCC South Hall — VIP gate",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "expo-general-entry-fri",
+      "date": "2026-09-25",
+      "start": "09:00",
+      "end": "17:00",
+      "title": "Expo general entry",
+      "boothOrStage": "LVCC South Hall",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "strongman-fri",
+      "date": "2026-09-25",
+      "start": "09:00",
+      "end": "16:30",
+      "title": "America's Strongest Man & Woman (Day 1)",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/strongman"
+    },
+    {
+      "id": "expo-prejudging-fri",
+      "date": "2026-09-25",
+      "start": "09:30",
+      "end": "16:00",
+      "title": "Friday pre-judging (Expo stage)",
+      "boothOrStage": "LVCC South Hall — Expo Stage",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "armwrestling-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia Ultimate Armwrestling Championships",
+      "boothOrStage": "DFX / Ultimate Armwrestling (booth 2511)",
+      "url": "https://mrolympia.com/armwrestling"
+    },
+    {
+      "id": "armlifting-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "World Armlifting Championships",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://mrolympia.com/armlifting"
+    },
+    {
+      "id": "armored-combat-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Armored Combat Sports Husaria Cup",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://mrolympia.com/content/armored-combat"
+    },
+    {
+      "id": "boxing-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "F4MH Boxing Showcase",
+      "boothOrStage": "Expo floor boxing ring",
+      "url": "https://www.mrolympia.com/content/boxing"
+    },
+    {
+      "id": "ipl-powerlifting-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "IPL Olympia Pro Powerlifting",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/ipl-powerlifting"
+    },
+    {
+      "id": "mas-wrestling-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia World MAS Wrestling Championship",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/mas-wrestling"
+    },
+    {
+      "id": "olympia-university-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia University (roundtables)",
+      "boothOrStage": "Olympia University (booth 1453)",
+      "url": "https://www.mrolympia.com/content/olympia-university"
+    },
+    {
+      "id": "olympic-weightlifting-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "American Barbell Talon Cup (Olympic weightlifting)",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/olympic-weightlifting"
+    },
+    {
+      "id": "strict-curl-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Strict Curl & Superlifting Championships",
+      "boothOrStage": "Inzer Advance Designs (booth 1862)",
+      "url": "https://www.mrolympia.com/content/strict-curl"
+    },
+    {
+      "id": "sumo-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Sumo Dan's Olympia Sumo Championship",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/sumo-wrestling"
+    },
+    {
+      "id": "usa-powerlifting-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "USA Powerlifting Olympia Championships",
+      "boothOrStage": "Expo floor — three platforms",
+      "url": "https://www.mrolympia.com/content/usa-powerlifting"
+    },
+    {
+      "id": "zumba-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Zumba® Demo Classes",
+      "boothOrStage": "Zumba Demo Stage (booth 1339)",
+      "url": "https://www.mrolympia.com/content/zumba"
+    },
+    {
+      "id": "podcast-stage-fri",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Podcast Stage / Recovery Zone with Chris Champion",
+      "boothOrStage": "Podcast Stage (booth 2507)",
+      "url": "https://mrolympia.com/content/world-fitness-expo-events"
+    },
+    {
+      "id": "humans-panel-fri",
+      "date": "2026-09-25",
+      "start": "11:00",
+      "end": "13:00",
+      "title": "H.U.M.A.N.S. Mental Health Panel",
+      "boothOrStage": "Expo Fest Stage",
+      "url": "https://www.mrolympia.com/content/humans-mental-health-panel"
+    },
+    {
+      "id": "extreme-eating-fri",
+      "date": "2026-09-25",
+      "start": "12:00",
+      "end": "15:00",
+      "title": "Olympia Extreme Eating Championships",
+      "boothOrStage": "Olympia Fest Stage",
+      "url": "https://www.mrolympia.com/content/extreme-eating-challenge"
+    },
+    {
+      "id": "expo-vip-entry-sat",
+      "date": "2026-09-26",
+      "start": "08:00",
+      "end": "09:00",
+      "title": "Expo VIP entry",
+      "boothOrStage": "LVCC South Hall — VIP gate",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "expo-general-entry-sat",
+      "date": "2026-09-26",
+      "start": "09:00",
+      "end": "17:00",
+      "title": "Expo general entry",
+      "boothOrStage": "LVCC South Hall",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "strongman-sat",
+      "date": "2026-09-26",
+      "start": "09:00",
+      "end": "16:30",
+      "title": "America's Strongest Man & Woman (Day 2)",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/strongman"
+    },
+    {
+      "id": "expo-prejudging-sat",
+      "date": "2026-09-26",
+      "start": "09:30",
+      "end": "16:00",
+      "title": "Saturday pre-judging (Expo stage)",
+      "boothOrStage": "LVCC South Hall — Expo Stage",
+      "url": "https://mrolympia.com/weekend-schedule"
+    },
+    {
+      "id": "armwrestling-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia Ultimate Armwrestling Championships",
+      "boothOrStage": "DFX / Ultimate Armwrestling (booth 2511)",
+      "url": "https://mrolympia.com/armwrestling"
+    },
+    {
+      "id": "armlifting-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "World Armlifting Championships",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://mrolympia.com/armlifting"
+    },
+    {
+      "id": "armored-combat-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Armored Combat Sports Husaria Cup",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://mrolympia.com/content/armored-combat"
+    },
+    {
+      "id": "boxing-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "F4MH Boxing Showcase",
+      "boothOrStage": "Expo floor boxing ring",
+      "url": "https://www.mrolympia.com/content/boxing"
+    },
+    {
+      "id": "ipl-powerlifting-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "IPL Olympia Pro Powerlifting",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/ipl-powerlifting"
+    },
+    {
+      "id": "mas-wrestling-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia World MAS Wrestling Championship",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/mas-wrestling"
+    },
+    {
+      "id": "olympia-university-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Olympia University (roundtables)",
+      "boothOrStage": "Olympia University (booth 1453)",
+      "url": "https://www.mrolympia.com/content/olympia-university"
+    },
+    {
+      "id": "olympic-weightlifting-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "American Barbell Talon Cup (Olympic weightlifting)",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/olympic-weightlifting"
+    },
+    {
+      "id": "strict-curl-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Strict Curl & Superlifting Championships",
+      "boothOrStage": "Inzer Advance Designs (booth 1862)",
+      "url": "https://www.mrolympia.com/content/strict-curl"
+    },
+    {
+      "id": "sumo-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Sumo Dan's Olympia Sumo Championship",
+      "boothOrStage": "Expo floor platform",
+      "url": "https://www.mrolympia.com/content/sumo-wrestling"
+    },
+    {
+      "id": "usa-powerlifting-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "USA Powerlifting Olympia Championships",
+      "boothOrStage": "Expo floor — three platforms",
+      "url": "https://www.mrolympia.com/content/usa-powerlifting"
+    },
+    {
+      "id": "zumba-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Zumba® Demo Classes",
+      "boothOrStage": "Zumba Demo Stage (booth 1339)",
+      "url": "https://www.mrolympia.com/content/zumba"
+    },
+    {
+      "id": "podcast-stage-sat",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "17:00",
+      "title": "Podcast Stage / Recovery Zone with Chris Champion",
+      "boothOrStage": "Podcast Stage (booth 2507)",
+      "url": "https://mrolympia.com/content/world-fitness-expo-events"
+    },
+    {
+      "id": "humans-panel-sat",
+      "date": "2026-09-26",
+      "start": "11:00",
+      "end": "13:00",
+      "title": "H.U.M.A.N.S. Mental Health Panel",
+      "boothOrStage": "Expo Fest Stage",
+      "url": "https://www.mrolympia.com/content/humans-mental-health-panel"
+    },
+    {
+      "id": "extreme-eating-sat",
+      "date": "2026-09-26",
+      "start": "12:00",
+      "end": "15:00",
+      "title": "Olympia Extreme Eating Championships",
+      "boothOrStage": "Olympia Fest Stage",
+      "url": "https://www.mrolympia.com/content/extreme-eating-challenge"
+    }
+  ]
+}

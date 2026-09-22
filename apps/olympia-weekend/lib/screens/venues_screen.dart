@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
@@ -104,6 +105,14 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                               venue: venues[i],
                               onTap: () => _open(venues[i]),
                             ),
+                            // Expo link — only surfaces under the LVCC
+                            // South Hall row. Kept inside the same card
+                            // (not a separate section) so it reads as a
+                            // sub-action, not a peer venue.
+                            if (venues[i].id == 'lvcc')
+                              _ExpoLinkRow(
+                                onTap: () => context.go('/expo/exhibitors'),
+                              ),
                             if (i != venues.length - 1)
                               const OlympiaDivider(indent: 18),
                           ],
@@ -229,6 +238,46 @@ class _VenueRow extends StatelessWidget {
                 ),
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Sub-row appended to the LVCC venue card. Tapping jumps to the Expo
+/// exhibitors screen. Kept intentionally light — no chevron, no
+/// leading icon — so it doesn't compete with the parent venue row.
+class _ExpoLinkRow extends StatelessWidget {
+  const _ExpoLinkRow({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return OlympiaPressable(
+      onTap: onTap,
+      semanticsLabel: AppStrings.expoVenueLink,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 0, 18, 14),
+        child: Row(
+          children: [
+            Text(
+              AppStrings.expoVenueLink,
+              style: context.olympiaText.row.copyWith(
+                fontSize: 14,
+                color: colors.text,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '→',
+              style: context.olympiaText.row.copyWith(
+                fontSize: 14,
+                color: colors.textMuted,
+              ),
+            ),
           ],
         ),
       ),
