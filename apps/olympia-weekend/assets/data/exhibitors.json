@@ -7,926 +7,1080 @@
   "exhibitors": [
     {
       "id": "5-hour-energy",
-      "name": "5-hour ENERGY®",
+      "name": "5-hour ENERGY\u00ae",
       "booth": "1464",
+      "category": "energy_drinks",
       "keywords": []
     },
     {
       "id": "alpha-queen-apparel",
       "name": "Alpha Queen Apparel",
       "booth": "2801",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "alpha-supps",
       "name": "Alpha Supps",
       "booth": "1653",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "america-s-navy",
       "name": "America's Navy",
       "booth": "1637",
+      "category": "military_recruiting",
       "keywords": []
     },
     {
       "id": "american-peptides",
       "name": "American Peptides",
       "booth": "2920",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "american-strength",
       "name": "American Strength",
       "booth": "2521",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "an-supps",
       "name": "AN Supps",
       "booth": "1571",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "axon-skin-care-peps-verified",
       "name": "AXON-Skin Care-Peps-Verified",
       "booth": "2517",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "battle-flow-nootropics",
       "name": "Battle Flow Nootropics",
       "booth": "2708",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "be-fit-apparel",
       "name": "Be Fit Apparel",
       "booth": "704",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "beast-bites",
       "name": "Beast Bites",
       "booth": "1455",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "bhi-performance",
       "name": "BHI Performance",
       "booth": "2630",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "biomod-peptides",
       "name": "Biomod Peptides",
       "booth": "2529",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "bioxgenic",
       "name": "BioXgenic",
       "booth": "1753",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "blenditup-nation-x-infinity-cup",
       "name": "BLENDITUP NATION X INFINITY CUP",
       "booth": "1325",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "boa-supplements",
       "name": "Boa Supplements",
       "booth": "708",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "bolero",
       "name": "Bolero",
       "booth": "2803",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "bolt-fitness-supply-llc",
       "name": "Bolt Fitness Supply, LLC",
       "booth": "1425",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "born-superhuman",
       "name": "Born SuperHuman",
       "booth": "444",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "born-united",
       "name": "Born United",
       "booth": "1647",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "bulletproof-sports",
       "name": "Bulletproof Sports",
       "booth": "1828",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "california-ice-protein",
       "name": "California Ice Protein",
       "booth": "2625",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "celsius",
       "name": "CELSIUS",
       "booth": "1545",
+      "category": "energy_drinks",
       "keywords": []
     },
     {
       "id": "chef-rush",
       "name": "Chef Rush",
       "booth": "123",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "chosen-supplements",
       "name": "Chosen Supplements",
       "booth": "1673",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "controlled-insanity",
       "name": "Controlled Insanity",
       "booth": "2607",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "creaboost",
       "name": "CreaBoost",
       "booth": "712",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "crisp-power",
       "name": "Crisp Power",
       "booth": "113",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "david-protein",
       "name": "David Protein",
       "booth": "716",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "daxko",
       "name": "Daxko",
       "booth": "2531",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "demn",
       "name": "DEMN",
       "booth": "213",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "dfx-ultimate-armwrestling",
       "name": "DFX/Ultimate Armwrestling",
       "booth": "2511",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "dialed-moods",
       "name": "Dialed Moods",
       "booth": "1737",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "die-tryin-co",
       "name": "Die Tryin Co.",
       "booth": "109",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "dissolvd",
       "name": "Dissolvd",
       "booth": "722",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "dna-hair-tools",
       "name": "DNA Hair Tools",
       "booth": "1754",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "drink-nutralife",
       "name": "Drink NutraLife",
       "booth": "2721",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "dubgum",
       "name": "DUBGUM",
       "booth": "726",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "dynabody",
       "name": "DynaBody",
       "booth": "345",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "efx-sports",
       "name": "EFX Sports",
       "booth": "1729",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "elev8-foods",
       "name": "Elev8 Foods",
       "booth": "1675",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "elite-glute-isolator-x",
       "name": "Elite Glute Isolator X",
       "booth": "706",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "expo-enterprise",
       "name": "Expo Enterprise",
       "booth": "1765",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "extreme-sour-prewrk-out",
       "name": "Extreme Sour Prewrk Out",
       "booth": "1451",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "fear-the-lamb",
       "name": "Fear the Lamb",
       "booth": "1745",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "feral-supps-tren-twins",
       "name": "FERAL SUPPS/TREN TWINS",
       "booth": "2709",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "fit-ice",
       "name": "Fit Ice",
       "booth": "714",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "flex-comics",
       "name": "Flex Comics",
       "booth": "2610",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "flex-rx",
       "name": "Flex RX",
       "booth": "2501",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "flexcraft",
       "name": "FlexCraft",
       "booth": "2821",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "freedom-whatever",
       "name": "Freedom Whatever",
       "booth": "1403",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "fusion-gym",
       "name": "Fusion Gym",
       "booth": "1603",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "fusion-gym-raw-nutrition-bum-energy-3d-energy",
       "name": "FUSION GYM/RAW NUTRITION/BUM ENERGY/3D ENERGY",
       "booth": "1603",
+      "category": "energy_drinks",
       "keywords": []
     },
     {
       "id": "gains",
       "name": "GAINS",
       "booth": "449",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "gasp-better-bodies",
       "name": "GASP & Better Bodies",
       "booth": "748",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "gaspari-nutrition",
       "name": "Gaspari Nutrition",
       "booth": "2721",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "gentile-essentials",
       "name": "Gentile Essentials",
       "booth": "2901",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "gigli",
       "name": "Gigli",
       "booth": "1770",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "global-formulas",
       "name": "Global Formulas",
       "booth": "2827",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "gnc",
       "name": "GNC",
       "booth": "1461",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "grenade",
       "name": "Grenade",
       "booth": "1665",
+      "category": "energy_drinks",
       "keywords": []
     },
     {
       "id": "gymshark",
       "name": "Gymshark",
       "booth": "1503",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "half-nattys-llc",
       "name": "Half Nattys LLC",
       "booth": "1747",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "heroworks-training",
       "name": "HeroWorks Training",
       "booth": "218",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "hex-supplements",
       "name": "Hex Supplements",
       "booth": "2902",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "hidow",
       "name": "HiDow",
       "booth": "1860",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "honu-wear",
       "name": "Honu Wear",
       "booth": "1752",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "hvywght-chocolate",
       "name": "HVYWGHT Chocolate",
       "booth": "1763",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "infinity-cup",
       "name": "Infinity Cup",
       "booth": "1327",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "integralmedica",
       "name": "Integralmedica",
       "booth": "551",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "inzer-advance-designs",
       "name": "Inzer Advance Designs",
       "booth": "1862",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "ion-peptide",
       "name": "Ion Peptide",
       "booth": "1426",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "irongrind-athletics",
       "name": "IronGrind Athletics",
       "booth": "738",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "ironsanctuary",
       "name": "IronSanctuary",
       "booth": "1335",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "jacked-jeans",
       "name": "Jacked Jeans",
       "booth": "1424",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "jawku",
       "name": "Jawku",
       "booth": "1671",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "jimmybars",
       "name": "JiMMYBARS!",
       "booth": "744",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "jw-sport-usa",
       "name": "JW Sport USA",
       "booth": "1471",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "kai-greene",
       "name": "Kai Greene",
       "booth": "2614",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "legendary-foods",
       "name": "Legendary Foods",
       "booth": "201",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "limitless-powerlifting",
       "name": "Limitless Powerlifting",
       "booth": "125",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "lymphora",
       "name": "Lymphora",
       "booth": "1323",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "main-event-protein",
       "name": "Main Event Protein",
       "booth": "2701",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "maria-romero-competition-bikinis",
       "name": "Maria Romero Competition Bikinis",
       "booth": "1755",
+      "category": "bikini_prep",
       "keywords": []
     },
     {
       "id": "maxi-nutrition",
       "name": "Maxi Nutrition",
       "booth": "1468",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "metaboderm",
       "name": "Metaboderm",
       "booth": "2503",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "mnm-prolabs",
       "name": "MNM ProLabs",
       "booth": "1307",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "modified-aminos",
       "name": "Modified Aminos",
       "booth": "1846",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "morning-would",
       "name": "Morning Would",
       "booth": "119",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "mountanin-west-army-recruiting-battalion",
       "name": "Mountanin West Army Recruiting Battalion",
       "booth": "217",
+      "category": "military_recruiting",
       "keywords": []
     },
     {
       "id": "mr-bye-bye-co",
       "name": "Mr. Bye Bye Co",
       "booth": "1422",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "mrdr",
       "name": "MRDR",
       "booth": "1555",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "muscle-fitness-content-pavilion",
       "name": "Muscle & Fitness Content Pavilion",
       "booth": "523",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "muscle-egg",
       "name": "Muscle Egg",
       "booth": "1303",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "musclepharm",
       "name": "MusclePharm",
       "booth": "225",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "muscletech",
       "name": "Muscletech",
       "booth": "2601",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "mutant",
       "name": "Mutant",
       "booth": "1527",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "mutant-statue",
       "name": "Mutant Statue",
       "booth": "200",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "newtech-wellness-co-ltd",
       "name": "Newtech Wellness Co., Ltd",
       "booth": "323",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "nnb",
       "name": "NNB",
       "booth": "202",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "nore",
       "name": "Nore",
       "booth": "1406",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "npc-ifbb-pro-apparel",
       "name": "NPC & IFBB Pro Apparel",
       "booth": "1727",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "nutrabolt",
       "name": "Nutrabolt",
       "booth": "1466",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "nze",
       "name": "NZE",
       "booth": "2721",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "olympia-creator-experience",
       "name": "OLYMPIA CREATOR EXPERIENCE",
       "booth": "2721",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "olympia-university",
       "name": "Olympia University",
       "booth": "1453",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "olympia-x-gymreapers",
       "name": "OLYMPIA X GYMREAPERS",
       "booth": "303",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "omegamino",
       "name": "OmegAmino",
       "booth": "702",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "optimal-health-systems",
       "name": "Optimal Health Systems",
       "booth": "351",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "optimum-formula",
       "name": "Optimum Formula",
       "booth": "2823",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "optimum-nutrition-tiktok",
       "name": "Optimum Nutrition & TikTok",
       "booth": "545",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "orbitrex-peptide",
       "name": "Orbitrex Peptide",
       "booth": "2515",
+      "category": "peptides_hormones",
       "keywords": []
     },
     {
       "id": "otishi",
       "name": "Otishi",
       "booth": "1830",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "paramount-health-rx",
       "name": "Paramount Health Rx",
       "booth": "1537",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "performance-mndst",
       "name": "Performance MNDST",
       "booth": "1447",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "podcast-stage-recovery-zone-hosted-by-chris-champion",
       "name": "Podcast Stage/Recovery Zone Hosted by Chris Champion",
       "booth": "2507",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "power-pour-mixology",
       "name": "Power Pour Mixology",
       "booth": "1749",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "protan-steelfit-fungies",
       "name": "ProTan/SteelFit/Fungies",
       "booth": "1546",
+      "category": "bikini_prep",
       "keywords": []
     },
     {
       "id": "psycho-pharma",
       "name": "Psycho Pharma",
       "booth": "1661",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "pwrbld-gym",
       "name": "PWRBLD Gym",
       "booth": "324",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "red-one-nutrition",
       "name": "Red One Nutrition",
       "booth": "445",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "reign-total-body-fuel",
       "name": "REIGN TOTAL BODY FUEL",
       "booth": "1413",
+      "category": "energy_drinks",
       "keywords": []
     },
     {
       "id": "ronnie-coleman",
       "name": "Ronnie Coleman",
       "booth": "2600",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "rthms",
       "name": "RTHMS",
       "booth": "2924",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "schiek-sports-inc",
       "name": "Schiek Sports Inc.",
       "booth": "1726",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "senada-greca-aonic",
       "name": "Senada Greca & Aonic",
       "booth": "1369",
+      "category": "content_media",
       "keywords": []
     },
     {
       "id": "shaw-strength",
       "name": "Shaw Strength",
       "booth": "312",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "shokz",
       "name": "Shokz",
       "booth": "736",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "sinfit-nutrition",
       "name": "SinFit Nutrition",
       "booth": "1854",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "solbasium",
       "name": "Solbasium",
       "booth": "1365",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "state-liberty-clothing-company",
       "name": "State & Liberty Clothing Company",
       "booth": "1329",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "straight-ahead",
       "name": "Straight Ahead",
       "booth": "219",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "streignth-fitness-and-lifestyle",
       "name": "Streignth Fitness and Lifestyle",
       "booth": "724",
+      "category": "training_gyms",
       "keywords": []
     },
     {
       "id": "swole-ducks",
       "name": "Swole Ducks",
       "booth": "2612",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "tanq-athletic",
       "name": "Tanq Athletic",
       "booth": "1746",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "tao-group-hospitality",
       "name": "Tao Group Hospitality",
       "booth": "206",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "taste-flavor-co",
       "name": "Taste Flavor Co",
       "booth": "730",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "the-ambrosia-collective",
       "name": "The Ambrosia Collective",
       "booth": "1361",
+      "category": "supplements",
       "keywords": []
     },
     {
       "id": "till-the-death",
       "name": "TILL THE DEATH",
       "booth": "2921",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "titan-medical-center",
       "name": "Titan Medical Center",
       "booth": "1437",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "tlf-apparel",
       "name": "TLF Apparel",
       "booth": "2721",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "torq-gear",
       "name": "TorQ Gear",
       "booth": "2613",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "tw-culture",
       "name": "TW Culture",
       "booth": "1761",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "upr-tech",
       "name": "UPR Tech",
       "booth": "2621",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "us-air-force-special-warfare",
       "name": "US Air Force Special Warfare",
       "booth": "2628",
+      "category": "military_recruiting",
       "keywords": []
     },
     {
       "id": "us-marine-corps",
       "name": "US Marine Corps",
       "booth": "2609",
+      "category": "military_recruiting",
       "keywords": []
     },
     {
       "id": "usa-fitness-equipment-depot-premier-strength-equipment",
       "name": "USA Fitness Equipment Depot/Premier Strength Equipment",
       "booth": "1561",
+      "category": "equipment",
       "keywords": []
     },
     {
       "id": "voltrx",
       "name": "VOLTRX",
       "booth": "1408",
+      "category": "tech_wearables",
       "keywords": []
     },
     {
       "id": "wei-aesthetics",
       "name": "Wei Aesthetics",
       "booth": "1852",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "weight-it-out",
       "name": "Weight It Out",
       "booth": "1832",
+      "category": "services_wellness",
       "keywords": []
     },
     {
       "id": "wolfpak",
       "name": "WOLFpak",
       "booth": "1513",
+      "category": "apparel",
       "keywords": []
     },
     {
       "id": "yumtein-gummy",
       "name": "Yumtein Gummy",
       "booth": "1730",
+      "category": "food_snacks",
       "keywords": []
     },
     {
       "id": "zero-to-hero",
       "name": "Zero to Hero",
       "booth": "1409",
+      "category": "other",
       "keywords": []
     },
     {
       "id": "zumba-fitness",
-      "name": "Zumba® Fitness",
+      "name": "Zumba\u00ae Fitness",
       "booth": "1339",
+      "category": "training_gyms",
       "keywords": []
     }
   ]

@@ -23,13 +23,16 @@ Widget createVenueMap({
   final viewType = 'olympia-venue-map-${venues.map((v) => v.id).join('-')}';
   Uri url;
   if (venues.length == 1) {
-    // Single venue → `place` mode with the labelled pin. Prefer
-    // `place_id:` when we have one (best marker fidelity), else fall
-    // back to the venue's search-friendly name + address string.
+    // Single venue → `place` mode with the labelled pin. Prefer real
+    // `place_id:` (best marker fidelity), then fall back to lat/lng
+    // when placeId is empty or still holds the seed stub
+    // (`ChIJ__<TOKEN>__LOOKUP_AT_BUILD`) that was never resolved.
     final v = venues.first;
-    final q = v.placeId.isNotEmpty
+    final hasRealPlaceId =
+        v.placeId.isNotEmpty && !v.placeId.startsWith('ChIJ__');
+    final q = hasRealPlaceId
         ? 'place_id:${v.placeId}'
-        : '${v.name}, ${v.address}';
+        : '${v.lat},${v.lng}';
     url = Uri.https('www.google.com', '/maps/embed/v1/place', {
       'key': apiKey,
       'q': q,

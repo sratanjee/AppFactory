@@ -352,6 +352,74 @@ class Athlete {
       );
 }
 
+/// Coarse taxonomy for the 154 booths on the World Fitness Expo floor.
+///
+/// Assigned per-row in `assets/data/exhibitors.json` and used to drive
+/// the category chip strip on the Expo hub screen. Kept intentionally
+/// short so every chip fits on one horizontal scroll pass; anything
+/// that doesn't obviously slot maps to [other].
+enum ExhibitorCategory {
+  supplements,
+  energyDrinks,
+  apparel,
+  equipment,
+  foodSnacks,
+  peptidesHormones,
+  contentMedia,
+  militaryRecruiting,
+  techWearables,
+  servicesWellness,
+  trainingGyms,
+  bikiniPrep,
+  other,
+}
+
+/// Human-friendly labels for [ExhibitorCategory] — surfaced on filter
+/// chips. Kept adjacent to the enum so a new category can't ship
+/// without a matching label.
+extension ExhibitorCategoryLabel on ExhibitorCategory {
+  String get label => switch (this) {
+        ExhibitorCategory.supplements => 'Supplements',
+        ExhibitorCategory.energyDrinks => 'Energy drinks',
+        ExhibitorCategory.apparel => 'Apparel',
+        ExhibitorCategory.equipment => 'Equipment',
+        ExhibitorCategory.foodSnacks => 'Food & snacks',
+        ExhibitorCategory.peptidesHormones => 'Peptides / hormones',
+        ExhibitorCategory.contentMedia => 'Content / media',
+        ExhibitorCategory.militaryRecruiting => 'Military',
+        ExhibitorCategory.techWearables => 'Tech & wearables',
+        ExhibitorCategory.servicesWellness => 'Services / wellness',
+        ExhibitorCategory.trainingGyms => 'Training / gyms',
+        ExhibitorCategory.bikiniPrep => 'Bikini prep',
+        ExhibitorCategory.other => 'Other',
+      };
+
+  /// JSON serialisation key — snake_case to match the source data file.
+  String get jsonKey => switch (this) {
+        ExhibitorCategory.supplements => 'supplements',
+        ExhibitorCategory.energyDrinks => 'energy_drinks',
+        ExhibitorCategory.apparel => 'apparel',
+        ExhibitorCategory.equipment => 'equipment',
+        ExhibitorCategory.foodSnacks => 'food_snacks',
+        ExhibitorCategory.peptidesHormones => 'peptides_hormones',
+        ExhibitorCategory.contentMedia => 'content_media',
+        ExhibitorCategory.militaryRecruiting => 'military_recruiting',
+        ExhibitorCategory.techWearables => 'tech_wearables',
+        ExhibitorCategory.servicesWellness => 'services_wellness',
+        ExhibitorCategory.trainingGyms => 'training_gyms',
+        ExhibitorCategory.bikiniPrep => 'bikini_prep',
+        ExhibitorCategory.other => 'other',
+      };
+}
+
+ExhibitorCategory _parseExhibitorCategory(String? raw) {
+  if (raw == null) return ExhibitorCategory.other;
+  for (final c in ExhibitorCategory.values) {
+    if (c.jsonKey == raw) return c;
+  }
+  return ExhibitorCategory.other;
+}
+
 /// One entry in `assets/data/exhibitors.json` -> `exhibitors[]`.
 ///
 /// The 154-booth expo floor at LVCC South Hall on Fri 9/25 and Sat 9/26.
@@ -362,6 +430,7 @@ class Exhibitor {
     required this.id,
     required this.name,
     required this.booth,
+    required this.category,
     required this.keywords,
   });
 
@@ -369,6 +438,7 @@ class Exhibitor {
         id: json['id'] as String,
         name: json['name'] as String,
         booth: json['booth'] as String,
+        category: _parseExhibitorCategory(json['category'] as String?),
         keywords: (json['keywords'] as List<dynamic>? ?? const [])
             .cast<String>()
             .toList(growable: false),
@@ -377,6 +447,7 @@ class Exhibitor {
   final String id;
   final String name;
   final String booth;
+  final ExhibitorCategory category;
   final List<String> keywords;
 }
 

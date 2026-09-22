@@ -207,12 +207,17 @@ class _DivisionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schedule = _scheduleLabel(prejudging, finals);
+    final rows = <(String, String)>[
+      if (prejudging != null)
+        ('Pre-judging', _shortDayTime(prejudging!.date, prejudging!.start)),
+      if (finals != null)
+        ('Finals', _shortDayTime(finals!.date, finals!.start)),
+    ];
+    final caption = context.olympiaText.caption;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Text(
@@ -220,14 +225,37 @@ class _DivisionHeader extends StatelessWidget {
               style: context.olympiaText.section,
             ),
           ),
-          if (schedule != null) ...[
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                schedule,
-                textAlign: TextAlign.right,
-                style: context.olympiaText.caption,
-              ),
+          if (rows.isNotEmpty) ...[
+            const SizedBox(width: 12),
+            // Stacked labels on the right — pre-judging on top of
+            // finals, each row a "label · time" pair with the label
+            // muted and the time weight-500 for scanability.
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var i = 0; i < rows.length; i++) ...[
+                  if (i != 0) const SizedBox(height: 2),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        rows[i].$1,
+                        style: caption.copyWith(
+                          color: context.olympiaColors.textFaint,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        rows[i].$2,
+                        style: caption.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: context.olympiaColors.text,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ],
         ],
@@ -338,10 +366,9 @@ class _AthleteRowTrailing extends StatelessWidget {
         style: context.olympiaText.faint.copyWith(color: colors.textMuted),
       );
     }
-    return Text(
-      AppStrings.athletesNoBooth,
-      style: context.olympiaText.faint,
-    );
+    // No booth + no appearance — don't clutter the row with "No
+    // booth listed"; leave the trailing column empty.
+    return const SizedBox.shrink();
   }
 }
 
@@ -360,18 +387,6 @@ Appearance? _nextAppearance(Athlete a) =>
     a.appearances.isEmpty ? null : a.appearances.first;
 
 /// Formats the pre-judging + finals row for a division header. Returns
-/// null when neither event is scheduled (loading, live-refresh miss).
-String? _scheduleLabel(Event? prejudging, Event? finals) {
-  final buf = <String>[];
-  if (prejudging != null) {
-    buf.add('Pre-judging ${_shortDayTime(prejudging.date, prejudging.start)}');
-  }
-  if (finals != null) {
-    buf.add('Finals ${_shortDayTime(finals.date, finals.start)}');
-  }
-  return buf.isEmpty ? null : buf.join(' · ');
-}
-
 /// yyyy-MM-dd + HH:mm → "Sat 1 PM" / "Fri 6:30 PM". Uses the fixed 2026
 /// weekend so the label reads friendlier than a raw date.
 String _shortDayTime(String date, String? hhmm) {

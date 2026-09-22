@@ -130,6 +130,7 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             onOpenSocial: (link) => _openSocial(athlete, link),
           ),
         ),
+        _CompetesSection(division: division),
         if (athlete.appearances.isNotEmpty) ...[
           const SizedBox(height: 24),
           Padding(
@@ -564,6 +565,139 @@ String _socialLabel(SocialPlatform p) {
     case SocialPlatform.website:
       return 'Website';
   }
+}
+
+/// "Competes" section — pre-judging + finals rows for the athlete's
+/// division. Watches `eventsByIdProvider` + `venuesByIdProvider` so
+/// updates to the schedule JSON propagate here without any manual
+/// wiring on the caller side.
+class _CompetesSection extends ConsumerWidget {
+  const _CompetesSection({required this.division});
+  final Division division;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final eventsById = ref.watch(eventsByIdProvider);
+    final venuesById = ref.watch(venuesByIdProvider);
+    final prejudging = eventsById[division.prejudgingEventId];
+    final finals = eventsById[division.finalsEventId];
+    if (prejudging == null && finals == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(AppStrings.athleteCompetes, style: context.olympiaText.section),
+          const SizedBox(height: 10),
+          OlympiaCard(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (prejudging != null)
+                  _CompetesRow(
+                    label: AppStrings.athleteCompetesPrejudging,
+                    event: prejudging,
+                    venue: venuesById[prejudging.venueId],
+                  ),
+                if (prejudging != null && finals != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Container(
+                      height: 1,
+                      color: context.olympiaColors.divider,
+                    ),
+                  ),
+                if (finals != null)
+                  _CompetesRow(
+                    label: AppStrings.athleteCompetesFinals,
+                    event: finals,
+                    venue: venuesById[finals.venueId],
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompetesRow extends StatelessWidget {
+  const _CompetesRow({
+    required this.label,
+    required this.event,
+    required this.venue,
+  });
+  final String label;
+  final Event event;
+  final Venue? venue;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Text(
+              _shortDayTime(event.date, event.start),
+              style: context.olympiaText.row.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colors.textMuted,
+              ),
+            ),
+          ],
+        ),
+        if (venue != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            venue!.short,
+            style: context.olympiaText.caption,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+String _shortDayTime(String date, String? hhmm) {
+  final day = _weekdayShort(date);
+  if (hhmm == null || hhmm.isEmpty) return day;
+  return '$day · ${_shortTime(hhmm)}';
+}
+
+String _weekdayShort(String yyyyMmDd) {
+  const map = {
+    '2026-09-23': 'Wed',
+    '2026-09-24': 'Thu',
+    '2026-09-25': 'Fri',
+    '2026-09-26': 'Sat',
+    '2026-09-27': 'Sun',
+  };
+  return map[yyyyMmDd] ?? yyyyMmDd;
+}
+
+String _shortTime(String hhmm) {
+  final parts = hhmm.split(':');
+  if (parts.length < 2) return hhmm;
+  final h = int.tryParse(parts[0]);
+  final m = int.tryParse(parts[1]);
+  if (h == null || m == null) return hhmm;
+  final period = h >= 12 ? 'PM' : 'AM';
+  final hh12 = h % 12 == 0 ? 12 : h % 12;
+  return m == 0 ? '$hh12 $period' : '$hh12:${m.toString().padLeft(2, '0')} $period';
 }
 
 /// The baseball-card hero at the top of an athlete's detail screen.

@@ -11,6 +11,7 @@ abstract final class AppStrings {
   static const String tabSchedule = 'Schedule';
   static const String tabAthletes = 'Athletes';
   static const String tabVenues = 'Venues';
+  static const String tabExpo = 'Expo';
   static const String tabSaved = 'Saved';
 
   // Now screen.
@@ -89,6 +90,9 @@ abstract final class AppStrings {
   static const String athletesDivisionEmpty =
       'Roster still coming in from IFBB Pro. Check back Wednesday.';
   static const String athleteInstagram = 'Instagram';
+  static const String athleteCompetes = 'Competes';
+  static const String athleteCompetesPrejudging = 'Pre-judging';
+  static const String athleteCompetesFinals = 'Finals';
   static const String athleteAppearances = 'Appearances';
   static const String athleteConfirmed = 'Confirmed';
   static const String athleteReported = 'Reported';
@@ -112,10 +116,18 @@ abstract final class AppStrings {
 
   // Expo.
   static const String expoTitle = 'Expo';
+  static const String expoDates = 'Fri Sep 25 + Sat Sep 26';
   static const String expoSubtitle =
-      'Fri 9/25 + Sat 9/26 · LVCC South Hall · 154 booths';
-  static const String expoSearchHint = 'Search booths';
+      'LVCC South Hall · 15 min from Palms';
+  static const String expoSearchHint = 'Search 154 exhibitors';
   static const String expoSearchEmpty = 'No exhibitors match "{query}".';
+  static const String expoFilterAll = 'All';
+  static const String expoSegmentExhibitors = 'Exhibitors';
+  static const String expoSegmentEvents = 'Events';
+  static const String expoSegmentFloorPlan = 'Floor plan';
+  static const String expoFloorPlanFallback =
+      'Floor plan drops here. Bundling the PNG at web/expo-floor-plan.png '
+      'in the next drop.';
   static const String expoStageChip = 'See stage events';
   static const String expoVenueLink = 'See exhibitors';
   static const String expoEventsTitle = 'Expo stage & meet-and-greets';
