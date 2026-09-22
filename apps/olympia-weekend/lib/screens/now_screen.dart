@@ -197,6 +197,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             child: OlympiaCard(
               padding: EdgeInsets.zero,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   for (var i = 0; i < state.next.length; i++) ...[
                     EventRow(
@@ -228,6 +229,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             child: OlympiaCard(
               padding: EdgeInsets.zero,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   for (var i = 0; i < state.allDay.length; i++) ...[
                     EventRow(

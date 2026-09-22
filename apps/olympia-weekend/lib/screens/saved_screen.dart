@@ -117,6 +117,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                         child: OlympiaCard(
                           padding: EdgeInsets.zero,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               for (var i = 0; i < entry.value.length; i++) ...[
                                 EventRow(

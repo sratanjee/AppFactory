@@ -10,6 +10,7 @@ import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/chip_strip.dart';
 import 'package:olympia_weekend/widgets/filter_chip.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
 
@@ -108,26 +109,21 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 48,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            children: [
-              for (final d in payload.divisions)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: OlympiaFilterChip(
-                    label: d.name,
-                    active: d.id == divisionId,
-                    onTap: () {
-                      setState(() => _divisionId = d.id);
-                      ref.read(mixpanelProvider).viewAthletes(d.id);
-                    },
-                  ),
+        HorizontalChipStrip(
+          children: [
+            for (final d in payload.divisions)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: OlympiaFilterChip(
+                  label: d.name,
+                  active: d.id == divisionId,
+                  onTap: () {
+                    setState(() => _divisionId = d.id);
+                    ref.read(mixpanelProvider).viewAthletes(d.id);
+                  },
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
         const SizedBox(height: 12),
         Padding(
@@ -168,6 +164,7 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
             child: OlympiaCard(
               padding: EdgeInsets.zero,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   for (var i = 0; i < athletes.length; i++) ...[
                     _AthleteRow(

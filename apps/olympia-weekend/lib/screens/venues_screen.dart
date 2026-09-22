@@ -92,7 +92,12 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: OlympiaCard(
                       padding: EdgeInsets.zero,
+                      // stretch — otherwise each row is sized to its
+                      // intrinsic content width and Column's default
+                      // center alignment shifts shorter rows right
+                      // (Cosmopolitan / OMNIA were visibly indented).
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           for (var i = 0; i < venues.length; i++) ...[
                             _VenueRow(

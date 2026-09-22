@@ -12,11 +12,26 @@ import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/chip_strip.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
 import 'package:olympia_weekend/widgets/filter_chip.dart';
 
 enum ScheduleFilter { all, free, ticketed, palms }
+
+/// The Schedule tab's currently-selected day. Shared so other screens
+/// (Now's day-pill row, an event detail's "Full day" link) can prime the
+/// day before pushing to `/schedule` — otherwise the tab always lands on
+/// today, which surprised users who tapped Thursday from Now and saw
+/// Wednesday.
+class ScheduleSelectedDay extends Notifier<String?> {
+  @override
+  String? build() => null;
+  void set(String? day) => state = day;
+}
+
+final scheduleSelectedDayProvider =
+    NotifierProvider<ScheduleSelectedDay, String?>(ScheduleSelectedDay.new);
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({super.key});
@@ -27,7 +42,6 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   ScheduleFilter _filter = ScheduleFilter.all;
-  String? _selectedDate;
   bool _tracked = false;
 
   @override
@@ -72,7 +86,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               ];
               final now = ref.read(vegasClockProvider)();
               final today = vegasDateOf(now);
-              final selected = _selectedDate ??
+              final primed = ref.watch(scheduleSelectedDayProvider);
+              final selected = primed ??
                   (days.contains(today) ? today : '2026-09-25');
 
               if (!_tracked) {
@@ -115,31 +130,24 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       activeTextColor: const Color(0xFFFFFFFF),
                       onSelected: (d) {
                         ref.read(mixpanelProvider).dayChange(selected, d);
-                        setState(() => _selectedDate = d);
+                        ref.read(scheduleSelectedDayProvider.notifier).set(d);
                       },
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 48,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      children: [
-                        _filterChip(ScheduleFilter.all,
-                            AppStrings.scheduleFilterAll),
-                        const SizedBox(width: 8),
-                        _filterChip(ScheduleFilter.free,
-                            AppStrings.scheduleFilterFree),
-                        const SizedBox(width: 8),
-                        _filterChip(ScheduleFilter.ticketed,
-                            AppStrings.scheduleFilterTicket),
-                        const SizedBox(width: 8),
-                        _filterChip(ScheduleFilter.palms,
-                            AppStrings.scheduleFilterPalms),
-                      ],
-                    ),
-                  ),
+                  HorizontalChipStrip(children: [
+                    _filterChip(ScheduleFilter.all,
+                        AppStrings.scheduleFilterAll),
+                    const SizedBox(width: 8),
+                    _filterChip(ScheduleFilter.free,
+                        AppStrings.scheduleFilterFree),
+                    const SizedBox(width: 8),
+                    _filterChip(ScheduleFilter.ticketed,
+                        AppStrings.scheduleFilterTicket),
+                    const SizedBox(width: 8),
+                    _filterChip(ScheduleFilter.palms,
+                        AppStrings.scheduleFilterPalms),
+                  ]),
                   const SizedBox(height: 8),
                   if (filtered.isEmpty)
                     Padding(
@@ -230,6 +238,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           OlympiaCard(
             padding: EdgeInsets.zero,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (var i = 0; i < events.length; i++) ...[
                   EventRow(

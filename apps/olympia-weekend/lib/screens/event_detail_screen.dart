@@ -2,6 +2,7 @@ import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
@@ -253,8 +254,14 @@ class EventDetailScreen extends ConsumerWidget {
             child: AdaptiveSecondaryButton(
               label: AppStrings.eventShare,
               onPressed: () async {
+                // Build from the live deploy domain (--dart-define
+                // WEB_DEPLOY_DOMAIN), falling back to the current
+                // Vercel URL if no custom domain is wired.
+                final host = AppConfig.webDeployDomain.isNotEmpty
+                    ? AppConfig.webDeployDomain
+                    : 'olympia-weekend.vercel.app';
                 final url = Uri.parse(
-                    'https://olympiaweekend.app/e/${event.id}?utm_source=share');
+                    'https://$host/e/${event.id}?utm_source=share');
                 await launchUrl(url, mode: LaunchMode.externalApplication);
                 ref
                     .read(mixpanelProvider)
