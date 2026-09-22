@@ -68,6 +68,9 @@ class Generator {
     await _writeStoreStubs(ctx);
     await _writeReviewMd(ctx);
     await _createQaDir();
+    // The default web/manifest.json + web/index.html land as-is from
+    // `flutter create`. Apps whose spec §1 lists Web overwrite them in
+    // the builder step; apps that don't ship web ignore the folder.
 
     if (options.runGit) {
       await _gitCommit();
@@ -86,7 +89,10 @@ class Generator {
         'flutter',
         'create',
         '--template=app',
-        '--platforms=ios,android',
+        // Web is generated for every app so any spec whose §1 opts into
+        // it can build immediately. Apps that don't ship web can ignore
+        // the tiny web/ folder — it costs nothing to keep on disk.
+        '--platforms=ios,android,web',
         '--org',
         config.require('BUNDLE_PREFIX'),
         '--project-name',

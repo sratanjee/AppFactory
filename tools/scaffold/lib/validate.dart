@@ -91,37 +91,55 @@ class SpecValidator {
       ));
     }
 
-    // Monetization prices
-    if (spec.monetization.weeklyPrice.isEmpty &&
-        spec.monetization.lifetimePrice.isEmpty) {
-      issues.add(const ValidationIssue(
-        'monetization.weeklyPrice',
-        '§6 must have at least a weekly price or a lifetime price.',
-      ));
-    }
-    if (spec.monetization.annualPrice.isEmpty) {
-      issues.add(const ValidationIssue(
-        'monetization.annualPrice',
-        '§6 annual price is required — the annual plan is pre-selected on '
-        'the paywall.',
-      ));
-    }
+    // Monetization — an app can opt out of the paywall by declaring
+    // `Paywall placement: none` in §6. That's a factory-level override of
+    // CLAUDE.md non-negotiable #3 and must be spelled out in the spec's
+    // §0 deviations block. When it's on we skip the price + benefits
+    // checks (and the onboarding count check below), since a free app
+    // has no plans to price and no paywall to warm up for.
+    // Spec authors often bold "**none**" or trail explanatory copy after
+    // it (e.g. "**none** (overrides CLAUDE.md 3)"), so read the placement
+    // liberally: strip markdown emphasis + brackets and match the leading
+    // word.
+    final placementNormalised = spec.monetization.paywallPlacement
+        .toLowerCase()
+        .replaceAll(RegExp(r'[*_`]'), '')
+        .trim();
+    final free = placementNormalised.startsWith('none');
     if (spec.monetization.paywallPlacement.isEmpty) {
       issues.add(const ValidationIssue(
         'monetization.paywallPlacement',
-        '§6 paywall placement is required.',
+        '§6 paywall placement is required (use "none" to opt out).',
       ));
     }
-    if (spec.monetization.benefits.length != 3) {
-      issues.add(ValidationIssue(
-        'monetization.benefits',
-        '§6 needs exactly 3 benefit lines. Got '
-        '${spec.monetization.benefits.length}.',
-      ));
+    if (!free) {
+      if (spec.monetization.weeklyPrice.isEmpty &&
+          spec.monetization.lifetimePrice.isEmpty) {
+        issues.add(const ValidationIssue(
+          'monetization.weeklyPrice',
+          '§6 must have at least a weekly price or a lifetime price.',
+        ));
+      }
+      if (spec.monetization.annualPrice.isEmpty) {
+        issues.add(const ValidationIssue(
+          'monetization.annualPrice',
+          '§6 annual price is required — the annual plan is pre-selected on '
+          'the paywall.',
+        ));
+      }
+      if (spec.monetization.benefits.length != 3) {
+        issues.add(ValidationIssue(
+          'monetization.benefits',
+          '§6 needs exactly 3 benefit lines. Got '
+          '${spec.monetization.benefits.length}.',
+        ));
+      }
     }
 
-    // Onboarding 2–4
-    if (spec.onboardingSteps.length < 2 || spec.onboardingSteps.length > 4) {
+    // Onboarding 2–4, unless the app is free (§7 is often just "None" for
+    // apps with nothing to warm up for).
+    if (!free &&
+        (spec.onboardingSteps.length < 2 || spec.onboardingSteps.length > 4)) {
       issues.add(ValidationIssue(
         'onboarding',
         '§7 must have 2–4 steps. Got ${spec.onboardingSteps.length}.',

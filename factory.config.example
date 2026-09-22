@@ -54,6 +54,20 @@ REVENUECAT_API_V2_TOKEN=""
 REVENUECAT_IOS_PUBLIC_KEY=""
 REVENUECAT_ANDROID_PUBLIC_KEY=""
 
+# ---- Mixpanel (per-app opt-in) ----
+# Only apps whose spec calls for Mixpanel instead of the factory default.
+# MIXPANEL_PROJECT_<slug>=""
+# MIXPANEL_TOKEN_<slug>=""
+
+# ---- Google Maps (per-app opt-in) ----
+# GOOGLE_MAPS_WEB_KEY_<slug>=""
+# GOOGLE_MAPS_IOS_KEY_<slug>=""
+# GOOGLE_MAPS_ANDROID_KEY_<slug>=""
+
+# ---- Web deploy (per-app opt-in) ----
+# WEB_DEPLOY_DOMAIN_<slug>=""
+# WEB_DEPLOY_PROVIDER_<slug>=""   # vercel | firebase
+
 # ---- Shorebird ----
 SHOREBIRD_ORG=""
 SHOREBIRD_TOKEN=""

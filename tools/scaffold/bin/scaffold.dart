@@ -57,7 +57,12 @@ Future<void> main(List<String> argv) async {
     exit(1);
   }
 
-  final existingSlugs = await _existingSlugs(repoRoot);
+  // --force means the caller knows apps/<slug>/ exists and wants to
+  // overwrite; skip the existing-slug guard so re-runs and post-
+  // `flutter create` overlays both work cleanly.
+  final force = args['force'] as bool;
+  final existingSlugs =
+      force ? const <String>{} : await _existingSlugs(repoRoot);
   final report = SpecValidator(
     bundlePrefix: config.require('BUNDLE_PREFIX'),
     existingSlugs: existingSlugs,
@@ -83,7 +88,7 @@ Future<void> main(List<String> argv) async {
     dryRun: args['dry-run'] as bool,
     runGit: !(args['no-git'] as bool),
     runFlutterCreate: !(args['no-flutter-create'] as bool),
-    force: args['force'] as bool,
+    force: force,
   );
 
   await Generator(

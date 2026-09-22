@@ -483,7 +483,25 @@ class SpecParser {
           }
         }
       } else if (t.startsWith('- Screenshot story')) {
-        inScreenshots = true;
+        // Two supported shapes:
+        //   - Screenshot story:
+        //     1. Now — …
+        //     2. Schedule — …
+        //   - Screenshot story: 1 Now (…), 2 Schedule (…), …
+        // Inline form keeps a compact spec; multiline form handles
+        // longer captions.
+        final inline = _afterColon(t);
+        if (inline.isNotEmpty) {
+          for (final part in inline.split(RegExp(r',\s*(?=\d+[\.\s])'))) {
+            final captionMatch =
+                RegExp(r'^\d+[\.\s]+(.+)$').firstMatch(part.trim());
+            if (captionMatch != null) {
+              screenshots.add(captionMatch.group(1)!.trim());
+            }
+          }
+        } else {
+          inScreenshots = true;
+        }
       } else if (inScreenshots) {
         final match = RegExp(r'^\d+\.\s+(.+)$').firstMatch(t);
         if (match != null) {
