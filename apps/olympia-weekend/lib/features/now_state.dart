@@ -46,18 +46,32 @@ class NowState {
     required this.happening,
     required this.next,
     required this.allDay,
+    required this.phase,
   });
 
   final ResolvedEvent? happening;
   final List<ResolvedEvent> next;
   final List<ResolvedEvent> allDay;
+  final WeekendPhase phase;
 }
 
-/// Public "Wed…Sun" range for the weekend (Vegas local dates).
+/// Full sorted list of distinct event dates across the dataset. Useful
+/// for the Schedule day pills.
 List<String> weekendDays(List<Event> events) {
   final s = events.map((e) => e.date).toSet().toList()..sort();
   return s;
 }
+
+/// Fixed public Wed–Sun window of the 2026 Olympia weekend, in Vegas
+/// local dates. Kept in one place so the Now screen empty state and
+/// the [computeNowState] `phase` field agree on the same cutoff.
+const List<String> olympiaWeekendDates = [
+  '2026-09-23',
+  '2026-09-24',
+  '2026-09-25',
+  '2026-09-26',
+  '2026-09-27',
+];
 
 /// Formats yyyy-MM-dd for a Vegas TZDateTime.
 String vegasDateOf(tz.TZDateTime t) {
@@ -67,14 +81,23 @@ String vegasDateOf(tz.TZDateTime t) {
   return '$y-$m-$d';
 }
 
+/// Where `now` sits relative to the Wed–Sun weekend window.
+///
+/// Used to swap the "Up next" empty-state copy on the Now screen.
+enum WeekendPhase { before, during, after }
+
 /// Compute Now / Up-next / All-day state for a given Vegas moment.
 ///
 /// - `happening`: the first event with startAt <= now <= endAt, if any.
 ///   For all-day events (start + end both set) the whole window counts.
-/// - `next`: upcoming events strictly after `now`, capped at 6, sorted
-///   ascending by start.
+/// - `next`: upcoming events *on the same Vegas day as `now`*, capped
+///   at 6, sorted ascending by start. Reviewer round 1 blocker 3:
+///   cross-day rows in the pre-weekend view read as broken duplicates
+///   — filtering to today makes the "Wed / Thu / Fri" jumble go away.
 /// - `allDay`: events on the same Vegas day as `now` that have both
 ///   start and end (Expo / Pop-Up Gym).
+/// - `phase`: whether we're before, during, or after the weekend, so
+///   the caller can pick an empty-state message.
 NowState computeNowState(List<Event> events, tz.TZDateTime now) {
   final resolved = events.map(resolveEvent).toList(growable: false);
   final today = vegasDateOf(now);
@@ -105,7 +128,10 @@ NowState computeNowState(List<Event> events, tz.TZDateTime now) {
   final happeningNonNull = happening.event.id == _sentinel.id ? null : happening;
 
   final upcoming = resolved
-      .where((r) => r.startAt != null && r.startAt!.isAfter(now))
+      .where((r) =>
+          r.startAt != null &&
+          r.startAt!.isAfter(now) &&
+          r.event.date == today)
       .toList()
     ..sort((a, b) => a.startAt!.compareTo(b.startAt!));
 
@@ -113,10 +139,20 @@ NowState computeNowState(List<Event> events, tz.TZDateTime now) {
       .where((r) => r.event.isAllDay && r.event.date == today)
       .toList();
 
+  final WeekendPhase phase;
+  if (today.compareTo(olympiaWeekendDates.first) < 0) {
+    phase = WeekendPhase.before;
+  } else if (today.compareTo(olympiaWeekendDates.last) > 0) {
+    phase = WeekendPhase.after;
+  } else {
+    phase = WeekendPhase.during;
+  }
+
   return NowState(
     happening: happeningNonNull,
     next: upcoming.take(6).toList(growable: false),
     allDay: allDayToday,
+    phase: phase,
   );
 }
 

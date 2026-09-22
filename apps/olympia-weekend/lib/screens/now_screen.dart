@@ -130,7 +130,9 @@ class _NowScreenState extends ConsumerState<NowScreen> {
           const SizedBox(height: 8),
           _padded(
             child: Text(
-              AppStrings.nowEmpty,
+              state.next.isEmpty
+                  ? _emptyCopy(state.phase)
+                  : AppStrings.nowEmpty,
               style: TextStyle(fontSize: 15, color: colors.textMuted),
             ),
           ),
@@ -169,7 +171,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
           _padded(
             child: OlympiaCard(
               child: Text(
-                AppStrings.nowEmpty,
+                _emptyCopy(state.phase),
                 style: TextStyle(color: colors.textMuted, fontSize: 15),
               ),
             ),
@@ -445,6 +447,17 @@ class _HappeningNowCard extends StatelessWidget {
 
 // ————— helpers —————
 
+String _emptyCopy(WeekendPhase phase) {
+  switch (phase) {
+    case WeekendPhase.before:
+      return AppStrings.nowEmptyBeforeWeekend;
+    case WeekendPhase.after:
+      return AppStrings.nowEmptyAfterWeekend;
+    case WeekendPhase.during:
+      return AppStrings.nowEmptyEndOfDay;
+  }
+}
+
 Widget _padded({required Widget child}) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: child,
@@ -456,13 +469,8 @@ tz.TZDateTime _vegasNow(WidgetRef ref) {
 }
 
 /// Vegas dates for the weekend (Wed–Sun).
-bool _isWeekend(String yyyyMmDd) => const {
-      '2026-09-23',
-      '2026-09-24',
-      '2026-09-25',
-      '2026-09-26',
-      '2026-09-27',
-    }.contains(yyyyMmDd);
+bool _isWeekend(String yyyyMmDd) =>
+    olympiaWeekendDates.contains(yyyyMmDd);
 
 String _longDate(tz.TZDateTime t) {
   const weekdays = [

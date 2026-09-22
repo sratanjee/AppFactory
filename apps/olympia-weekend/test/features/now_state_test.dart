@@ -27,14 +27,39 @@ void main() {
     );
   });
 
-  test('Friday 22:00 → next is Saturday first', () {
+  test('Friday 22:00 → next filters to today, empty if nothing remains', () {
+    // Reviewer round 1 blocker 3: "Up next" must not spill into the
+    // next day, otherwise the pre-weekend view stacks Wed/Thu/Fri rows
+    // without any weekday label and reads as broken duplicates.
     final events = parseSchedule(
       File('assets/data/schedule.json').readAsStringSync(),
     );
     final now = tz.TZDateTime(loc(), 2026, 9, 25, 22, 0);
     final state = computeNowState(events, now);
-    expect(state.next, isNotEmpty);
-    expect(state.next.first.event.date, '2026-09-26');
+    for (final e in state.next) {
+      expect(e.event.date, '2026-09-25');
+    }
+    expect(state.phase, WeekendPhase.during);
+  });
+
+  test('Tuesday before the weekend → next is empty, phase is before', () {
+    final events = parseSchedule(
+      File('assets/data/schedule.json').readAsStringSync(),
+    );
+    final now = tz.TZDateTime(loc(), 2026, 9, 22, 10, 0);
+    final state = computeNowState(events, now);
+    expect(state.next, isEmpty);
+    expect(state.phase, WeekendPhase.before);
+  });
+
+  test('Monday after the weekend → next is empty, phase is after', () {
+    final events = parseSchedule(
+      File('assets/data/schedule.json').readAsStringSync(),
+    );
+    final now = tz.TZDateTime(loc(), 2026, 9, 28, 10, 0);
+    final state = computeNowState(events, now);
+    expect(state.next, isEmpty);
+    expect(state.phase, WeekendPhase.after);
   });
 
   test('all-day items only surface on their day', () {

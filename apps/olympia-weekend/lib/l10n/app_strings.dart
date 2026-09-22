@@ -20,6 +20,12 @@ abstract final class AppStrings {
   static const String nowFullDay = 'Full day';
   static const String nowEmpty =
       'Nothing on right now. Next up shows here.';
+  static const String nowEmptyBeforeWeekend =
+      'Weekend starts Wednesday. Tap Schedule to see it.';
+  static const String nowEmptyAfterWeekend =
+      'That\'s a wrap. See you in 2027.';
+  static const String nowEmptyEndOfDay =
+      'That\'s it for today. Full schedule is one tap away.';
   static const String nowInstallHint =
       'Unofficial fan guide. Add to your home screen for one-tap access.';
   static const String nowInstallHintCta = 'How';
