@@ -18,6 +18,10 @@ import 'package:timezone/timezone.dart' as tz;
 class MixpanelService {
   MixpanelService._(this._mp, this._sharedProps);
 
+  /// A no-op instance used in tests and when the token isn't set.
+  factory MixpanelService.stub() =>
+      MixpanelService._(null, const {'platform': 'test'});
+
   final Mixpanel? _mp;
   final Map<String, Object?> _sharedProps;
 

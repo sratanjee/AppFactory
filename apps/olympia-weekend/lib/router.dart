@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/screens/app_shell.dart';
+import 'package:olympia_weekend/screens/athlete_detail_screen.dart';
 import 'package:olympia_weekend/screens/athletes_screen.dart';
+import 'package:olympia_weekend/screens/event_detail_screen.dart';
 import 'package:olympia_weekend/screens/now_screen.dart';
 import 'package:olympia_weekend/screens/saved_screen.dart';
 import 'package:olympia_weekend/screens/schedule_screen.dart';
@@ -21,6 +23,18 @@ GoRouter buildRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: [
+      GoRoute(
+        path: '/e/:id',
+        name: Routes.event,
+        builder: (_, state) =>
+            EventDetailScreen(eventId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/a/:id',
+        name: Routes.athlete,
+        builder: (_, state) =>
+            AthleteDetailScreen(athleteId: state.pathParameters['id']!),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
@@ -74,4 +88,3 @@ GoRouter buildRouter() {
     ],
   );
 }
-

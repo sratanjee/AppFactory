@@ -1,28 +1,513 @@
 import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:olympia_weekend/data/models.dart';
+import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:olympia_weekend/features/mixpanel_service.dart';
+import 'package:olympia_weekend/features/now_state.dart';
+import 'package:olympia_weekend/features/vegas_time.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:olympia_weekend/l10n/app_strings.dart';
+import 'package:olympia_weekend/router.dart';
+import 'package:olympia_weekend/widgets/access_tag.dart';
+import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/day_pills.dart';
+import 'package:olympia_weekend/widgets/event_row.dart';
 
-class NowScreen extends StatelessWidget {
+class NowScreen extends ConsumerStatefulWidget {
   const NowScreen({super.key});
+
+  @override
+  ConsumerState<NowScreen> createState() => _NowScreenState();
+}
+
+class _NowScreenState extends ConsumerState<NowScreen> {
+  bool _tracked = false;
+  String? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
-    return AdaptiveScaffold(
-      backgroundColor: colors.background,
-      titleDisplay: TitleDisplay.none,
-      body: Container(
-        color: colors.background,
-        child: SafeArea(
-          child: Center(
-            child: Text(
-              AppStrings.tabNow,
-              style: TextStyle(color: colors.text),
+    final scheduleAsync = ref.watch(scheduleProvider);
+    final venuesById = ref.watch(venuesByIdProvider);
+    final nowAsync = ref.watch(nowVegasProvider);
+
+    return ColoredBox(
+      color: colors.background,
+      child: AdaptiveScaffold(
+        backgroundColor: colors.background,
+        titleDisplay: TitleDisplay.none,
+        body: SafeArea(
+          bottom: false,
+          child: scheduleAsync.when(
+            loading: () => _padded(child: const AdaptiveLoading()),
+            error: (_, __) => _padded(
+              child: AdaptiveError(
+                message: AppStrings.errorLiveRefresh,
+                onRetry: () => ref.refresh(scheduleProvider),
+              ),
             ),
+            data: (events) {
+              final now = nowAsync.value ?? _vegasNow(ref);
+              final days = weekendDays(events)
+                  .where((d) => _isWeekend(d))
+                  .toList();
+              final selectedDate = _selectedDate ??
+                  (_isWeekend(vegasDateOf(now))
+                      ? vegasDateOf(now)
+                      : days.first);
+              final state = computeNowState(events, now);
+
+              if (!_tracked) {
+                _tracked = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ref.read(mixpanelProvider).viewNow(
+                        nowEventId: state.happening?.event.id,
+                        nextEventId: state.next.isEmpty
+                            ? null
+                            : state.next.first.event.id,
+                      );
+                });
+              }
+
+              return _buildBody(
+                context: context,
+                colors: colors,
+                now: now,
+                selectedDate: selectedDate,
+                days: days,
+                events: events,
+                state: state,
+                venuesById: venuesById,
+              );
+            },
           ),
         ),
       ),
     );
   }
+
+  Widget _buildBody({
+    required BuildContext context,
+    required OlympiaColors colors,
+    required tz.TZDateTime now,
+    required String selectedDate,
+    required List<String> days,
+    required List<Event> events,
+    required NowState state,
+    required Map<String, Venue> venuesById,
+  }) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        _Header(now: now),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          child: DayPills(
+            dates: days,
+            selected: selectedDate,
+            activeColor: const Color(0xFFe2231a),
+            activeTextColor: const Color(0xFFFFFFFF),
+            onSelected: (d) {
+              ref.read(mixpanelProvider).dayChange(selectedDate, d);
+              if (d == selectedDate) return;
+              // Jump to schedule for other days.
+              context.goNamed(Routes.schedule);
+            },
+          ),
+        ),
+        const SizedBox(height: 20),
+        _installHint(context),
+        if (state.happening != null) ...[
+          _HappeningNowCard(
+            resolved: state.happening!,
+            venue: venuesById[state.happening!.event.venueId],
+          ),
+          const SizedBox(height: 28),
+        ] else ...[
+          const SizedBox(height: 8),
+          _padded(
+            child: Text(
+              AppStrings.nowEmpty,
+              style: TextStyle(fontSize: 15, color: colors.textMuted),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Text(
+                  AppStrings.nowUpNext,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: colors.text,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => context.goNamed(Routes.schedule),
+                child: Text(
+                  AppStrings.nowFullDay,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFFe2231a),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (state.next.isEmpty)
+          _padded(
+            child: OlympiaCard(
+              child: Text(
+                AppStrings.nowEmpty,
+                style: TextStyle(color: colors.textMuted, fontSize: 15),
+              ),
+            ),
+          )
+        else
+          _padded(
+            child: OlympiaCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  for (var i = 0; i < state.next.length; i++) ...[
+                    EventRow(
+                      event: state.next[i].event,
+                      venueLabel: _venueLabel(
+                          venuesById[state.next[i].event.venueId],
+                          state.next[i].event),
+                      timeLabel: _shortTime(state.next[i].event.start),
+                      onTap: () => _openEvent(state.next[i].event, 'now'),
+                    ),
+                    if (i != state.next.length - 1)
+                      const OlympiaDivider(indent: 86),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        if (state.allDay.isNotEmpty) ...[
+          const SizedBox(height: 28),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              AppStrings.nowAllDay,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: colors.text,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          _padded(
+            child: OlympiaCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  for (var i = 0; i < state.allDay.length; i++) ...[
+                    EventRow(
+                      event: state.allDay[i].event,
+                      venueLabel: _venueLabel(
+                          venuesById[state.allDay[i].event.venueId],
+                          state.allDay[i].event),
+                      timeLabel: '',
+                      onTap: () => _openEvent(state.allDay[i].event, 'now'),
+                    ),
+                    if (i != state.allDay.length - 1)
+                      const OlympiaDivider(),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+
+  Widget _installHint(BuildContext context) {
+    final colors = context.olympiaColors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colors.surfaceBorder),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                AppStrings.nowInstallHint,
+                style: TextStyle(color: colors.textMuted, fontSize: 13),
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () => _showInstallSheet(context),
+              child: Text(
+                AppStrings.nowInstallHintCta,
+                style: const TextStyle(
+                  color: Color(0xFFe2231a),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showInstallSheet(BuildContext context) async {
+    ref.read(mixpanelProvider).installPromptShown();
+    await AdaptiveSheet.show<void>(
+      context,
+      child: Builder(
+        builder: (ctx) => Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppStrings.nowInstallSheetIosTitle,
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: ctx.olympiaColors.text),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.nowInstallSheetIosBody,
+                style: TextStyle(color: ctx.olympiaColors.text),
+              ),
+              const SizedBox(height: 16),
+              AdaptivePrimaryButton(
+                label: AppStrings.nowInstallSheetDismiss,
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openEvent(Event event, String fromScreen) {
+    ref.read(mixpanelProvider).viewEvent(
+          eventId: event.id,
+          access: event.access.name,
+          venue: event.venueId,
+          fromScreen: fromScreen,
+        );
+    context.goNamed(Routes.event, pathParameters: {'id': event.id});
+  }
+
+  String _venueLabel(Venue? v, Event e) {
+    if (v == null) return e.venueId;
+    return e.room == null ? v.short : '${v.short} · ${e.room}';
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.now});
+  final tz.TZDateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _longDate(now),
+            style: TextStyle(fontSize: 13, color: colors.textMuted),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            AppStrings.appTitle,
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
+              color: colors.text,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HappeningNowCard extends StatelessWidget {
+  const _HappeningNowCard({required this.resolved, required this.venue});
+
+  final ResolvedEvent resolved;
+  final Venue? venue;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final event = resolved.event;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+      child: GestureDetector(
+        onTap: () {
+          context.goNamed(Routes.event, pathParameters: {'id': event.id});
+        },
+        child: OlympiaCard(
+          border: Border.all(color: const Color(0xFFe2231a)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFe2231a),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    AppStrings.nowHappening,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFe2231a),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                event.title,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                  height: 1.15,
+                  color: colors.text,
+                ),
+              ),
+              if (event.divisions.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  event.divisions.join(', '),
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: colors.textMuted,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      _venueSubtitle(venue, event, resolved),
+                      style: TextStyle(fontSize: 14, color: colors.textMuted),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  AccessTag(access: event.access),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ————— helpers —————
+
+Widget _padded({required Widget child}) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: child,
+    );
+
+tz.TZDateTime _vegasNow(WidgetRef ref) {
+  final f = ref.read(vegasClockProvider);
+  return f();
+}
+
+/// Vegas dates for the weekend (Wed–Sun).
+bool _isWeekend(String yyyyMmDd) => const {
+      '2026-09-23',
+      '2026-09-24',
+      '2026-09-25',
+      '2026-09-26',
+      '2026-09-27',
+    }.contains(yyyyMmDd);
+
+String _longDate(tz.TZDateTime t) {
+  const weekdays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return '${weekdays[t.weekday - 1]}, ${months[t.month - 1]} ${t.day}';
+}
+
+String _shortTime(String? hhmm) {
+  if (hhmm == null) return '';
+  final parts = hhmm.split(':');
+  if (parts.length < 2) return hhmm;
+  final h = int.tryParse(parts[0]) ?? 0;
+  final m = parts[1];
+  final suffix = h >= 12 ? 'PM' : 'AM';
+  final h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h);
+  return m == '00' ? '$h12 $suffix' : '$h12:$m $suffix';
+}
+
+String _venueSubtitle(Venue? venue, Event event, ResolvedEvent resolved) {
+  final buf = StringBuffer(venue?.short ?? event.venueId);
+  if (event.room != null) buf.write(' · ${event.room}');
+  final endAt = resolved.endAt;
+  if (endAt != null) {
+    buf.write(' · until ${_shortTime(event.end)}');
+  }
+  return buf.toString();
 }

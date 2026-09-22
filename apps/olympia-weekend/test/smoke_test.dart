@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:olympia_weekend/app.dart';
+import 'package:olympia_weekend/features/mixpanel_service.dart';
+import 'package:olympia_weekend/features/saved_events.dart';
+import 'package:olympia_weekend/features/sightings_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 
@@ -12,6 +15,12 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(
       ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          mixpanelProvider.overrideWithValue(MixpanelService.stub()),
+          sightingsRepoProvider.overrideWithValue(
+              SightingsRepo(deviceId: 'test-device')),
+        ],
         child: OlympiaWeekendApp(prefs: prefs),
       ),
     );
