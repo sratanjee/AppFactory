@@ -1,0 +1,51 @@
+name: olympia_weekend
+description: Olympia Weekend — unofficial fan guide for the 2026 weekend.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.4 <3.48.0"
+
+dependencies:
+  # Deviation deps (see spec §0). Kept alphabetised so
+  # sort_pub_dependencies stays happy; the "why" for each is on the
+  # comment line above.
+  # Anonymous per-device install id used when reporting sightings.
+  device_info_plus: ^13.2.0
+  factory_core:
+    path: ../../packages/core
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+  # Native map on iOS + Android. Web uses google_maps JS via a stub in
+  # lib/features/venue_map.dart.
+  google_maps_flutter: ^2.7.0
+  # Mixpanel replaces the factory's PostHog for this app; token is
+  # provided via --dart-define at build (see tool/run.sh).
+  mixpanel_flutter: ^2.4.0
+  # First-touch utm_source persisted as a Mixpanel super property.
+  shared_preferences: ^2.3.2
+  # Anonymous inserts into the `sightings` table for crowd confirmations.
+  supabase_flutter: ^2.5.0
+  # Timezone-aware "now" — spec §4 requires Las Vegas local time even
+  # when the device clock is on Eastern.
+  timezone: ^0.9.4
+  # Directions deep links and web share sheet.
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  alchemist: ^0.14.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/schedule.json
+    - assets/data/venues.json
+    - assets/data/athletes.json

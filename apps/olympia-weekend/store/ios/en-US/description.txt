@@ -1,0 +1,21 @@
+"I'm at Olympia and I want to know what's happening right now, what's next, and where to go, without digging through the official site."
+
+For nobody. Free, no ads, no account. The goal is a following for the weekend and Mixpanel data on what fans actually use..
+
+What it does
+
+• Today's date; day pills Wed–Sun; "Happening now" card (red dot, title, divisions, venue, until-time, access tag); "Up next" list with times relative to now; "All day" list; tab bar Now / Schedule / Athletes / Venues / Saved
+• Day pills; filter chips All / Free / Ticketed / At Palms; events grouped Morning / Afternoon and evening; access tags; chevrons
+• Red band; back + Save; date/time; title; divisions; three facts (Doors or VIP entry / Venue / Access); Running order with estimates, or Meet-and-greets for the Expo; Afterward or Good to know; "Save to my day" + "Directions"
+• Division chips; search; division header with pre-judging/finals times; athlete rows with avatar initials, tagline, booth or "No booth listed," meet-and-greet time. Athlete page: name, division, country, **Instagram row** (opens app or web), appearances with Confirmed/Reported and an "I saw this" button, "Report a booth or time"
+• Google Map with five pins; venue rows with role and drive time; shuttle note. Saved: bookmarked events grouped by day with a "Nothing saved yet — tap the bookmark on any event" empty state
+
+Why people use it
+
+everything free
+
+Subscription
+
+Free trial: n/a. Weekly: . Annual: .
+Auto-renews unless cancelled.
+Manage in App Store settings.

@@ -1,0 +1,96 @@
+# Codemagic lanes for olympia-weekend.
+#
+# Deviates from the factory template (spec §0):
+#   * Web build + Vercel deploy is the primary lane — public link must
+#     be live before the Thursday deadline.
+#   * iOS + Android lanes stay on the factory shape but resolve the
+#     app's own dart-defines (Mixpanel, Supabase, Google Maps) instead
+#     of the standard RevenueCat/PostHog pair.
+#
+# All env vars land via the shared Codemagic env group "app-factory-secrets"
+# which mirrors the factory.config keys documented under
+# apps/olympia-weekend/REVIEW.md.
+
+workflows:
+  web-vercel:
+    name: olympia-weekend — Web (Vercel)
+    max_build_duration: 30
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+      node: 20
+    scripts:
+      - name: Resolve dart-defines
+        script: |
+          eval "export MIXPANEL_TOKEN=\$MIXPANEL_TOKEN_olympiaweekend"
+          eval "export GOOGLE_MAPS_WEB_KEY=\$GOOGLE_MAPS_WEB_KEY_olympiaweekend"
+          eval "export WEB_DEPLOY_DOMAIN=\$WEB_DEPLOY_DOMAIN_olympiaweekend"
+      - name: Build web
+        script: |
+          cd apps/olympia-weekend
+          flutter build web --release --web-renderer canvaskit \
+            --dart-define=MIXPANEL_TOKEN="$MIXPANEL_TOKEN" \
+            --dart-define=SUPABASE_URL="$SUPABASE_OLYMPIAWEEKEND_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_OLYMPIAWEEKEND_ANON_KEY" \
+            --dart-define=GOOGLE_MAPS_WEB_KEY="$GOOGLE_MAPS_WEB_KEY" \
+            --dart-define=WEB_DEPLOY_DOMAIN="$WEB_DEPLOY_DOMAIN"
+      - name: Deploy to Vercel
+        script: |
+          cd apps/olympia-weekend/build/web
+          npx --yes vercel@latest deploy --prod --yes \
+            --token "$VERCEL_TOKEN" \
+            --scope "$VERCEL_TEAM"
+
+  ios-testflight:
+    name: olympia-weekend — iOS TestFlight
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+      xcode: latest
+    scripts:
+      - name: Resolve dart-defines
+        script: |
+          eval "export MIXPANEL_TOKEN=\$MIXPANEL_TOKEN_olympiaweekend"
+          eval "export GOOGLE_MAPS_IOS_KEY=\$GOOGLE_MAPS_IOS_KEY_olympiaweekend"
+      - name: Build IPA
+        script: |
+          cd apps/olympia-weekend
+          flutter build ipa --release \
+            --dart-define=MIXPANEL_TOKEN="$MIXPANEL_TOKEN" \
+            --dart-define=SUPABASE_URL="$SUPABASE_OLYMPIAWEEKEND_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_OLYMPIAWEEKEND_ANON_KEY" \
+            --dart-define=GOOGLE_MAPS_IOS_KEY="$GOOGLE_MAPS_IOS_KEY"
+      - name: Upload to TestFlight
+        script: |
+          app-store-connect publish \
+            --path build/ios/ipa/*.ipa \
+            --testflight
+
+  android-internal:
+    name: olympia-weekend — Play internal
+    max_build_duration: 60
+    environment:
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+    scripts:
+      - name: Resolve dart-defines
+        script: |
+          eval "export MIXPANEL_TOKEN=\$MIXPANEL_TOKEN_olympiaweekend"
+          eval "export GOOGLE_MAPS_ANDROID_KEY=\$GOOGLE_MAPS_ANDROID_KEY_olympiaweekend"
+      - name: Build AAB
+        script: |
+          cd apps/olympia-weekend
+          flutter build appbundle --release \
+            --dart-define=MIXPANEL_TOKEN="$MIXPANEL_TOKEN" \
+            --dart-define=SUPABASE_URL="$SUPABASE_OLYMPIAWEEKEND_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_OLYMPIAWEEKEND_ANON_KEY" \
+            --dart-define=GOOGLE_MAPS_ANDROID_KEY="$GOOGLE_MAPS_ANDROID_KEY"
+      - name: Upload to Play internal
+        script: |
+          google-play publish \
+            --track internal \
+            build/app/outputs/bundle/release/*.aab

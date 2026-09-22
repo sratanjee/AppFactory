@@ -1,0 +1,33 @@
+{
+  "note": "Seed list. Only names the public sites publish are filled; every other field is to be completed before launch from ifbbpro.com qualified lists and athletes' own Instagram bios. Instagram handles are shown as a tappable row on the athlete page and open the app if installed. Never invent a handle: leave it null and the row hides.",
+  "divisions": [
+    {"id": "mens-open", "name": "Men's Open", "prejudging": "fri-finals", "finals": "sat-finals", "prize": "$600,000 to the winner"},
+    {"id": "classic", "name": "Classic Physique", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "212", "name": "212", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "mens-physique", "name": "Men's Physique", "prejudging": "sat-prejudging", "finals": "sat-finals"},
+    {"id": "bikini", "name": "Bikini", "prejudging": "sat-prejudging", "finals": "sat-finals"},
+    {"id": "wellness", "name": "Wellness", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "figure", "name": "Figure", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "fitness", "name": "Fitness", "prejudging": "sat-prejudging", "finals": "sat-finals"},
+    {"id": "womens-physique", "name": "Women's Physique", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "ms-olympia", "name": "Ms. Olympia", "prejudging": "fri-prejudging", "finals": "fri-finals"},
+    {"id": "wheelchair", "name": "Wheelchair", "prejudging": "sat-prejudging", "finals": "sat-prejudging"},
+    {"id": "fit-model", "name": "Fit Model", "prejudging": "sat-prejudging", "finals": "sat-prejudging"}
+  ],
+  "athletes": [
+    {"id": "derek-lunsford", "name": "Derek Lunsford", "division": "mens-open", "country": "USA", "tagline": "Reigning champion", "instagram": null, "booth": null, "appearances": []},
+    {"id": "hadi-choopan", "name": "Hadi Choopan", "division": "mens-open", "country": "Iran", "tagline": "2022 champion", "instagram": null, "booth": null, "appearances": []},
+    {"id": "chinedu-obiekea", "name": "Chinedu Obiekea", "division": "mens-open", "country": "Nigeria", "tagline": "Qualified", "instagram": null, "booth": null, "appearances": []}
+  ],
+  "appearanceShape": {
+    "date": "2026-09-26",
+    "start": "13:00",
+    "end": "14:00",
+    "venue": "lvcc",
+    "booth": "B4",
+    "sponsor": null,
+    "status": "reported | confirmed",
+    "confirmations": 0,
+    "source": "signage | instagram | sponsor"
+  }
+}
