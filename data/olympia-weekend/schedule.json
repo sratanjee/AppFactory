@@ -1,0 +1,56 @@
+{
+  "event": "Olympia Weekend 2026",
+  "city": "Las Vegas, NV",
+  "timezone": "America/Los_Angeles",
+  "source": "https://mrolympia.com/weekend-schedule",
+  "sourceNote": "Locations and times subject to change per the official site. Fields marked estimate are ours, not official.",
+  "accessTypes": {
+    "free": "Open to the public",
+    "ticket": "Tickets required",
+    "vip": "VIP only"
+  },
+  "events": [
+    {"id": "mon-amateur-reg", "date": "2026-09-21", "start": "16:00", "end": null, "title": "Amateur Olympia competitor registration", "venue": "palms", "room": null, "access": "free", "amateur": true, "divisions": [], "notes": "Competitors only."},
+
+    {"id": "tue-am-women-judging", "date": "2026-09-22", "start": "08:00", "end": null, "title": "Amateur Olympia women's judging", "venue": "palms", "room": "Pearl Theater", "access": "ticket", "amateur": true, "divisions": []},
+    {"id": "tue-am-women-finals", "date": "2026-09-22", "start": null, "end": null, "title": "Amateur Olympia women's finals", "venue": "palms", "room": "Pearl Theater", "access": "ticket", "amateur": true, "divisions": [], "notes": "Time TBD."},
+
+    {"id": "wed-gym", "date": "2026-09-23", "start": "06:00", "end": "18:00", "title": "Dragon's Lair Pop-Up Gym", "venue": "palms", "room": "Green St", "access": "free", "divisions": [], "presentedBy": "GNC"},
+    {"id": "wed-am-men-judging", "date": "2026-09-23", "start": "08:00", "end": null, "title": "Amateur Olympia men's judging", "venue": "palms", "room": "Pearl Theater", "access": "ticket", "amateur": true, "divisions": []},
+    {"id": "wed-am-men-finals", "date": "2026-09-23", "start": null, "end": null, "title": "Amateur Olympia men's finals", "venue": "palms", "room": "Pearl Theater", "access": "ticket", "amateur": true, "divisions": [], "notes": "Time TBD."},
+
+    {"id": "thu-gym", "date": "2026-09-24", "start": "06:00", "end": "18:00", "title": "Dragon's Lair Pop-Up Gym", "venue": "palms", "room": "Green St", "access": "free", "divisions": [], "presentedBy": "GNC"},
+    {"id": "thu-press", "date": "2026-09-24", "start": "12:00", "end": null, "title": "Olympia Press Conference", "venue": "palms", "room": "Pearl Theater", "access": "free", "divisions": [], "presentedBy": "WOLFpak", "vipEntry": "11:30", "generalEntry": "11:45"},
+    {"id": "thu-kickoff", "date": "2026-09-24", "start": "20:30", "end": null, "title": "Olympia Superstar Kickoff Party", "venue": "palms", "room": "Palms Pool", "access": "free", "divisions": [], "presentedBy": "Optimum Nutrition", "vipEntry": "19:30", "generalEntry": "20:30", "notes": "Formerly Meet the Olympians."},
+
+    {"id": "fri-gym", "date": "2026-09-25", "start": "06:00", "end": "18:00", "title": "Dragon's Lair Pop-Up Gym", "venue": "palms", "room": "Green St", "access": "free", "divisions": [], "presentedBy": "GNC"},
+    {"id": "fri-expo", "date": "2026-09-25", "start": "09:00", "end": "17:00", "title": "Olympia World Fitness Expo", "venue": "lvcc", "room": "South Hall", "access": "ticket", "divisions": [], "vipEntry": "08:00", "generalEntry": "09:00", "shuttle": true, "endEstimate": true},
+    {"id": "fri-prejudging", "date": "2026-09-25", "start": "09:30", "end": null, "title": "Friday Pre-Judging", "venue": "lvcc", "room": "Expo stage, South Hall", "access": "ticket", "divisions": ["212 Olympia", "Classic Physique Olympia", "Figure Olympia", "Women's Physique Olympia", "Ms. Olympia", "Wellness Olympia"], "notes": "Inside the Expo. Reserved seating for VIPs; standing room and limited open seating for general admission."},
+    {"id": "fri-sandow", "date": "2026-09-25", "start": "15:00", "end": null, "title": "VIP Sandow Photo Opportunity and Q&A", "venue": "orleans", "room": "Inside main entrance", "access": "vip", "divisions": [], "notes": "Gold VIP and Silver VIP Plus only. 3:00 sharp."},
+    {"id": "fri-finals", "date": "2026-09-25", "start": "18:00", "end": null, "title": "Friday Finals", "venue": "orleans", "room": null, "access": "ticket", "divisions": ["Figure Olympia", "Women's Physique Olympia", "Wellness Olympia", "212 Olympia", "Ms. Olympia", "Classic Physique Olympia"], "plus": "Mr. Olympia Pre-Judging", "shuttle": true, "runningOrder": [
+      {"division": "Figure Olympia", "estimate": "18:10"},
+      {"division": "Women's Physique Olympia", "estimate": "18:40"},
+      {"division": "Wellness Olympia", "estimate": "19:10"},
+      {"division": "212 Olympia", "estimate": "19:40"},
+      {"division": "Ms. Olympia", "estimate": "20:10"},
+      {"division": "Classic Physique Olympia", "estimate": "20:40"},
+      {"division": "Mr. Olympia Pre-Judging", "estimate": "21:20"}
+    ], "runningOrderNote": "Order is official; times are our estimates."},
+
+    {"id": "sat-gym", "date": "2026-09-26", "start": "06:00", "end": "12:00", "title": "Dragon's Lair Pop-Up Gym", "venue": "palms", "room": "Green St", "access": "free", "divisions": [], "presentedBy": "GNC"},
+    {"id": "sat-expo", "date": "2026-09-26", "start": "09:00", "end": "17:00", "title": "Olympia World Fitness Expo", "venue": "lvcc", "room": "South Hall", "access": "ticket", "divisions": [], "vipEntry": "08:00", "generalEntry": "09:00", "shuttle": true, "endEstimate": true},
+    {"id": "sat-prejudging", "date": "2026-09-26", "start": "09:30", "end": null, "title": "Saturday Pre-Judging", "venue": "lvcc", "room": "Expo stage, South Hall", "access": "ticket", "divisions": ["Men's Physique Olympia", "Fitness Olympia", "Bikini Olympia", "Wheelchair Olympia (pre-judging and finals)", "Fit Model Olympia (pre-judging and finals)"], "notes": "Inside the Expo. Reserved seating for VIPs; standing room and limited open seating for general admission."},
+    {"id": "sat-hof", "date": "2026-09-26", "start": "12:00", "end": null, "title": "International Sports Hall of Fame Induction Ceremony", "venue": "palms", "room": "Grand Ballroom", "access": "free", "divisions": [], "notes": "15th edition. Inductees: Vitomir Maričić (free diving), Garry Kasparov (chess), Dexter Jackson (former Mr. Olympia), Forrest Griffin (UFC), The Harlem Globetrotters."},
+    {"id": "sat-finals", "date": "2026-09-26", "start": "19:00", "end": null, "title": "Saturday Finals", "venue": "orleans", "room": null, "access": "ticket", "divisions": ["Fitness Olympia", "Men's Physique Olympia", "Bikini Olympia", "Mr. Olympia"], "shuttle": true, "doorsEstimate": "18:00", "runningOrder": [
+      {"division": "Fitness Olympia", "estimate": "19:10"},
+      {"division": "Men's Physique Olympia", "estimate": "19:45"},
+      {"division": "Bikini Olympia", "estimate": "20:30"},
+      {"division": "Mr. Olympia", "estimate": "21:15"}
+    ], "runningOrderNote": "Order is official; times are our estimates."},
+    {"id": "sat-afterparty", "date": "2026-09-26", "start": "22:30", "end": null, "title": "Official Olympia After Party", "venue": "cosmopolitan", "room": "Marquee Nightclub", "access": "ticket", "divisions": [], "featuring": "Illenium"},
+    {"id": "sat-vip-afterparty", "date": "2026-09-26", "start": "23:00", "end": null, "title": "Olympia VIP After Party", "venue": "palms", "room": "Kaos Nightclub", "access": "vip", "divisions": [], "presentedBy": "MYPROTEIN", "notes": "Formerly the VIP Gala."},
+
+    {"id": "sun-seminar", "date": "2026-09-27", "start": "11:00", "end": null, "title": "Olympia Champions Seminar", "venue": "palms", "room": "Grand Ballroom", "access": "ticket", "divisions": [], "presentedBy": "MYPROTEIN", "notes": "VIP free entry. Tickets available at the door."},
+    {"id": "sun-dayclub", "date": "2026-09-27", "start": "11:00", "end": null, "title": "Official Olympia Dayclub After Party", "venue": "omnia", "room": "OMNIA Dayclub", "access": "ticket", "divisions": [], "featuring": "Pauly D"}
+  ]
+}

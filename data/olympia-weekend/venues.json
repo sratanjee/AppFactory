@@ -1,0 +1,62 @@
+{
+  "venues": [
+    {
+      "id": "palms",
+      "name": "Palms Casino Resort",
+      "short": "Palms",
+      "address": "4321 W Flamingo Rd, Las Vegas, NV 89103",
+      "lat": 36.1147, "lng": -115.1946,
+      "placeId": "ChIJ__PALMS__LOOKUP_AT_BUILD",
+      "role": "Home base. Press conference, pop-up gym, amateur shows, Hall of Fame, seminar, VIP after party.",
+      "rooms": ["Pearl Theater", "Grand Ballroom", "Palms Pool", "Kaos Nightclub", "Green St"]
+    },
+    {
+      "id": "orleans",
+      "name": "Orleans Arena",
+      "short": "Orleans",
+      "address": "4500 W Tropicana Ave, Las Vegas, NV 89103",
+      "lat": 36.1017, "lng": -115.1868,
+      "placeId": "ChIJ__ORLEANS__LOOKUP_AT_BUILD",
+      "role": "Friday and Saturday finals. Sandow VIP photo at the main entrance.",
+      "driveFromPalmsMin": 6,
+      "shuttle": true
+    },
+    {
+      "id": "lvcc",
+      "name": "Las Vegas Convention Center, South Hall",
+      "short": "Convention Center",
+      "address": "3150 Paradise Rd, Las Vegas, NV 89109",
+      "lat": 36.1310, "lng": -115.1520,
+      "placeId": "ChIJ__LVCC__LOOKUP_AT_BUILD",
+      "role": "World Fitness Expo and the Friday and Saturday pre-judging on the Expo stage.",
+      "driveFromPalmsMin": 15,
+      "shuttle": true
+    },
+    {
+      "id": "cosmopolitan",
+      "name": "The Cosmopolitan of Las Vegas",
+      "short": "Cosmopolitan",
+      "address": "3708 S Las Vegas Blvd, Las Vegas, NV 89109",
+      "lat": 36.1097, "lng": -115.1746,
+      "placeId": "ChIJ__COSMO__LOOKUP_AT_BUILD",
+      "role": "Official after party at Marquee Nightclub, Saturday.",
+      "driveFromPalmsMin": 10
+    },
+    {
+      "id": "omnia",
+      "name": "OMNIA Dayclub at Caesars Palace",
+      "short": "OMNIA",
+      "address": "3570 S Las Vegas Blvd, Las Vegas, NV 89109",
+      "lat": 36.1162, "lng": -115.1745,
+      "placeId": "ChIJ__OMNIA__LOOKUP_AT_BUILD",
+      "role": "Dayclub after party, Sunday.",
+      "driveFromPalmsMin": 10
+    }
+  ],
+  "shuttleNote": "Official shuttles run between the Palms, Orleans Arena, and the Expo on Friday and Saturday. Schedule: https://mrolympia.com/faq",
+  "directions": {
+    "android": "https://www.google.com/maps/dir/?api=1&destination={lat},{lng}&destination_place_id={placeId}",
+    "ios": "Show a sheet with Apple Maps (maps://?daddr={lat},{lng}) and Google Maps (comgooglemaps://?daddr={lat},{lng}), falling back to the web URL if not installed."
+  },
+  "placeIdNote": "Resolve placeIds at build time with the Places API (Find Place from Text with the address) and commit them; do not ship the placeholders."
+}
