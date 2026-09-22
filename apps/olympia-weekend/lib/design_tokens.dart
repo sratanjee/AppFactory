@@ -114,10 +114,10 @@ class OlympiaColors {
 }
 
 extension OlympiaColorsFromContext on BuildContext {
-  OlympiaColors get olympiaColors =>
-      MediaQuery.platformBrightnessOf(this) == Brightness.dark
-          ? OlympiaColors.dark
-          : OlympiaColors.light;
+  // Spec §8 Option B — the mrolympia.com black/red/white palette. Locked
+  // to dark regardless of system preference; light tokens stay defined
+  // above for future opt-in via a settings toggle.
+  OlympiaColors get olympiaColors => OlympiaColors.dark;
 
   OlympiaText get olympiaText => OlympiaText(olympiaColors);
 }
