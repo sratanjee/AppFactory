@@ -37,7 +37,8 @@ enum AdaptiveIconName {
   pencil('pencil', CupertinoIcons.pencil),
   ellipsis('ellipsis', CupertinoIcons.ellipsis),
   play('play.fill', CupertinoIcons.play_fill),
-  pause('pause.fill', CupertinoIcons.pause_fill);
+  pause('pause.fill', CupertinoIcons.pause_fill),
+  bag('bag', CupertinoIcons.bag);
 
   AdaptiveIconName(this.sfSymbol, this.cupertinoFallback);
   final String sfSymbol;
