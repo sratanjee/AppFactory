@@ -11,6 +11,7 @@ import 'package:olympia_weekend/features/directions.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/venue_map.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
+import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
 
@@ -35,9 +36,14 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
         titleDisplay: TitleDisplay.none,
         body: SafeArea(
           bottom: false,
-          child: venuesAsync.when(
-            loading: () => const Center(child: AdaptiveLoading()),
+          child: OlympiaAsyncBody(
+            child: venuesAsync.when(
+            loading: () => const Center(
+              key: ValueKey('loading'),
+              child: AdaptiveLoading(),
+            ),
             error: (_, __) => Padding(
+              key: const ValueKey('error'),
               padding: const EdgeInsets.all(24),
               child: Text(
                 AppStrings.venuesMapFallback,
@@ -55,6 +61,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                 });
               }
               return ListView(
+                key: const ValueKey('data'),
                 padding: EdgeInsets.zero,
                 children: [
                   Padding(
@@ -111,6 +118,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                 ],
               );
             },
+          ),
           ),
         ),
       ),

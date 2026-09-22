@@ -8,6 +8,7 @@ import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
+import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/filter_chip.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
@@ -43,28 +44,37 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
         titleDisplay: TitleDisplay.none,
         body: SafeArea(
           bottom: false,
-          child: athletesAsync.when(
-            loading: () => const Center(child: AdaptiveLoading()),
-            error: (_, __) => Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text(
-                AppStrings.errorLiveRefresh,
-                style: context.olympiaText.row.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: colors.textMuted,
+          child: OlympiaAsyncBody(
+            child: athletesAsync.when(
+              loading: () => const Center(
+                key: ValueKey('loading'),
+                child: AdaptiveLoading(),
+              ),
+              error: (_, __) => Padding(
+                key: const ValueKey('error'),
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  AppStrings.errorLiveRefresh,
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colors.textMuted,
+                  ),
                 ),
               ),
+              data: (payload) {
+                final divisionId = _divisionId ?? payload.divisions.first.id;
+                if (!_tracked) {
+                  _tracked = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ref.read(mixpanelProvider).viewAthletes(divisionId);
+                  });
+                }
+                return KeyedSubtree(
+                  key: const ValueKey('data'),
+                  child: _buildBody(payload, divisionId, eventsById),
+                );
+              },
             ),
-            data: (payload) {
-              final divisionId = _divisionId ?? payload.divisions.first.id;
-              if (!_tracked) {
-                _tracked = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ref.read(mixpanelProvider).viewAthletes(divisionId);
-                });
-              }
-              return _buildBody(payload, divisionId, eventsById);
-            },
           ),
         ),
       ),

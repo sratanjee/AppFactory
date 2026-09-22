@@ -12,6 +12,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/access_tag.dart';
+import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
@@ -42,9 +43,14 @@ class _NowScreenState extends ConsumerState<NowScreen> {
         titleDisplay: TitleDisplay.none,
         body: SafeArea(
           bottom: false,
-          child: scheduleAsync.when(
-            loading: () => _padded(child: const AdaptiveLoading()),
+          child: OlympiaAsyncBody(
+            child: scheduleAsync.when(
+            loading: () => _padded(
+              key: const ValueKey('loading'),
+              child: const AdaptiveLoading(),
+            ),
             error: (_, __) => _padded(
+              key: const ValueKey('error'),
               child: AdaptiveError(
                 message: AppStrings.errorLiveRefresh,
                 onRetry: () => ref.refresh(scheduleProvider),
@@ -73,17 +79,21 @@ class _NowScreenState extends ConsumerState<NowScreen> {
                 });
               }
 
-              return _buildBody(
-                context: context,
-                colors: colors,
-                now: now,
-                selectedDate: selectedDate,
-                days: days,
-                events: events,
-                state: state,
-                venuesById: venuesById,
+              return KeyedSubtree(
+                key: const ValueKey('data'),
+                child: _buildBody(
+                  context: context,
+                  colors: colors,
+                  now: now,
+                  selectedDate: selectedDate,
+                  days: days,
+                  events: events,
+                  state: state,
+                  venuesById: venuesById,
+                ),
               );
             },
+          ),
           ),
         ),
       ),
@@ -446,7 +456,8 @@ String _emptyCopy(WeekendPhase phase) {
   }
 }
 
-Widget _padded({required Widget child}) => Padding(
+Widget _padded({required Widget child, Key? key}) => Padding(
+      key: key,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: child,
     );

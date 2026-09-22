@@ -10,6 +10,7 @@ import 'package:olympia_weekend/features/now_state.dart';
 import 'package:olympia_weekend/features/vegas_time.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
+import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
@@ -42,9 +43,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         titleDisplay: TitleDisplay.none,
         body: SafeArea(
           bottom: false,
-          child: scheduleAsync.when(
-            loading: () => const Center(child: AdaptiveLoading()),
+          child: OlympiaAsyncBody(
+            child: scheduleAsync.when(
+            loading: () => const Center(
+              key: ValueKey('loading'),
+              child: AdaptiveLoading(),
+            ),
             error: (_, __) => Center(
+              key: const ValueKey('error'),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
@@ -89,6 +95,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               final afternoon = filtered.where((e) => !_isMorning(e)).toList();
 
               return ListView(
+                key: const ValueKey('data'),
                 padding: EdgeInsets.zero,
                 children: [
                   Padding(
@@ -168,6 +175,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 ],
               );
             },
+          ),
           ),
         ),
       ),
