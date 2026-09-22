@@ -111,8 +111,8 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             activeColor: const Color(0xFFe2231a),
             activeTextColor: const Color(0xFFFFFFFF),
             onSelected: (d) {
-              ref.read(mixpanelProvider).dayChange(selectedDate, d);
               if (d == selectedDate) return;
+              ref.read(mixpanelProvider).dayChange(selectedDate, d);
               // Jump to schedule for other days.
               context.goNamed(Routes.schedule);
             },

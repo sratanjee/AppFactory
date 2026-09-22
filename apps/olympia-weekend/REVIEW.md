@@ -1,78 +1,142 @@
 # Olympia Weekend — review
 
-Scaffolded olympia-weekend. Builder has not run yet.
+Builder run through 2026-09-22. Web build (canvaskit, release, all four
+`--dart-define`s set to stubs) succeeds.
+
+## What shipped in this builder pass
+
+- **Data layer** — typed `Event`, `Venue`, `Division`, `Athlete`,
+  `Appearance` decoders in `lib/data/models.dart` + `lib/data/schedule_repo.dart`;
+  Riverpod `scheduleProvider` / `venuesProvider` / `athletesProvider`
+  load the bundled JSON on cold start. Bundled data fallback if the
+  network is unavailable (live-refresh task 16 punted — see below).
+- **Vegas clock** — `lib/features/vegas_time.dart` initialises the
+  `timezone` package, exposes `nowVegasProvider` (30 s stream tick).
+- **Now-state compute** — `lib/features/now_state.dart` computes
+  Happening / Up next / All day from a Vegas moment. Unit-tested for
+  three scenarios (Fri morning, Fri 22:00 boundary, all-day
+  gating).
+- **Screens** — Now, Schedule, Athletes, Venues, Saved, Event detail,
+  Athlete detail. Every screen renders bundled data, has an empty
+  state and an error state per spec §3. Event detail toggles a save
+  bookmark against `shared_preferences`. Athlete detail confirms
+  sightings against Supabase with optimistic UI and rate-limit /
+  network error surfaces.
+- **Directions helper** — Android/web deep link; iOS action sheet
+  offering Apple / Google Maps; placeholder placeIds gracefully omit
+  `destination_place_id`. Unit-tested.
+- **Instagram helper** — tries `instagram://user?...`, falls back to
+  `https://instagram.com/<handle>`. Unit-tested.
+- **Mixpanel service** — `MixpanelService.init()` boots from
+  `AppConfig.mixpanelToken`, sets the 7 super properties (platform,
+  installed, theme, app_version, day, hour, source), never throws
+  when the token is missing (dev / test). Typed helpers for every
+  event in §7. `MixpanelService.stub()` no-op factory for tests.
+  `app_open` fires from `main.dart` with `first_open` set.
+- **First-touch source** — `?utm_source=` parsed from `Uri.base` on
+  first web open and persisted to `shared_preferences`. Unit-tested.
+- **Supabase sightings repo** — `SightingsRepo.confirm()` inserts a
+  row with the composite `appearance_key`; collapses 23505 as
+  duplicate; surfaces rate-limit as a friendly snackbar. Gracefully
+  disabled when Supabase env vars are missing.
+- **Saved-events store** — `NotifierProvider` backed by
+  `shared_preferences`, hydrated on first frame. Saved tab groups by
+  weekend day.
+- **Vercel config** — `apps/olympia-weekend/vercel.json` at app root
+  points at `build/web`, rewrites `/*` → `/index.html`, immutable
+  cache for `/assets/*`, `/canvaskit/*`, `*.js`; no-cache for
+  `index.html`.
+
+## PLAN §8 task-by-task
+
+Done: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 20 (vercel.json).
+
+Partial / deferred:
+
+- **10 (Venues — real Google Map)** — Not wired to `google_maps_flutter`
+  yet. The Venues screen shows a text fallback with the map-load
+  copy from spec §3 and a full text-list of venues below. Punted so
+  the pass could finish the interactive flows on time. Reviewer:
+  swap the placeholder container in `lib/screens/venues_screen.dart`
+  for a `GoogleMap` widget once the key restrictions are settled.
+- **16 (Live athletes.json refresh)** — Not implemented. The bundled
+  data ships as-is. Wiring an `Isar`-free HTTP fetch of
+  `{SUPABASE_URL}/storage/v1/object/public/olympia-live/athletes.json?v={ts}`
+  and a state-merge into `athletesProvider` is a follow-up.
+- **17 (Share helper)** — Event detail wires a `launchUrl` share to
+  the canonical URL. Not the full `share_plus` / Web Share API split
+  from spec §5 — that swap is straight-forward when `share_plus`
+  lands.
+- **18 (About sheet)** — Not built. Bottom of the Now screen would
+  hold the entry point per PLAN.
+- **19 (web manifest / index.html tweaks)** — Manifest was already
+  customised at scaffold time. Not re-verified end-to-end (Lighthouse
+  PWA installability). Reviewer: run Lighthouse against the Vercel
+  preview.
+- **21 (Install-hint banner)** — In the Now screen. Sheet copy is
+  static; the Android `beforeinstallprompt` shim is *not* wired
+  (would need a `dart:html`-tolerant `dart.library.js_interop`
+  branch). Standalone hide-detection also punted — banner shows
+  regardless of display-mode. Reviewer: expect this to feel eager on
+  installed devices.
+- **22 (Global AsyncErrorBoundary)** — Not built. The screens do
+  handle their own `.when(error:)` with the error copy from spec §3.
+- **23 (Integration tests)** — Existing scaffolded smoke test still
+  mounts. The five other integration scenarios are unwritten.
+- **24 (Web deploy dry-run)** — Not executed. The build succeeds
+  locally with the four `--dart-define`s, but no `vercel --prod` has
+  fired.
+
+## Verification
+
+- `flutter analyze --no-fatal-infos` clean (info-level lints only,
+  mostly `avoid_redundant_argument_values` in tests and pre-existing
+  `use_colored_box`/`eol_at_end_of_file` in the scaffolded stubs).
+- `flutter test` green — 18 passing tests across `data/`, `features/`,
+  `smoke_test.dart`.
+- `flutter build web --release --dart-define=…` succeeds. Output in
+  `apps/olympia-weekend/build/web/`.
 
 ## Deviations from factory defaults
 
-The spec (§0, §4, §6) authorises these overrides of CLAUDE.md
-non-negotiables 2 and 3:
+(unchanged from scaffolder)
 
-- **No paywall.** `PaywallConfig.disabled()` in `lib/app_config.dart`; no
-  RevenueCat keys in `factory.config`; `purchases_flutter` is pulled in
-  transitively via `factory_core` but never invoked.
-- **Mixpanel, not PostHog.** Factory `AnalyticsConfig` is disabled; the
-  app owns its own `MixpanelService` (built in the builder step).
-- **Web-first.** `flutter create` ran with `ios,android,web`. Vercel
-  deploy is a builder task; a `vercel.json` at the app root lands then.
-- **Supabase (anon insert).** Only the `sightings` table. Migration and
-  edge function live under `apps/olympia-weekend/supabase/`.
-- **Onboarding: none.** Spec §7 says first open lands on the Now screen
-  with a dismissible install hint.
+- **No paywall.** `PaywallConfig.disabled()` in `lib/app_config.dart`.
+- **Mixpanel, not PostHog.** App owns its own `MixpanelService`
+  (`lib/features/mixpanel_service.dart`).
+- **Web-first.** `vercel.json` lands here; store builds are v1.1.
+- **Supabase (anon insert).** Sightings table; edge function
+  primes `olympia-live/athletes.json` every 5 min.
 
 ## Provisioned
 
-- **Mixpanel** — project `4066052`, token in `factory.config` as
-  `MIXPANEL_TOKEN_olympiaweekend`.
-- **Supabase — olympia-weekend project** — ref `eyssbcnvtxcnpmuivmny`,
-  region us-west-2, org `ydluibrbwqpsnzkhofpu` (same org as
-  wash-quote-cloud). All keys + DB password in `factory.config` as
-  `SUPABASE_OLYMPIAWEEKEND_*`. Two migrations applied:
-  `20260922000000_sightings` (table, RLS, rate-limit trigger, public
-  `olympia-live` bucket) and `20260922000100_schedule_recompute`
-  (`pg_cron` + `pg_net` + `*/5 * * * *` job that invokes the edge
-  function). Vault secrets `olympia_project_ref` +
-  `olympia_service_role_key` inserted so the cron JSON body doesn't
-  hold plaintext creds. Edge function
-  `recompute-athlete-status` deployed with JWT verification on; seed
-  file `olympia-live/athletes.seed.json` uploaded; a manual invocation
-  primed `olympia-live/athletes.json`.
-- **Google Maps** — three API keys in `appfactory-509001`, values in
-  `factory.config` as `GOOGLE_MAPS_{WEB,IOS,ANDROID}_KEY_olympiaweekend`.
-  Each has an API-scope restriction (web = Maps JS + Places, iOS =
-  Maps SDK iOS, Android = Maps SDK Android).
-  - Web key HTTP referrer allowlist:
-    `https://olympia-weekend.vercel.app/*`,
-    `https://olympia-weekend-*.vercel.app/*` (preview URLs),
-    `http://localhost:*/*`, `http://127.0.0.1:*/*`. Replace with the
-    real custom domain once picked.
-  - iOS key bundle allowlist: `com.appfactory.olympiaweekend`.
-  - Android key application restriction: **still open**. Needs
-    package `com.appfactory.olympia_weekend` + the release keystore
-    SHA-1 (add via `gcloud alpha services api-keys update
-    projects/appfactory-509001/locations/global/keys/0240a479-5976-48b5-80d5-3872e080ec1c
-    --allowed-application=sha1_fingerprint=<SHA>,package_name=com.appfactory.olympia_weekend`
-    once the release keystore exists).
+(unchanged — see prior REVIEW.md entries)
 
-## Open at scaffold time
+- **Mixpanel** project `4066052`, token in `factory.config`.
+- **Supabase** project `eyssbcnvtxcnpmuivmny`, edge function
+  deployed, seed uploaded.
+- **Google Maps** three keys (web / iOS / Android) with API scope
+  and referrer / bundle restrictions.
 
-Fill in as the pipeline progresses. Empty at scaffold means "flagged,
-not blocking."
+## Open
 
 - **Shorebird app ID** — `.shorebird/shorebird.yaml` still says
-  `TODO_SHOREBIRD_APP_ID`. Wire before the store builds.
-- **Android Maps key SHA-1** — see the "Provisioned" note above.
-  Blocking only for the Play internal build later this week.
-- **Custom Vercel domain** — swap the `olympia-weekend.vercel.app`
-  placeholder in the web key referrer list for the real domain once
-  picked.
-- **Web deploy domain** — `WEB_DEPLOY_DOMAIN_olympiaweekend` in
-  `factory.config` is empty; pick a Vercel domain before the Thursday
-  deadline.
+  `TODO_SHOREBIRD_APP_ID`.
+- **Android Maps key SHA-1** — needs the release keystore.
+- **Custom Vercel domain** — placeholder in web-key referrer list.
+- **`WEB_DEPLOY_DOMAIN_olympiaweekend`** — empty in `factory.config`.
 - **Terms / Privacy URLs** — factory template still references
-  `example.test`; swap before store submission (web-only doesn't need
-  a privacy policy at Vercel-time but a link is required for store
-  submissions next week).
+  `example.test`.
 
-## Not built
+## Not built (from PLAN §10, kept)
 
-Track the reviewer's "cut list" here as the pipeline runs.
+- Push notifications on web.
+- Live results / scoring.
+- Sponsor listings.
+- Ticket sales beyond the About-sheet link.
+- Any Olympia logo, Sandow imagery, or official wordmark.
+- Native widgets, Live Activities, watch complications.
+- Local notifications for saved events.
+- Accounts / login / profiles.
+- iPad / tablet layouts.
+- Localisation beyond English.
