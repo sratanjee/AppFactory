@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/widgets/access_tag.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 /// One row inside an event list card. Shows the time column (or a
 /// blank when the row is all-day), the title, the venue + access tag,
@@ -29,67 +30,66 @@ class EventRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
-    return Semantics(
-      button: true,
-      label: '${event.title}, $venueLabel',
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (timeLabel.isNotEmpty)
-                SizedBox(
-                  width: 52,
-                  child: Text(
-                    timeLabel,
-                    style: context.olympiaText.timeCell.copyWith(
-                      fontSize: 15,
-                    ),
+    return OlympiaPressable(
+      onTap: onTap,
+      semanticsLabel: '${event.title}, $venueLabel',
+      // Row content already has 14px vertical padding, and each row
+      // clocks in >= 60px tall thanks to the two-line body — well
+      // above the 48px min. No extra min-size needed.
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (timeLabel.isNotEmpty)
+              SizedBox(
+                width: 52,
+                child: Text(
+                  timeLabel,
+                  style: context.olympiaText.timeCell.copyWith(
+                    fontSize: 15,
                   ),
-                ),
-              if (timeLabel.isNotEmpty) const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.title,
-                      style: context.olympiaText.row,
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            venueLabel,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.olympiaText.caption,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        AccessTag(access: event.access),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-              if (trailing != null) trailing!,
-              if (showChevron)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CustomPaint(
-                      painter: ChevronPainter(color: colors.chevron),
-                    ),
+            if (timeLabel.isNotEmpty) const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    style: context.olympiaText.row,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          venueLabel,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.olympiaText.caption,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      AccessTag(access: event.access),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null) trailing!,
+            if (showChevron)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CustomPaint(
+                    painter: ChevronPainter(color: colors.chevron),
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );

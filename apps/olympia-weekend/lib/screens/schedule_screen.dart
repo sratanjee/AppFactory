@@ -13,6 +13,7 @@ import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
+import 'package:olympia_weekend/widgets/filter_chip.dart';
 
 enum ScheduleFilter { all, free, ticketed, palms }
 
@@ -112,21 +113,23 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
+                  SizedBox(
+                    height: 48,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       children: [
                         _filterChip(ScheduleFilter.all,
-                            AppStrings.scheduleFilterAll, colors),
+                            AppStrings.scheduleFilterAll),
                         const SizedBox(width: 8),
                         _filterChip(ScheduleFilter.free,
-                            AppStrings.scheduleFilterFree, colors),
+                            AppStrings.scheduleFilterFree),
                         const SizedBox(width: 8),
                         _filterChip(ScheduleFilter.ticketed,
-                            AppStrings.scheduleFilterTicket, colors),
+                            AppStrings.scheduleFilterTicket),
                         const SizedBox(width: 8),
                         _filterChip(ScheduleFilter.palms,
-                            AppStrings.scheduleFilterPalms, colors),
+                            AppStrings.scheduleFilterPalms),
                       ],
                     ),
                   ),
@@ -171,30 +174,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     );
   }
 
-  Widget _filterChip(
-      ScheduleFilter which, String label, OlympiaColors colors) {
-    final active = _filter == which;
-    return GestureDetector(
+  Widget _filterChip(ScheduleFilter which, String label) {
+    return OlympiaFilterChip(
+      label: label,
+      active: _filter == which,
       onTap: () {
         setState(() => _filter = which);
         ref.read(mixpanelProvider).filterChange(which.name);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: active ? colors.pillActiveBg : colors.surface,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: colors.surfaceBorder),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-            color: active ? colors.pillActiveText : colors.text,
-          ),
-        ),
-      ),
     );
   }
 

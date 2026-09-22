@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 /// Wed…Sun day pills. `dates` maps 1-to-1 to [AppStrings.dayShort].
 class DayPills extends StatelessWidget {
@@ -66,28 +67,28 @@ class _DayPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: accessLabel,
-      selected: active,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          decoration: BoxDecoration(
-            color: active ? activeColor : null,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: context.olympiaText.pill(active: active).copyWith(
-                  color: active
-                      ? (activeTextColor ?? colors.pillActiveText)
-                      : colors.textMuted,
-                ),
-          ),
+    return OlympiaPressable(
+      onTap: onTap,
+      semanticsLabel: accessLabel,
+      semanticsSelected: active,
+      // 44pt tall — iOS HIG minimum. 12px vertical padding on top of a
+      // 17px line-height gets us to ~41px which was under the bar; now
+      // 14px lands the pill at ~45px. Also gives the tap a real target
+      // instead of a tight hairline row.
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: active ? activeColor : null,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: context.olympiaText.pill(active: active).copyWith(
+                color: active
+                    ? (activeTextColor ?? colors.pillActiveText)
+                    : colors.textMuted,
+              ),
         ),
       ),
     );

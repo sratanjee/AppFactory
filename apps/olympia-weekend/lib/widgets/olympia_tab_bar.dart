@@ -1,6 +1,7 @@
 import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 /// Bottom tab bar matching `design/olympia-weekend/*-main.html` — 84 px
 /// tall, five outline icons, active state uses `colors.text` (never the
@@ -30,10 +31,10 @@ class OlympiaTabBar extends StatelessWidget {
         child: SizedBox(
           height: 74,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (var i = 0; i < destinations.length; i++)
                   Expanded(
@@ -79,25 +80,34 @@ class _OlympiaTabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
     final tint = active ? colors.text : colors.textFaint;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    // 48px min tap target — HIG says 44pt on iOS, Material says 48dp on
+    // Android. The tab bar itself is 74px tall which already clears both,
+    // but width-wise each item is only ~78px so any dip in padding gets
+    // eaten by the icon+label. Force the min explicitly.
+    return OlympiaPressable(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AdaptiveIcon(
-            active ? destination.selectedIcon : destination.icon,
-            size: 22,
-            color: tint,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            destination.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: context.olympiaText.tab(active: active).copyWith(color: tint),
-          ),
-        ],
+      pressedOpacity: 0.5,
+      minSize: const Size(48, 48),
+      semanticsLabel: destination.label,
+      semanticsSelected: active,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AdaptiveIcon(
+              active ? destination.selectedIcon : destination.icon,
+              size: 22,
+              color: tint,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              destination.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.olympiaText.tab(active: active).copyWith(color: tint),
+            ),
+          ],
+        ),
       ),
     );
   }

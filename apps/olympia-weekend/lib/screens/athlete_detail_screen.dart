@@ -11,6 +11,8 @@ import 'package:olympia_weekend/features/sightings_repo.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/filter_chip.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 class AthleteDetailScreen extends ConsumerStatefulWidget {
   const AthleteDetailScreen({required this.athleteId, super.key});
@@ -90,19 +92,27 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-          child: GestureDetector(
-            onTap: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.goNamed(Routes.athletes);
-              }
-            },
-            child: Text(
-              '‹ ${AppStrings.athletesTitle}',
-              style: context.olympiaText.row.copyWith(
-                fontWeight: FontWeight.w400,
-                color: colors.textMuted,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: OlympiaPressable(
+              onTap: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(Routes.athletes);
+                }
+              },
+              semanticsLabel: 'Back to athletes',
+              minSize: const Size(48, 44),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Text(
+                  '‹ ${AppStrings.athletesTitle}',
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colors.textMuted,
+                  ),
+                ),
               ),
             ),
           ),
@@ -130,14 +140,15 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: OlympiaCard(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 18, vertical: 14),
-              child: GestureDetector(
-                onTap: () {
-                  ref.read(mixpanelProvider).openInstagram(athlete.id);
-                  openInstagram(athlete.instagram!);
-                },
+            child: OlympiaPressable(
+              onTap: () {
+                ref.read(mixpanelProvider).openInstagram(athlete.id);
+                openInstagram(athlete.instagram!);
+              },
+              semanticsLabel: 'Open @${athlete.instagram} on Instagram',
+              child: OlympiaCard(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 18, vertical: 16),
                 child: Row(
                   children: [
                     Text(
@@ -184,12 +195,20 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: GestureDetector(
-            onTap: () => _openReportSheet(athlete),
-            child: Text(
-              AppStrings.athleteReportBooth,
-              style: context.olympiaText.row.copyWith(
-                color: const Color(0xFFe2231a),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: OlympiaPressable(
+              onTap: () => _openReportSheet(athlete),
+              semanticsLabel: AppStrings.athleteReportBooth,
+              minSize: const Size(0, 44),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                child: Text(
+                  AppStrings.athleteReportBooth,
+                  style: context.olympiaText.row.copyWith(
+                    color: const Color(0xFFe2231a),
+                  ),
+                ),
               ),
             ),
           ),
@@ -390,7 +409,7 @@ class _ReportSheetState extends State<_ReportSheet> {
                 runSpacing: 8,
                 children: [
                   for (final d in _days)
-                    _PillChoice(
+                    OlympiaFilterChip(
                       label: d.$2,
                       active: _date == d.$1,
                       onTap: () => setState(() => _date = d.$1),
@@ -410,7 +429,7 @@ class _ReportSheetState extends State<_ReportSheet> {
                 runSpacing: 8,
                 children: [
                   for (final h in const [10, 11, 12, 13, 14, 15, 16, 17, 18])
-                    _PillChoice(
+                    OlympiaFilterChip(
                       label: _shortHour(h),
                       active: _hour == h,
                       onTap: () => setState(() => _hour = h),
@@ -431,41 +450,6 @@ class _ReportSheetState extends State<_ReportSheet> {
                 },
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PillChoice extends StatelessWidget {
-  const _PillChoice({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.olympiaColors;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: active ? colors.pillActiveBg : colors.surface,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: colors.surfaceBorder),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-            color: active ? colors.pillActiveText : colors.text,
           ),
         ),
       ),

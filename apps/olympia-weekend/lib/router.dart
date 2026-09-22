@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/screens/app_shell.dart';
@@ -31,14 +32,18 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/e/:id',
         name: Routes.event,
-        builder: (_, state) =>
-            EventDetailScreen(eventId: state.pathParameters['id']!),
+        pageBuilder: (_, state) => _slidePage(
+          state,
+          EventDetailScreen(eventId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/a/:id',
         name: Routes.athlete,
-        builder: (_, state) =>
-            AthleteDetailScreen(athleteId: state.pathParameters['id']!),
+        pageBuilder: (_, state) => _slidePage(
+          state,
+          AthleteDetailScreen(athleteId: state.pathParameters['id']!),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
@@ -91,5 +96,30 @@ GoRouter buildRouter() {
         ],
       ),
     ],
+  );
+}
+
+/// Consistent detail-push transition: slide-from-right with a fade,
+/// 260 ms `easeOutCubic` in / 220 ms `easeInCubic` out. iOS default on
+/// mobile, matched by our web build so tabs on desktop don't get the
+/// jarring Material fade that ships with MaterialPage on Chrome.
+CustomTransitionPage<T> _slidePage<T>(GoRouterState state, Widget child) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 260),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
+    transitionsBuilder: (context, animation, secondary, child) {
+      final slide = Tween<Offset>(
+        begin: const Offset(0.06, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      final fade =
+          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return FadeTransition(
+        opacity: fade,
+        child: SlideTransition(position: slide, child: child),
+      );
+    },
   );
 }

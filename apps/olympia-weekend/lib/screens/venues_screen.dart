@@ -12,6 +12,7 @@ import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/venue_map.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 class VenuesScreen extends ConsumerStatefulWidget {
   const VenuesScreen({super.key});
@@ -186,9 +187,9 @@ class _VenueRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return OlympiaPressable(
       onTap: onTap,
+      semanticsLabel: 'Open ${venue.name}, ${venue.role}',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Column(

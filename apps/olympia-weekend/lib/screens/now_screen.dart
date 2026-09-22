@@ -15,6 +15,7 @@ import 'package:olympia_weekend/widgets/access_tag.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 class NowScreen extends ConsumerStatefulWidget {
   const NowScreen({super.key});
@@ -152,12 +153,17 @@ class _NowScreenState extends ConsumerState<NowScreen> {
                   style: context.olympiaText.section,
                 ),
               ),
-              GestureDetector(
+              OlympiaPressable(
                 onTap: () => context.goNamed(Routes.schedule),
-                child: Text(
-                  AppStrings.nowFullDay,
-                  style: context.olympiaText
-                      .link(accent: const Color(0xFFe2231a)),
+                semanticsLabel: AppStrings.nowFullDay,
+                minSize: const Size(0, 44),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    AppStrings.nowFullDay,
+                    style: context.olympiaText
+                        .link(accent: const Color(0xFFe2231a)),
+                  ),
                 ),
               ),
             ],
@@ -255,13 +261,18 @@ class _NowScreenState extends ConsumerState<NowScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            GestureDetector(
+            OlympiaPressable(
               onTap: () => _showInstallSheet(context),
-              child: Text(
-                AppStrings.nowInstallHintCta,
-                style: context.olympiaText.caption.copyWith(
-                  color: const Color(0xFFe2231a),
-                  fontWeight: FontWeight.w600,
+              semanticsLabel: AppStrings.nowInstallHintCta,
+              minSize: const Size(0, 44),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                child: Text(
+                  AppStrings.nowInstallHintCta,
+                  style: context.olympiaText.caption.copyWith(
+                    color: const Color(0xFFe2231a),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -353,10 +364,12 @@ class _HappeningNowCard extends StatelessWidget {
     final event = resolved.event;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-      child: GestureDetector(
+      child: OlympiaPressable(
         onTap: () {
           context.goNamed(Routes.event, pathParameters: {'id': event.id});
         },
+        semanticsLabel: 'Happening now: ${event.title}',
+        pressedOpacity: 0.7,
         child: OlympiaCard(
           border: Border.all(color: const Color(0xFFe2231a)),
           child: Column(

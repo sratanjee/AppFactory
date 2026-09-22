@@ -9,6 +9,8 @@ import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/filter_chip.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 
 class AthletesScreen extends ConsumerStatefulWidget {
   const AthletesScreen({super.key});
@@ -97,7 +99,7 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 40,
+          height: 48,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -105,7 +107,7 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
               for (final d in payload.divisions)
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: _DivisionChip(
+                  child: OlympiaFilterChip(
                     label: d.name,
                     active: d.id == divisionId,
                     onTap: () {
@@ -227,43 +229,6 @@ class _DivisionHeader extends StatelessWidget {
   }
 }
 
-class _DivisionChip extends StatelessWidget {
-  const _DivisionChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.olympiaColors;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: active ? colors.pillActiveBg : colors.surface,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: colors.surfaceBorder),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-            color: active ? colors.pillActiveText : colors.text,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _AthleteRow extends StatelessWidget {
   const _AthleteRow({required this.athlete, required this.onTap});
   final Athlete athlete;
@@ -273,9 +238,9 @@ class _AthleteRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
     final tagline = _taglineWithCountry(athlete);
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return OlympiaPressable(
       onTap: onTap,
+      semanticsLabel: '${athlete.name}, ${tagline.isEmpty ? athlete.divisionId : tagline}',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(

@@ -11,6 +11,7 @@ import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/access_tag.dart';
 import 'package:olympia_weekend/widgets/card.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
 import 'package:olympia_weekend/features/directions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,7 +55,7 @@ class EventDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
             child: Row(
               children: [
-                GestureDetector(
+                OlympiaPressable(
                   onTap: () {
                     if (context.canPop()) {
                       context.pop();
@@ -62,16 +63,21 @@ class EventDetailScreen extends ConsumerWidget {
                       context.goNamed(Routes.now);
                     }
                   },
-                  child: Text(
-                    '‹ ${AppStrings.eventBackToNow}',
-                    style: context.olympiaText.row.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: colors.textMuted,
+                  semanticsLabel: 'Back',
+                  minSize: const Size(48, 44),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    child: Text(
+                      '‹ ${AppStrings.eventBackToNow}',
+                      style: context.olympiaText.row.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: colors.textMuted,
+                      ),
                     ),
                   ),
                 ),
                 const Spacer(),
-                GestureDetector(
+                OlympiaPressable(
                   onTap: () async {
                     await ref.read(savedEventsProvider.notifier).toggle(eventId);
                     if (isSaved) {
@@ -80,9 +86,12 @@ class EventDetailScreen extends ConsumerWidget {
                       ref.read(mixpanelProvider).saveEvent(eventId);
                     }
                   },
+                  semanticsLabel:
+                      isSaved ? AppStrings.eventUnsave : AppStrings.eventSave,
+                  semanticsSelected: isSaved,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                        horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSaved
                           ? const Color(0xFFe2231a)
