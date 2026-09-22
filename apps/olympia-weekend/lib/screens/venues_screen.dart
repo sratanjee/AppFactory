@@ -1,11 +1,15 @@
 import 'package:factory_core/adaptive/adaptive.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/features/directions.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
+import 'package:olympia_weekend/features/venue_map.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 
@@ -70,23 +74,11 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Map placeholder / fallback. Real Google Maps widget
-                  // ships in a follow-up (task 10 of PLAN §8) — the text
-                  // list below already gives the user directions.
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Container(
-                      height: 160,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: colors.surfaceBorder),
-                      ),
-                      child: Text(
-                        AppStrings.venuesMapFallback,
-                        style: TextStyle(color: colors.textFaint),
-                      ),
+                    child: _VenueMapPanel(
+                      venues: venues,
+                      onPinTap: _open,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -137,6 +129,53 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
       onTracked: (mapsApp) => ref
           .read(mixpanelProvider)
           .directionsTap(venueId: venue.id, mapsApp: mapsApp),
+    );
+  }
+}
+
+/// Rounded map surface with either the real Google Map or a text
+/// fallback when the runtime key isn't available (dev / preview
+/// builds without `--dart-define=GOOGLE_MAPS_WEB_KEY`).
+class _VenueMapPanel extends StatelessWidget {
+  const _VenueMapPanel({required this.venues, required this.onPinTap});
+
+  final List<Venue> venues;
+  final void Function(Venue venue) onPinTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    // On web the Embed API only fires when we have a key. On mobile,
+    // google_maps_flutter reads the key from Info.plist / Manifest,
+    // so we treat the platform-appropriate build-time key as the
+    // enable flag.
+    final key = kIsWeb
+        ? AppConfig.googleMapsWebKey
+        : (defaultTargetPlatform == TargetPlatform.iOS
+            ? AppConfig.googleMapsIosKey
+            : AppConfig.googleMapsAndroidKey);
+    final hasKey = key.isNotEmpty && key != 'stub';
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        height: 200,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: colors.surface,
+          border: Border.all(color: colors.surfaceBorder),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: hasKey
+            ? buildVenueMap(
+                venues: venues,
+                apiKey: key,
+                onPinTap: onPinTap,
+              )
+            : Text(
+                AppStrings.venuesMapFallback,
+                style: TextStyle(color: colors.textFaint),
+              ),
+      ),
     );
   }
 }
