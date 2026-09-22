@@ -1,4 +1,4 @@
-import 'package:factory_core/factory_core.dart';
+import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatelessWidget {

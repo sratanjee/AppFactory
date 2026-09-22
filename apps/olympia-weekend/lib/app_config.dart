@@ -1,4 +1,5 @@
-import 'package:factory_core/factory_core.dart';
+import 'package:factory_core/analytics/analytics_config.dart';
+import 'package:factory_core/paywall/paywall_config.dart';
 
 /// Static per-app config for Olympia Weekend.
 ///

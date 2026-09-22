@@ -1,4 +1,4 @@
-import 'package:factory_core/factory_core.dart';
+import 'package:factory_core/shorebird/shorebird.dart';
 import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/app.dart';
 
