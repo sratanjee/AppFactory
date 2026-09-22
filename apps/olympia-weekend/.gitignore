@@ -49,3 +49,7 @@ app.*.map.json
 
 # Supabase CLI transient state (created by `supabase link`).
 supabase/.temp/
+
+# Xcode 15+ Swift Package Manager transient caches.
+ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+ios/Runner.xcworkspace/xcshareddata/swiftpm/
