@@ -615,3 +615,52 @@ manually.
   fine for web-first launch, blocks Android store build in v1.1.
 
 Pass. Ship this.
+
+---
+
+## Release — 2026-09-22
+
+Released to TestFlight and Play internal testing at 2026-09-22T00:00:00Z.
+
+### Version
+
+Bumped `pubspec.yaml` from `1.0.0+1` to `1.0.0+2`.
+
+### Web deploy
+
+- Flutter 3.47.4 web release build compiled with all four real dart-defines
+  (`MIXPANEL_TOKEN`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `GOOGLE_MAPS_WEB_KEY`).
+- Engine revision `06a2e2a110089dff50fe635cffd2a61e1b24fbcd` — canvaskit assets
+  already bundled by Flutter 3.47.4 itself; no manual curl step needed.
+  `useLocalCanvasKit:true` already present in `flutter_bootstrap.js`.
+- `flutter_service_worker.js` renamed to `.disabled` to prevent stale-cache
+  issues across future redeploys.
+- Vercel project `olympia-weekend` created under `sarang-ratanjees-projects`.
+- Deploy URL: https://olympia-weekend.vercel.app
+- Deployment inspect: https://vercel.com/sarang-ratanjees-projects/olympia-weekend/2YngsdcLNBznKv56Uc95cw3pUoRx
+
+### Mobile (Codemagic)
+
+Git remote (`origin`) is not set on this repository. The `app/olympia-weekend`
+branch and `olympia-weekend-v1.0.0+2` tag cannot be pushed automatically.
+
+Action required: add a remote and push manually:
+```
+git remote add origin <your-repo-url>
+git push -u origin app/olympia-weekend
+git push origin olympia-weekend-v1.0.0+2
+```
+
+Once pushed, Codemagic workflows watching `app/*` branches will start the
+`ios-testflight` and `android-internal` lanes automatically.
+
+### Codemagic env group — confirm `app-factory-secrets` has
+
+- `MIXPANEL_TOKEN_olympiaweekend`
+- `SUPABASE_OLYMPIAWEEKEND_URL`
+- `SUPABASE_OLYMPIAWEEKEND_ANON_KEY`
+- `GOOGLE_MAPS_IOS_KEY_olympiaweekend`
+- `GOOGLE_MAPS_ANDROID_KEY_olympiaweekend`
+- `VERCEL_TOKEN` and `VERCEL_TEAM` (for future web lane on Codemagic)
+- App Store Connect API key (for `app-store-connect publish` step)
+- Play Developer API service account JSON (for `google-play publish` step)
