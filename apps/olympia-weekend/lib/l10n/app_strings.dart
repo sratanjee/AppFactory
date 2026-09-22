@@ -51,8 +51,14 @@ abstract final class AppStrings {
   // Event detail.
   static const String eventDoors = 'Doors';
   static const String eventVipEntry = 'VIP entry';
+  static const String eventHours = 'Hours';
   static const String eventVenue = 'Venue';
   static const String eventAccess = 'Access';
+  static const String eventPresentedBy = 'Presented by';
+  static const String eventEntry = 'Entry';
+  static const String eventEntryVip = 'VIP';
+  static const String eventEntryGeneral = 'General public';
+  static const String eventEstimate = 'est';
   static const String eventRunningOrder = 'Running order';
   static const String eventRunningOrderNote =
       'Order is confirmed. Times are estimates and update during the show.';

@@ -126,6 +126,34 @@ class EventDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if (event.presentedBy != null &&
+              event.presentedBy!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                '${AppStrings.eventPresentedBy} ${event.presentedBy}',
+                style: context.olympiaText.caption.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
+              ),
+            ),
+          ],
+          if (event.featuring != null && event.featuring!.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                event.featuring!,
+                style: context.olympiaText.caption.copyWith(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.italic,
+                  color: colors.textMuted,
+                ),
+              ),
+            ),
+          ],
           if (event.divisions.isNotEmpty) ...[
             const SizedBox(height: 6),
             Padding(
@@ -148,14 +176,8 @@ class EventDetailScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   _Fact(
-                      label:
-                          event.vipEntry != null && event.vipEntry!.isNotEmpty
-                              ? AppStrings.eventVipEntry
-                              : AppStrings.eventDoors,
-                      value: event.vipEntry ??
-                          event.doorsEstimate ??
-                          event.start ??
-                          '—'),
+                      label: _timeFactLabel(event),
+                      value: _timeFactValue(event)),
                   _FactDivider(color: colors.divider),
                   _Fact(
                       label: AppStrings.eventVenue,
@@ -166,6 +188,44 @@ class EventDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if ((event.vipEntry != null && event.vipEntry!.isNotEmpty) ||
+              (event.generalEntry != null &&
+                  event.generalEntry!.isNotEmpty)) ...[
+            const SizedBox(height: 24),
+            _sectionTitle(context, AppStrings.eventEntry),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: OlympiaCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (event.vipEntry != null &&
+                        event.vipEntry!.isNotEmpty)
+                      _EntryRow(
+                        label: AppStrings.eventEntryVip,
+                        time: event.vipEntry!,
+                      ),
+                    if (event.vipEntry != null &&
+                        event.vipEntry!.isNotEmpty &&
+                        event.generalEntry != null &&
+                        event.generalEntry!.isNotEmpty)
+                      Container(
+                        height: 1,
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        color: colors.divider,
+                      ),
+                    if (event.generalEntry != null &&
+                        event.generalEntry!.isNotEmpty)
+                      _EntryRow(
+                        label: AppStrings.eventEntryGeneral,
+                        time: event.generalEntry!,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
           if (event.runningOrder.isNotEmpty) ...[
             const SizedBox(height: 24),
             _sectionTitle(context, AppStrings.eventRunningOrder),
@@ -280,6 +340,39 @@ class EventDetailScreen extends ConsumerWidget {
         child: Text(label, style: context.olympiaText.section),
       );
 
+  /// Label for the first fact card. If the event has both a start and
+  /// an end we show "Hours" (open-window venues like the pop-up gym and
+  /// the Expo). Otherwise we show "VIP entry" when a VIP entry time is
+  /// present, or "Doors" as a fallback.
+  static String _timeFactLabel(Event event) {
+    if (event.start != null && event.end != null) {
+      return AppStrings.eventHours;
+    }
+    if (event.vipEntry != null && event.vipEntry!.isNotEmpty) {
+      return AppStrings.eventVipEntry;
+    }
+    return AppStrings.eventDoors;
+  }
+
+  /// Value for the first fact card. All-day rows get a "start–end"
+  /// range (with an "(est)" suffix when endEstimate is set). Point
+  /// events fall back to vipEntry, then doorsEstimate, then start.
+  static String _timeFactValue(Event event) {
+    if (event.start != null && event.end != null) {
+      final range = '${event.start}–${event.end}';
+      return event.endEstimate
+          ? '$range (${AppStrings.eventEstimate})'
+          : range;
+    }
+    if (event.vipEntry != null && event.vipEntry!.isNotEmpty) {
+      return event.vipEntry!;
+    }
+    if (event.doorsEstimate != null && event.doorsEstimate!.isNotEmpty) {
+      return '${event.doorsEstimate} (${AppStrings.eventEstimate})';
+    }
+    return event.start ?? '—';
+  }
+
   Widget _shell(BuildContext context, {required Widget child}) {
     final colors = context.olympiaColors;
     return ColoredBox(
@@ -359,6 +452,41 @@ class _FactAccess extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           AccessTag(access: access),
+        ],
+      ),
+    );
+  }
+}
+
+/// One line in the "Entry" section — "VIP · 11:30am".
+class _EntryRow extends StatelessWidget {
+  const _EntryRow({required this.label, required this.time});
+  final String label;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: context.olympiaText.row.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colors.text,
+              ),
+            ),
+          ),
+          Text(
+            time,
+            style: context.olympiaText.row.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colors.textMuted,
+            ),
+          ),
         ],
       ),
     );

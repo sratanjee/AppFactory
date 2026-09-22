@@ -30,9 +30,13 @@ class EventRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.olympiaColors;
+    final sponsor = event.presentedBy;
+    final semantics = sponsor != null && sponsor.isNotEmpty
+        ? '${event.title}, presented by $sponsor, $venueLabel'
+        : '${event.title}, $venueLabel';
     return OlympiaPressable(
       onTap: onTap,
-      semanticsLabel: '${event.title}, $venueLabel',
+      semanticsLabel: semantics,
       // Row content already has 14px vertical padding, and each row
       // clocks in >= 60px tall thanks to the two-line body — well
       // above the 48px min. No extra min-size needed.
