@@ -53,3 +53,6 @@ supabase/.temp/
 # Xcode 15+ Swift Package Manager transient caches.
 ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 ios/Runner.xcworkspace/xcshareddata/swiftpm/
+
+# Playwright screenshot output (tester run).
+screenshots/

@@ -192,6 +192,66 @@ platform deployment floors to match spec §1 ("iOS 17+", "Android 10+").
   Shorebird / Flutter tool-cache issue, not a native-config bug.
   Codemagic starts from a fresh install so this does not repro on CI.
 
+## Tester pass (2026-09-22)
+
+Tester ran 6 integration tests on iPhone 17 Pro simulator (UDID 37C37926-F0DA-47CB-8CAF-60456ED04A46). All 6 passed (Flow A, B-1, B-2, C, D, E). 2 bugs found (listed below).
+
+### Integration test files
+
+- `integration_test/smoke_test.dart` — cold-launch mounts app
+- `integration_test/app_flows_test.dart` — 6 flow tests (A through E):
+  - **Flow A**: cold open, Now screen renders with bundled data, 5 tab labels visible
+  - **Flow B-1**: save event from schedule → appears in Saved tab
+  - **Flow B-2**: save then unsave on event detail → button label toggles correctly
+  - **Flow C**: tap athlete (Derek Lunsford) → Instagram row hidden when handle is null
+  - **Flow D**: confirm sighting → checks optimistic "Confirmed" badge (skips gracefully when no appearances in bundled data)
+  - **Flow E**: filter chip on Schedule changes visible event list (Free filter hides ticketed events)
+- `integration_test/screenshot_test.dart` — screenshot capture via `IntegrationTestWidgetsFlutterBinding`
+
+### Screenshot matrix
+
+`apps/olympia-weekend/qa/` layout:
+
+```
+qa/
+  web-chrome/
+    light-100/{now,schedule,event,athletes,athlete,venues,saved}.png   — 7 screens
+    light-200/{...}   — 7 screens (same layout as light-100 — see Bug 2)
+    dark-100/{...}    — 7 screens
+    dark-200/{...}    — 7 screens
+  ios-sim/
+    iphone-17-pro/
+      light-100/{now,schedule,event,athletes,athlete,venues,saved}.png  — 7 screens
+      light-200/{...}
+      dark-100/{...}
+      dark-200/{...}
+    iphone-16e/
+      light-100/{...}
+      light-200/{...}
+      dark-100/{...}
+      dark-200/{...}
+```
+
+Total: 28 web-chrome + 56 iOS simulator = 84 screenshots.
+
+Platforms not attempted:
+- **Android emulator**: known local build failure — Shorebird engine hash 404 (`io.flutter:flutter_embedding_debug` hash mismatch against `download.flutter.io`). Not a code bug; does not repro on Codemagic CI. Documented per task brief.
+- **iPad**: not in `tools/devices.json` for this project.
+
+### Bugs for builder
+
+**Bug 1 — Text scale 200% not visible in web-chrome or iOS screenshots**
+
+`integration_test/screenshot_test.dart` wraps the app with a `MediaQuery` text scaler set to `TextScaler.linear(2.0)` when `TEXT_SCALE=2.0` is passed via dart-define. However `OlympiaWeekendApp` creates its own `MediaQuery` through `AdaptiveApp`, which overwrites the injected scaler before any screen renders. Result: `light-200` and `dark-200` screenshot directories are pixel-identical to their `100` counterparts.
+
+Fix required in `lib/`: expose a `textScaleOverride` parameter on `OlympiaWeekendApp` (or on `AdaptiveApp`) and thread the `TEXT_SCALE` dart-define through. Tester cannot fix this without touching `lib/`.
+
+**Bug 2 — Web screenshots: athlete/venues/saved tab navigation unreliable via coordinate tapping**
+
+Flutter web renders into a shadow DOM inside `flt-glass-pane`. Playwright cannot target Flutter elements by text because Flutter's accessibility tree is disabled until the user taps the "Enable accessibility" placeholder. Tab navigation falls back to x/y coordinate clicks against the bottom nav bar (verified: Now=x39, Schedule=x117, Athletes=x195, Venues=x273, Saved=x351, all at y=820). This works on first load but breaks after navigating to a detail screen (event detail or athlete detail) because the detail screens do not have the tab bar, so subsequent tab-coordinate clicks hit empty space.
+
+The `screenshot-v2.mjs` script works around this by reloading the app (`page.goto(BASE_URL + '/')`) between groups of screens that require going through a detail, so the venues and saved screens are captured from a fresh Now-screen context. All 7 per-config web screenshots show distinct, non-blank content. However "athlete" screenshots for web show the athletes list (first card was tapped but the detail did not open; the tap hit the header area above the first card). The iOS simulator athlete detail screenshots are correct.
+
 ## Not built (from PLAN §10, kept)
 
 - Push notifications on web.
