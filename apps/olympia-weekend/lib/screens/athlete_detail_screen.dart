@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,7 @@ import 'package:olympia_weekend/router.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/filter_chip.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleteDetailScreen extends ConsumerStatefulWidget {
   const AthleteDetailScreen({required this.athleteId, super.key});
@@ -74,7 +77,8 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
               ref.read(mixpanelProvider).viewAthlete(
                     athleteId: athlete.id,
                     division: division.id,
-                    hasInstagram: athlete.instagram != null,
+                    hasInstagram: _effectiveSocials(athlete)
+                        .any((s) => s.platform == SocialPlatform.instagram),
                     hasAppearance: athlete.appearances.isNotEmpty,
                   );
               return _buildBody(athlete, division);
@@ -117,58 +121,15 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            athlete.name,
-            style: context.olympiaText.title.copyWith(fontSize: 28),
+          child: _AthleteHeroCard(
+            athlete: athlete,
+            division: division,
+            onOpenSocial: (link) => _openSocial(athlete, link),
           ),
         ),
-        const SizedBox(height: 4),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            '${division.name}${athlete.country.isEmpty ? '' : ' · ${athlete.country}'}',
-            style: context.olympiaText.row.copyWith(
-              fontWeight: FontWeight.w400,
-              color: colors.textMuted,
-            ),
-          ),
-        ),
-        if (athlete.instagram != null) ...[
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: OlympiaPressable(
-              onTap: () {
-                ref.read(mixpanelProvider).openInstagram(athlete.id);
-                openInstagram(athlete.instagram!);
-              },
-              semanticsLabel: 'Open @${athlete.instagram} on Instagram',
-              child: OlympiaCard(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 18, vertical: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      AppStrings.athleteInstagram,
-                      style: context.olympiaText.row,
-                    ),
-                    const Spacer(),
-                    Text(
-                      '@${athlete.instagram}',
-                      style: context.olympiaText.row.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: colors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
         if (athlete.appearances.isNotEmpty) ...[
           const SizedBox(height: 24),
           Padding(
@@ -228,6 +189,25 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
         const SizedBox(height: 40),
       ],
     );
+  }
+
+  Future<void> _openSocial(Athlete athlete, SocialLink link) async {
+    final url = resolveSocialUrl(link);
+    if (url == null) return;
+    final mp = ref.read(mixpanelProvider);
+    if (link.platform == SocialPlatform.instagram) {
+      // Existing tracking event keeps its dashboards intact.
+      unawaited(mp.openInstagram(athlete.id));
+      // Prefer the native Instagram app when we still have a handle.
+      final handle = link.handleOrUrl;
+      if (!handle.startsWith('http')) {
+        await openInstagram(handle);
+        return;
+      }
+    } else {
+      unawaited(mp.openSocial(athleteId: athlete.id, platform: link.platform.name));
+    }
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _openReportSheet(Athlete athlete) async {
@@ -461,6 +441,320 @@ String _shortHour(int h) {
   final suffix = h >= 12 ? 'PM' : 'AM';
   final h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h);
   return '$h12 $suffix';
+}
+
+/// Merges the legacy `Athlete.instagram` field into the socials list at
+/// render time, so entries that predate the socials array still show
+/// their Instagram pill without a data migration.
+List<SocialLink> _effectiveSocials(Athlete a) {
+  final hasInsta =
+      a.socials.any((s) => s.platform == SocialPlatform.instagram);
+  if (hasInsta || a.instagram == null || a.instagram!.isEmpty) {
+    return a.socials;
+  }
+  return <SocialLink>[
+    SocialLink(platform: SocialPlatform.instagram, handleOrUrl: a.instagram!),
+    ...a.socials,
+  ];
+}
+
+/// Turns a [SocialLink] into a resolvable https URL. Handles the two
+/// conventions we allow in the JSON: bare handle for insta/tiktok,
+/// full URL for everything else.
+Uri? resolveSocialUrl(SocialLink link) {
+  final v = link.handleOrUrl.trim();
+  if (v.isEmpty) return null;
+  if (v.startsWith('http://') || v.startsWith('https://')) {
+    return Uri.tryParse(v);
+  }
+  switch (link.platform) {
+    case SocialPlatform.instagram:
+      return Uri.parse('https://instagram.com/${_stripAt(v)}');
+    case SocialPlatform.tiktok:
+      return Uri.parse('https://tiktok.com/@${_stripAt(v)}');
+    case SocialPlatform.twitter:
+      return Uri.parse('https://x.com/${_stripAt(v)}');
+    case SocialPlatform.youtube:
+      // Handle "@channel" or bare channel id; official channels live on
+      // youtube.com/@name so that's the safer default.
+      return Uri.parse('https://youtube.com/${v.startsWith('@') ? v : '@$v'}');
+    case SocialPlatform.website:
+      return Uri.tryParse(v.startsWith('http') ? v : 'https://$v');
+  }
+}
+
+String _stripAt(String v) => v.startsWith('@') ? v.substring(1) : v;
+
+/// Flag emoji for the roster's most common countries. When we don't
+/// have a mapping the row just omits the flag, which is visually fine.
+String? _countryFlag(String? country) {
+  if (country == null || country.isEmpty) return null;
+  const map = <String, String>{
+    'United States': '\u{1F1FA}\u{1F1F8}',
+    'Iran': '\u{1F1EE}\u{1F1F7}',
+    'United Arab Emirates': '\u{1F1E6}\u{1F1EA}',
+    'United Kingdom': '\u{1F1EC}\u{1F1E7}',
+    'Brazil': '\u{1F1E7}\u{1F1F7}',
+    'Canada': '\u{1F1E8}\u{1F1E6}',
+    'Netherlands': '\u{1F1F3}\u{1F1F1}',
+    'Germany': '\u{1F1E9}\u{1F1EA}',
+    'Poland': '\u{1F1F5}\u{1F1F1}',
+    'Russia': '\u{1F1F7}\u{1F1FA}',
+    'Slovakia': '\u{1F1F8}\u{1F1F0}',
+    'Slovenia': '\u{1F1F8}\u{1F1EE}',
+    'Italy': '\u{1F1EE}\u{1F1F9}',
+    'Spain': '\u{1F1EA}\u{1F1F8}',
+    'Turkey': '\u{1F1F9}\u{1F1F7}',
+    'Bulgaria': '\u{1F1E7}\u{1F1EC}',
+    'Mexico': '\u{1F1F2}\u{1F1FD}',
+    'Colombia': '\u{1F1E8}\u{1F1F4}',
+    'Chile': '\u{1F1E8}\u{1F1F1}',
+    'Australia': '\u{1F1E6}\u{1F1FA}',
+    'China': '\u{1F1E8}\u{1F1F3}',
+    'Taiwan': '\u{1F1F9}\u{1F1FC}',
+    'Japan': '\u{1F1EF}\u{1F1F5}',
+    'South Korea': '\u{1F1F0}\u{1F1F7}',
+    'Kuwait': '\u{1F1F0}\u{1F1FC}',
+    'Nigeria': '\u{1F1F3}\u{1F1EC}',
+    'Saudi Arabia': '\u{1F1F8}\u{1F1E6}',
+    'Ukraine': '\u{1F1FA}\u{1F1E6}',
+    'Croatia': '\u{1F1ED}\u{1F1F7}',
+    'Hungary': '\u{1F1ED}\u{1F1FA}',
+    'Nicaragua': '\u{1F1F3}\u{1F1EE}',
+    'Czech Republic': '\u{1F1E8}\u{1F1FF}',
+    'Austria': '\u{1F1E6}\u{1F1F9}',
+    'Afghanistan': '\u{1F1E6}\u{1F1EB}',
+    'Morocco': '\u{1F1F2}\u{1F1E6}',
+    'Ghana': '\u{1F1EC}\u{1F1ED}',
+    'India': '\u{1F1EE}\u{1F1F3}',
+    'Indonesia': '\u{1F1EE}\u{1F1E9}',
+    'Paraguay': '\u{1F1F5}\u{1F1FE}',
+    'Venezuela': '\u{1F1FB}\u{1F1EA}',
+    'Philippines': '\u{1F1F5}\u{1F1ED}',
+    'Kyrgyzstan': '\u{1F1F0}\u{1F1EC}',
+    'New Zealand': '\u{1F1F3}\u{1F1FF}',
+    'Switzerland': '\u{1F1E8}\u{1F1ED}',
+    'Thailand': '\u{1F1F9}\u{1F1ED}',
+    'Greece': '\u{1F1EC}\u{1F1F7}',
+    'Portugal': '\u{1F1F5}\u{1F1F9}',
+    'Dominican Republic': '\u{1F1E9}\u{1F1F4}',
+    'Moldova': '\u{1F1F2}\u{1F1E9}',
+    'Bahamas': '\u{1F1E7}\u{1F1F8}',
+    'Puerto Rico': '\u{1F1F5}\u{1F1F7}',
+    'Bolivia': '\u{1F1E7}\u{1F1F4}',
+    'Finland': '\u{1F1EB}\u{1F1EE}',
+    'France': '\u{1F1EB}\u{1F1F7}',
+    'Montenegro': '\u{1F1F2}\u{1F1EA}',
+    'Vietnam': '\u{1F1FB}\u{1F1F3}',
+    'Romania': '\u{1F1F7}\u{1F1F4}',
+  };
+  return map[country];
+}
+
+String _socialLabel(SocialPlatform p) {
+  switch (p) {
+    case SocialPlatform.instagram:
+      return 'Instagram';
+    case SocialPlatform.tiktok:
+      return 'TikTok';
+    case SocialPlatform.youtube:
+      return 'YouTube';
+    case SocialPlatform.twitter:
+      return 'X';
+    case SocialPlatform.website:
+      return 'Website';
+  }
+}
+
+/// The baseball-card hero at the top of an athlete's detail screen.
+///
+/// Photo tile on the left (or initials avatar when we don't have a
+/// verified physique shot), name + division + country + tagline on the
+/// right, then a wrapping row of tappable social pills.
+class _AthleteHeroCard extends StatelessWidget {
+  const _AthleteHeroCard({
+    required this.athlete,
+    required this.division,
+    required this.onOpenSocial,
+  });
+
+  final Athlete athlete;
+  final Division division;
+  final ValueChanged<SocialLink> onOpenSocial;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final socials = _effectiveSocials(athlete);
+    final flag = _countryFlag(athlete.country);
+    final countryLine = <String>[
+      division.name,
+      if (flag != null && athlete.country.isNotEmpty)
+        '$flag ${athlete.country}'
+      else if (athlete.country.isNotEmpty)
+        athlete.country,
+    ].join(' · ');
+
+    return OlympiaCard(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _HeroPhoto(athlete: athlete),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      athlete.name,
+                      style: context.olympiaText.title.copyWith(fontSize: 26),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      countryLine,
+                      style: context.olympiaText.caption,
+                    ),
+                    if (athlete.tagline.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        athlete.tagline,
+                        style: context.olympiaText.row.copyWith(
+                          color: colors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (socials.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final link in socials)
+                  _SocialPill(
+                    link: link,
+                    onTap: () => onOpenSocial(link),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// 96 sq photo tile with graceful fallback to the initials avatar.
+class _HeroPhoto extends StatelessWidget {
+  const _HeroPhoto({required this.athlete});
+  final Athlete athlete;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final fallback = Container(
+      width: 96,
+      height: 96,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: colors.avatarBg,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        athlete.initials,
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: colors.avatarText,
+        ),
+      ),
+    );
+
+    final url = athlete.photoUrl;
+    if (url == null || url.isEmpty) return fallback;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        width: 96,
+        height: 96,
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            return fallback;
+          },
+          errorBuilder: (_, _, _) => fallback,
+        ),
+      ),
+    );
+  }
+}
+
+/// Coloured, tappable pill for one social channel.
+class _SocialPill extends StatelessWidget {
+  const _SocialPill({required this.link, required this.onTap});
+  final SocialLink link;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    final label = _socialLabel(link.platform);
+    // Per spec: red-tinted Instagram, red-primary YouTube, dark-surface
+    // for the rest. Text colour picked to keep contrast ~4.5:1 on both
+    // themes; the app is locked to dark so the light-theme branch here
+    // is future-proofing.
+    late final Color bg;
+    late final Color fg;
+    switch (link.platform) {
+      case SocialPlatform.instagram:
+        bg = const Color(0xFFE2231A);
+        fg = const Color(0xFFFFFFFF);
+      case SocialPlatform.youtube:
+        bg = const Color(0xFFFF0000);
+        fg = const Color(0xFFFFFFFF);
+      case SocialPlatform.tiktok:
+        bg = colors.pillActiveBg;
+        fg = colors.pillActiveText;
+      case SocialPlatform.twitter:
+        bg = colors.surface;
+        fg = colors.text;
+      case SocialPlatform.website:
+        bg = colors.surface;
+        fg = colors.text;
+    }
+    return OlympiaPressable(
+      onTap: onTap,
+      semanticsLabel: 'Open $label',
+      minSize: const Size(0, 36),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: colors.surfaceBorder, width: 0.5),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: fg,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _AppearanceCard extends StatelessWidget {

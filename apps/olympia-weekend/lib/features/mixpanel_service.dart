@@ -164,6 +164,15 @@ class MixpanelService {
   Future<void> openInstagram(String athleteId) =>
       track('open_instagram', {'athlete_id': athleteId});
 
+  /// Non-Instagram social taps (TikTok / YouTube / X / website) from
+  /// the athlete "baseball card" hero. Fired alongside `open_instagram`
+  /// so both surfaces show up on the same dashboard filter.
+  Future<void> openSocial({
+    required String athleteId,
+    required String platform,
+  }) =>
+      track('open_social', {'athlete_id': athleteId, 'platform': platform});
+
   Future<void> confirmSighting({
     required String athleteId,
     required String booth,

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Access tier for an event. Maps to the `access` field in
 /// `assets/data/schedule.json`.
 enum EventAccess { free, ticket, vip }
@@ -247,6 +249,34 @@ class Appearance {
       );
 }
 
+/// Verified social channels shown on the athlete "baseball card" hero.
+///
+/// Sourced from official channels only (`ifbbpro.com`, athlete's own
+/// verified site, Wikipedia when licensed) — never scraped Instagram or
+/// fan-run wikis. Empty is fine; the UI renders a "no links yet" state.
+enum SocialPlatform { instagram, tiktok, youtube, twitter, website }
+
+@immutable
+class SocialLink {
+  const SocialLink({required this.platform, required this.handleOrUrl});
+
+  factory SocialLink.fromJson(Map<String, dynamic> j) => SocialLink(
+        platform: SocialPlatform.values.firstWhere(
+          (p) => p.name == j['platform'],
+          orElse: () => SocialPlatform.website,
+        ),
+        handleOrUrl: j['handleOrUrl'] as String,
+      );
+
+  final SocialPlatform platform;
+
+  /// Either a bare handle ("chrisbumstead") or a full https URL. The
+  /// screen normalises this at tap time — instagram/tiktok handles get
+  /// prefixed with their standard web URL; youtube/twitter/website are
+  /// assumed to be full URLs already.
+  final String handleOrUrl;
+}
+
 class Athlete {
   const Athlete({
     required this.id,
@@ -257,16 +287,26 @@ class Athlete {
     required this.appearances,
     this.instagram,
     this.booth,
+    this.photoUrl,
+    this.socials = const <SocialLink>[],
   });
 
   factory Athlete.fromJson(Map<String, dynamic> json) => Athlete(
         id: json['id'] as String,
         name: json['name'] as String,
-        divisionId: json['division'] as String,
+        // The seed roster JSON uses `divisionId`; keep the older
+        // `division` key working too so upstream refreshes don't break.
+        divisionId: (json['divisionId'] ?? json['division']) as String,
         country: json['country'] as String? ?? '',
         tagline: json['tagline'] as String? ?? '',
         instagram: json['instagram'] as String?,
         booth: json['booth'] as String?,
+        photoUrl: json['photoUrl'] as String?,
+        socials: (json['socials'] as List<dynamic>?)
+                ?.cast<Map<String, dynamic>>()
+                .map(SocialLink.fromJson)
+                .toList(growable: false) ??
+            const <SocialLink>[],
         appearances: (json['appearances'] as List<dynamic>? ?? const [])
             .cast<Map<String, dynamic>>()
             .map(Appearance.fromJson)
@@ -280,6 +320,14 @@ class Athlete {
   final String tagline;
   final String? instagram;
   final String? booth;
+
+  /// Absolute HTTPS URL to a public / official physique photo. Null
+  /// means the UI falls back to the initials avatar.
+  final String? photoUrl;
+
+  /// Verified social links; never null. Empty renders a quiet state.
+  final List<SocialLink> socials;
+
   final List<Appearance> appearances;
 
   String get initials {
@@ -298,6 +346,8 @@ class Athlete {
         tagline: tagline,
         instagram: instagram,
         booth: booth,
+        photoUrl: photoUrl,
+        socials: socials,
         appearances: appearances ?? this.appearances,
       );
 }
