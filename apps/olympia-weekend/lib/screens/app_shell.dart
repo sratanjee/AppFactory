@@ -3,12 +3,16 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
+import 'package:olympia_weekend/widgets/olympia_tab_bar.dart';
 
 /// Five-tab shell for Olympia Weekend.
 ///
 /// Wraps the branch child from a [StatefulShellRoute.indexedStack] so
-/// each tab keeps its own navigation stack. Uses [AdaptiveTabBar] so iOS
-/// gets a Cupertino tab bar and Android gets a Material navigation bar.
+/// each tab keeps its own navigation stack. Uses a hand-rolled tab bar
+/// (see [OlympiaTabBar]) instead of `AdaptiveTabBar` because the spec
+/// requires the selected item to use `colors.text`, not the accent —
+/// Material's `NavigationBar` and Cupertino's default both tint with
+/// the theme's primary colour.
 class AppShell extends StatelessWidget {
   const AppShell({required this.navigationShell, super.key});
 
@@ -23,37 +27,39 @@ class AppShell extends StatelessWidget {
         titleDisplay: TitleDisplay.none,
         backgroundColor: colors.background,
         body: navigationShell,
-        tabBar: AdaptiveTabBar(
+        tabBar: OlympiaTabBar(
           destinations: const [
-            AdaptiveTabDestination(
+            OlympiaTabDestination(
               icon: AdaptiveIconName.clock,
               selectedIcon: AdaptiveIconName.clock,
               label: AppStrings.tabNow,
             ),
-            AdaptiveTabDestination(
+            OlympiaTabDestination(
               icon: AdaptiveIconName.calendar,
               selectedIcon: AdaptiveIconName.calendar,
               label: AppStrings.tabSchedule,
             ),
-            AdaptiveTabDestination(
+            OlympiaTabDestination(
               icon: AdaptiveIconName.person,
               selectedIcon: AdaptiveIconName.person,
               label: AppStrings.tabAthletes,
             ),
-            AdaptiveTabDestination(
+            OlympiaTabDestination(
               icon: AdaptiveIconName.info,
               selectedIcon: AdaptiveIconName.info,
               label: AppStrings.tabVenues,
             ),
-            AdaptiveTabDestination(
+            OlympiaTabDestination(
               icon: AdaptiveIconName.star,
               selectedIcon: AdaptiveIconName.starFill,
               label: AppStrings.tabSaved,
             ),
           ],
           currentIndex: navigationShell.currentIndex,
-          onDestinationSelected: (i) =>
-              navigationShell.goBranch(i, initialLocation: i == navigationShell.currentIndex),
+          onDestinationSelected: (i) => navigationShell.goBranch(
+            i,
+            initialLocation: i == navigationShell.currentIndex,
+          ),
         ),
       ),
     );
