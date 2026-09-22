@@ -15,8 +15,9 @@ import 'package:olympia_weekend/features/sightings_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 
-const _kTextScale =
-    double.fromEnvironment('TEXT_SCALE', defaultValue: 1.0);
+const _kTextScaleRaw =
+    String.fromEnvironment('TEXT_SCALE', defaultValue: '1.0');
+final double _kTextScale = double.tryParse(_kTextScaleRaw) ?? 1.0;
 
 class _StubSightingsRepo extends SightingsRepo {
   _StubSightingsRepo() : super(deviceId: 'screenshot-test-device');

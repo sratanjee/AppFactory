@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/screens/app_shell.dart';
 import 'package:olympia_weekend/screens/athlete_detail_screen.dart';
@@ -18,6 +19,10 @@ abstract final class Routes {
   static const String event = 'event';
   static const String athlete = 'athlete';
 }
+
+/// Singleton GoRouter — exposed so incoming deep links (`olympia://schedule`)
+/// can push routes from outside the widget tree via `app_links`.
+final routerProvider = Provider<GoRouter>((_) => buildRouter());
 
 GoRouter buildRouter() {
   return GoRouter(
