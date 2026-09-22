@@ -47,7 +47,10 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
               padding: const EdgeInsets.all(24),
               child: Text(
                 AppStrings.errorLiveRefresh,
-                style: TextStyle(color: colors.textMuted),
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
               ),
             ),
             data: (payload) {
@@ -89,12 +92,7 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
           child: Text(
             AppStrings.athletesTitle,
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-              color: colors.text,
-            ),
+            style: context.olympiaText.title,
           ),
         ),
         const SizedBox(height: 12),
@@ -146,7 +144,10 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
                   ? AppStrings.athletesDivisionEmpty
                   : AppStrings.athletesSearchEmpty
                       .replaceAll('{query}', _query),
-              style: TextStyle(color: colors.textMuted),
+              style: context.olympiaText.row.copyWith(
+                fontWeight: FontWeight.w400,
+                color: colors.textMuted,
+              ),
             ),
           )
         else
@@ -175,11 +176,7 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
           padding: const EdgeInsets.fromLTRB(24, 14, 24, 0),
           child: Text(
             AppStrings.athleteFooter,
-            style: TextStyle(
-              fontSize: 13,
-              color: colors.textMuted,
-              height: 1.45,
-            ),
+            style: context.olympiaText.caption.copyWith(height: 1.45),
           ),
         ),
         const SizedBox(height: 40),
@@ -201,7 +198,6 @@ class _DivisionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.olympiaColors;
     final schedule = _scheduleLabel(prejudging, finals);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -212,11 +208,7 @@ class _DivisionHeader extends StatelessWidget {
           Expanded(
             child: Text(
               division.name,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: colors.text,
-              ),
+              style: context.olympiaText.section,
             ),
           ),
           if (schedule != null) ...[
@@ -225,7 +217,7 @@ class _DivisionHeader extends StatelessWidget {
               child: Text(
                 schedule,
                 textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 13, color: colors.textMuted),
+                style: context.olympiaText.caption,
               ),
             ),
           ],
@@ -312,16 +304,13 @@ class _AthleteRow extends StatelessWidget {
                 children: [
                   Text(
                     athlete.name,
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: colors.text),
+                    style: context.olympiaText.row,
                   ),
                   if (tagline.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       tagline,
-                      style: TextStyle(fontSize: 13, color: colors.textMuted),
+                      style: context.olympiaText.caption,
                     ),
                   ],
                 ],
@@ -356,18 +345,17 @@ class _AthleteRowTrailing extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             AppStrings.athletesMeetGreet,
-            style: TextStyle(
-              fontSize: 13,
+            style: context.olympiaText.caption.copyWith(
               fontWeight: FontWeight.w500,
-              color: Color(0xFFe2231a),
+              color: const Color(0xFFe2231a),
             ),
           ),
           const SizedBox(height: 2),
           Text(
             '${_shortDayTime(next.date, next.start)} · Booth ${next.booth}',
-            style: TextStyle(fontSize: 12, color: colors.textMuted),
+            style: context.olympiaText.faint.copyWith(color: colors.textMuted),
           ),
         ],
       );
@@ -375,12 +363,12 @@ class _AthleteRowTrailing extends StatelessWidget {
     if (athlete.booth != null && athlete.booth!.isNotEmpty) {
       return Text(
         'Booth ${athlete.booth}',
-        style: TextStyle(fontSize: 12, color: colors.textMuted),
+        style: context.olympiaText.faint.copyWith(color: colors.textMuted),
       );
     }
     return Text(
       AppStrings.athletesNoBooth,
-      style: TextStyle(fontSize: 12, color: colors.textFaint),
+      style: context.olympiaText.faint,
     );
   }
 }

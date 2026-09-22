@@ -48,7 +48,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 padding: const EdgeInsets.all(24),
                 child: Text(
                   AppStrings.errorLiveRefresh,
-                  style: TextStyle(color: colors.textMuted),
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colors.textMuted,
+                  ),
                 ),
               ),
             ),
@@ -91,12 +94,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                     child: Text(
                       AppStrings.scheduleTitle,
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                        color: colors.text,
-                      ),
+                      style: context.olympiaText.title,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -141,7 +139,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         children: [
                           Text(
                             AppStrings.scheduleEmpty,
-                            style: TextStyle(color: colors.textMuted),
+                            style: context.olympiaText.row.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: colors.textMuted,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           AdaptiveSecondaryButton(
@@ -219,7 +220,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
   Widget _section(BuildContext context, String title, List<Event> events,
       Map<String, Venue> venuesById) {
-    final colors = context.olympiaColors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
       child: Column(
@@ -227,10 +227,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         children: [
           Text(
             title,
-            style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: colors.textMuted),
+            style: context.olympiaText.caption.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           OlympiaCard(

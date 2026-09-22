@@ -82,13 +82,11 @@ class _DayPill extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-              color: active
-                  ? (activeTextColor ?? colors.pillActiveText)
-                  : colors.textMuted,
-            ),
+            style: context.olympiaText.pill(active: active).copyWith(
+                  color: active
+                      ? (activeTextColor ?? colors.pillActiveText)
+                      : colors.textMuted,
+                ),
           ),
         ),
       ),

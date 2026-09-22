@@ -40,7 +40,10 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
               padding: const EdgeInsets.all(24),
               child: Text(
                 AppStrings.venuesMapFallback,
-                style: TextStyle(color: colors.textMuted),
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
               ),
             ),
             data: (venues) {
@@ -57,12 +60,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                     child: Text(
                       AppStrings.venuesTitle,
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                        color: colors.text,
-                      ),
+                      style: context.olympiaText.title,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -70,7 +68,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
                       AppStrings.venuesSubtitle,
-                      style: TextStyle(fontSize: 14, color: colors.textMuted),
+                      style: context.olympiaText.caption.copyWith(fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -105,10 +103,7 @@ class _VenuesScreenState extends ConsumerState<VenuesScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
                       AppStrings.venuesShuttleNote,
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: colors.textMuted,
-                          height: 1.5),
+                      style: context.olympiaText.caption.copyWith(height: 1.5),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -173,7 +168,10 @@ class _VenueMapPanel extends StatelessWidget {
               )
             : Text(
                 AppStrings.venuesMapFallback,
-                style: TextStyle(color: colors.textFaint),
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textFaint,
+                ),
               ),
       ),
     );
@@ -198,23 +196,23 @@ class _VenueRow extends StatelessWidget {
           children: [
             Text(
               venue.name,
-              style: TextStyle(
-                fontSize: 15,
+              style: context.olympiaText.row.copyWith(
                 fontWeight: FontWeight.w600,
-                color: colors.text,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               venue.role,
-              style: TextStyle(fontSize: 13, color: colors.textMuted),
+              style: context.olympiaText.caption,
             ),
             if (venue.driveFromPalmsMin != null) ...[
               const SizedBox(height: 2),
               Text(
                 '${venue.driveFromPalmsMin} min from Palms'
                 '${venue.shuttle ? ' · shuttle' : ''}',
-                style: TextStyle(fontSize: 13, color: colors.textFaint),
+                style: context.olympiaText.caption.copyWith(
+                  color: colors.textFaint,
+                ),
               ),
             ],
           ],

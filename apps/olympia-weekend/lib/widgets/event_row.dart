@@ -45,11 +45,8 @@ class EventRow extends StatelessWidget {
                   width: 52,
                   child: Text(
                     timeLabel,
-                    style: TextStyle(
+                    style: context.olympiaText.timeCell.copyWith(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: colors.text,
-                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ),
@@ -60,11 +57,7 @@ class EventRow extends StatelessWidget {
                   children: [
                     Text(
                       event.title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: colors.text,
-                      ),
+                      style: context.olympiaText.row,
                     ),
                     const SizedBox(height: 2),
                     Row(
@@ -73,10 +66,7 @@ class EventRow extends StatelessWidget {
                           child: Text(
                             venueLabel,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: colors.textMuted,
-                            ),
+                            style: context.olympiaText.caption,
                           ),
                         ),
                         const SizedBox(width: 8),

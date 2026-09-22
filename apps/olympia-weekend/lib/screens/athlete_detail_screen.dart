@@ -40,8 +40,13 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
           child: data.when(
             loading: () => const Center(child: AdaptiveLoading()),
             error: (_, __) => Center(
-              child: Text(AppStrings.errorLiveRefresh,
-                  style: TextStyle(color: colors.textMuted)),
+              child: Text(
+                AppStrings.errorLiveRefresh,
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
+              ),
             ),
             data: (payload) {
               final athlete = payload.athletes.firstWhere(
@@ -93,8 +98,13 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
                 context.goNamed(Routes.athletes);
               }
             },
-            child: Text('‹ ${AppStrings.athletesTitle}',
-                style: TextStyle(fontSize: 15, color: colors.textMuted)),
+            child: Text(
+              '‹ ${AppStrings.athletesTitle}',
+              style: context.olympiaText.row.copyWith(
+                fontWeight: FontWeight.w400,
+                color: colors.textMuted,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -102,10 +112,7 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             athlete.name,
-            style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: colors.text),
+            style: context.olympiaText.title.copyWith(fontSize: 28),
           ),
         ),
         const SizedBox(height: 4),
@@ -113,7 +120,10 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             '${division.name}${athlete.country.isEmpty ? '' : ' · ${athlete.country}'}',
-            style: TextStyle(fontSize: 15, color: colors.textMuted),
+            style: context.olympiaText.row.copyWith(
+              fontWeight: FontWeight.w400,
+              color: colors.textMuted,
+            ),
           ),
         ),
         if (athlete.instagram != null) ...[
@@ -132,16 +142,15 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
                   children: [
                     Text(
                       AppStrings.athleteInstagram,
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: colors.text),
+                      style: context.olympiaText.row,
                     ),
                     const Spacer(),
                     Text(
                       '@${athlete.instagram}',
-                      style: TextStyle(
-                          fontSize: 15, color: colors.textMuted),
+                      style: context.olympiaText.row.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: colors.textMuted,
+                      ),
                     ),
                   ],
                 ),
@@ -155,10 +164,7 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               AppStrings.athleteAppearances,
-              style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: colors.text),
+              style: context.olympiaText.section,
             ),
           ),
           const SizedBox(height: 10),
@@ -182,10 +188,8 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             onTap: () => _openReportSheet(athlete),
             child: Text(
               AppStrings.athleteReportBooth,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFFe2231a),
+              style: context.olympiaText.row.copyWith(
+                color: const Color(0xFFe2231a),
               ),
             ),
           ),
@@ -196,7 +200,9 @@ class _AthleteDetailScreenState extends ConsumerState<AthleteDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               _errorMsg!,
-              style: const TextStyle(fontSize: 13, color: Color(0xFFe2231a)),
+              style: context.olympiaText.caption.copyWith(
+                color: const Color(0xFFe2231a),
+              ),
             ),
           ),
         ],
@@ -357,14 +363,12 @@ class _ReportSheetState extends State<_ReportSheet> {
               const SizedBox(height: 6),
               Text(
                 AppStrings.athleteReportBody,
-                style: TextStyle(fontSize: 13, color: colors.textMuted),
+                style: context.olympiaText.caption,
               ),
               const SizedBox(height: 20),
               Text(
                 AppStrings.athleteReportBoothLabel,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: colors.textMuted,
+                style: context.olympiaText.caption.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -376,9 +380,7 @@ class _ReportSheetState extends State<_ReportSheet> {
               const SizedBox(height: 16),
               Text(
                 AppStrings.athleteReportDay,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: colors.textMuted,
+                style: context.olympiaText.caption.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -398,9 +400,7 @@ class _ReportSheetState extends State<_ReportSheet> {
               const SizedBox(height: 16),
               Text(
                 AppStrings.athleteReportStart,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: colors.textMuted,
+                style: context.olympiaText.caption.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -507,10 +507,7 @@ class _AppearanceCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   '${appearance.start}  ·  ${appearance.booth}',
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: colors.text),
+                  style: context.olympiaText.row,
                 ),
               ),
               Container(
@@ -526,9 +523,7 @@ class _AppearanceCard extends StatelessWidget {
                   confirmed
                       ? AppStrings.athleteConfirmed
                       : AppStrings.athleteReported,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                  style: context.olympiaText.tag.copyWith(
                     color: confirmed
                         ? colors.badgeConfirmedText
                         : colors.badgeReportedText,

@@ -95,11 +95,7 @@ class _OlympiaTabItem extends StatelessWidget {
             destination.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-              color: tint,
-            ),
+            style: context.olympiaText.tab(active: active).copyWith(color: tint),
           ),
         ],
       ),

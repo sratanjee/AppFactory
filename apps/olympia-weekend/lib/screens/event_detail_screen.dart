@@ -28,8 +28,18 @@ class EventDetailScreen extends ConsumerWidget {
 
     final event = eventsById[eventId];
     if (event == null) {
-      return _shell(context, child: Center(child: Text(
-        eventId, style: TextStyle(color: colors.textFaint))));
+      return _shell(
+        context,
+        child: Center(
+          child: Text(
+            eventId,
+            style: context.olympiaText.row.copyWith(
+              fontWeight: FontWeight.w400,
+              color: colors.textFaint,
+            ),
+          ),
+        ),
+      );
     }
     final venue = venuesById[event.venueId];
     final isSaved = saved.contains(eventId);
@@ -54,7 +64,10 @@ class EventDetailScreen extends ConsumerWidget {
                   },
                   child: Text(
                     '‹ ${AppStrings.eventBackToNow}',
-                    style: TextStyle(fontSize: 15, color: colors.textMuted),
+                    style: context.olympiaText.row.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -79,8 +92,7 @@ class EventDetailScreen extends ConsumerWidget {
                     ),
                     child: Text(
                       isSaved ? AppStrings.eventUnsave : AppStrings.eventSave,
-                      style: TextStyle(
-                        fontSize: 13,
+                      style: context.olympiaText.caption.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSaved
                             ? const Color(0xFFFFFFFF)
@@ -97,11 +109,9 @@ class EventDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               event.title,
-              style: TextStyle(
+              style: context.olympiaText.title.copyWith(
                 fontSize: 28,
-                fontWeight: FontWeight.w700,
                 letterSpacing: -0.4,
-                color: colors.text,
                 height: 1.15,
               ),
             ),
@@ -112,7 +122,10 @@ class EventDetailScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
                 event.divisions.join(', '),
-                style: TextStyle(fontSize: 15, color: colors.textMuted),
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
               ),
             ),
           ],
@@ -162,23 +175,15 @@ class EventDetailScreen extends ConsumerWidget {
                               width: 62,
                               child: Text(
                                 event.runningOrder[i].estimate,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  fontFeatures: const [
-                                    FontFeature.tabularFigures()
-                                  ],
-                                  color: colors.text,
-                                ),
+                                style: context.olympiaText.timeCell,
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 event.runningOrder[i].division,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: colors.text,
+                                style: context.olympiaText.row.copyWith(
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -190,8 +195,9 @@ class EventDetailScreen extends ConsumerWidget {
                       const SizedBox(height: 8),
                       Text(
                         event.runningOrderNote!,
-                        style:
-                            TextStyle(fontSize: 13, color: colors.textFaint),
+                        style: context.olympiaText.caption.copyWith(
+                          color: colors.textFaint,
+                        ),
                       ),
                     ],
                   ],
@@ -207,8 +213,11 @@ class EventDetailScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
                 event.notes!,
-                style: TextStyle(
-                    fontSize: 15, color: colors.textMuted, height: 1.5),
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                  height: 1.5,
+                ),
               ),
             ),
           ],
@@ -252,14 +261,7 @@ class EventDetailScreen extends ConsumerWidget {
 
   Widget _sectionTitle(BuildContext context, String label) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: context.olympiaColors.text,
-          ),
-        ),
+        child: Text(label, style: context.olympiaText.section),
       );
 
   Widget _shell(BuildContext context, {required Widget child}) {
@@ -299,10 +301,8 @@ class _Fact extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 15,
+            style: context.olympiaText.row.copyWith(
               fontWeight: FontWeight.w600,
-              color: colors.text,
             ),
           ),
         ],

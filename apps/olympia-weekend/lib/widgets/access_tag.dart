@@ -25,11 +25,7 @@ class AccessTag extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: fg,
-        ),
+        style: context.olympiaText.tag.copyWith(color: fg),
       ),
     );
   }

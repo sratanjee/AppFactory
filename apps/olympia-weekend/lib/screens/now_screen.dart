@@ -133,7 +133,10 @@ class _NowScreenState extends ConsumerState<NowScreen> {
               state.next.isEmpty
                   ? _emptyCopy(state.phase)
                   : AppStrings.nowEmpty,
-              style: TextStyle(fontSize: 15, color: colors.textMuted),
+              style: context.olympiaText.row.copyWith(
+                color: colors.textMuted,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -146,21 +149,15 @@ class _NowScreenState extends ConsumerState<NowScreen> {
               Expanded(
                 child: Text(
                   AppStrings.nowUpNext,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: colors.text,
-                  ),
+                  style: context.olympiaText.section,
                 ),
               ),
               GestureDetector(
                 onTap: () => context.goNamed(Routes.schedule),
                 child: Text(
                   AppStrings.nowFullDay,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFFe2231a),
-                  ),
+                  style: context.olympiaText
+                      .link(accent: const Color(0xFFe2231a)),
                 ),
               ),
             ],
@@ -172,7 +169,10 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             child: OlympiaCard(
               child: Text(
                 _emptyCopy(state.phase),
-                style: TextStyle(color: colors.textMuted, fontSize: 15),
+                style: context.olympiaText.row.copyWith(
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           )
@@ -204,11 +204,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               AppStrings.nowAllDay,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: colors.text,
-              ),
+              style: context.olympiaText.section,
             ),
           ),
           const SizedBox(height: 10),
@@ -255,7 +251,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             Expanded(
               child: Text(
                 AppStrings.nowInstallHint,
-                style: TextStyle(color: colors.textMuted, fontSize: 13),
+                style: context.olympiaText.caption,
               ),
             ),
             const SizedBox(width: 8),
@@ -263,9 +259,8 @@ class _NowScreenState extends ConsumerState<NowScreen> {
               onTap: () => _showInstallSheet(context),
               child: Text(
                 AppStrings.nowInstallHintCta,
-                style: const TextStyle(
-                  color: Color(0xFFe2231a),
-                  fontSize: 13,
+                style: context.olympiaText.caption.copyWith(
+                  color: const Color(0xFFe2231a),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -289,15 +284,14 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             children: [
               Text(
                 AppStrings.nowInstallSheetIosTitle,
-                style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: ctx.olympiaColors.text),
+                style: ctx.olympiaText.section,
               ),
               const SizedBox(height: 8),
               Text(
                 AppStrings.nowInstallSheetIosBody,
-                style: TextStyle(color: ctx.olympiaColors.text),
+                style: ctx.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                ),
               ),
               const SizedBox(height: 16),
               AdaptivePrimaryButton(
@@ -333,26 +327,14 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.olympiaColors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _longDate(now),
-            style: TextStyle(fontSize: 13, color: colors.textMuted),
-          ),
+          Text(_longDate(now), style: context.olympiaText.caption),
           const SizedBox(height: 6),
-          Text(
-            AppStrings.appTitle,
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-              color: colors.text,
-            ),
-          ),
+          Text(AppStrings.appTitle, style: context.olympiaText.title),
         ],
       ),
     );
@@ -391,12 +373,11 @@ class _HappeningNowCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     AppStrings.nowHappening,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: context.olympiaText.caption.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFe2231a),
+                      color: const Color(0xFFe2231a),
                     ),
                   ),
                 ],
@@ -404,20 +385,14 @@ class _HappeningNowCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 event.title,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.3,
-                  height: 1.15,
-                  color: colors.text,
-                ),
+                style: context.olympiaText.cardTitle,
               ),
               if (event.divisions.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text(
                   event.divisions.join(', '),
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w400,
                     color: colors.textMuted,
                     height: 1.4,
                   ),
@@ -430,7 +405,7 @@ class _HappeningNowCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       _venueSubtitle(venue, event, resolved),
-                      style: TextStyle(fontSize: 14, color: colors.textMuted),
+                      style: context.olympiaText.caption.copyWith(fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 8),

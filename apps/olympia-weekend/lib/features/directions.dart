@@ -4,6 +4,7 @@ import 'package:factory_core/adaptive/adaptive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/data/models.dart';
+import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,8 +55,7 @@ Future<void> openDirections({
           children: [
             Text(
               AppStrings.eventDirections,
-              style: const TextStyle(
-                  fontSize: 17, fontWeight: FontWeight.w600),
+              style: ctx.olympiaText.section,
             ),
             const SizedBox(height: 16),
             AdaptivePrimaryButton(

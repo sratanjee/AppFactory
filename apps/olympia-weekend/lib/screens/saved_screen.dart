@@ -40,8 +40,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
             loading: () => const Center(child: AdaptiveLoading()),
             error: (_, __) => Padding(
               padding: const EdgeInsets.all(24),
-              child: Text(AppStrings.errorLiveRefresh,
-                  style: TextStyle(color: colors.textMuted)),
+              child: Text(
+                AppStrings.errorLiveRefresh,
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: colors.textMuted,
+                ),
+              ),
             ),
             data: (events) {
               final savedEvents =
@@ -71,12 +76,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                     child: Text(
                       AppStrings.savedTitle,
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                        color: colors.text,
-                      ),
+                      style: context.olympiaText.title,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -85,7 +85,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       padding: const EdgeInsets.all(24),
                       child: Text(
                         AppStrings.savedEmpty,
-                        style: TextStyle(color: colors.textMuted),
+                        style: context.olympiaText.row.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: colors.textMuted,
+                        ),
                       ),
                     )
                   else
@@ -95,10 +98,8 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                             const EdgeInsets.fromLTRB(24, 20, 24, 0),
                         child: Text(
                           _labelForDate(entry.key),
-                          style: TextStyle(
-                            fontSize: 13,
+                          style: context.olympiaText.caption.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: colors.textMuted,
                           ),
                         ),
                       ),

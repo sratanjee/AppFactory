@@ -118,4 +118,106 @@ extension OlympiaColorsFromContext on BuildContext {
       MediaQuery.platformBrightnessOf(this) == Brightness.dark
           ? OlympiaColors.dark
           : OlympiaColors.light;
+
+  OlympiaText get olympiaText => OlympiaText(olympiaColors);
+}
+
+/// Type scale — spec §8 + `design/olympia-weekend/*.html` inline values.
+///
+/// Everything system-font (SF Pro on iOS, Roboto on Android, system-ui on
+/// web). Line heights + letter-spacing mirror the artboard's CSS so the
+/// rendered pixel density matches the mockups instead of drifting on
+/// Flutter's default text metrics.
+@immutable
+class OlympiaText {
+  const OlympiaText(this._c);
+  final OlympiaColors _c;
+
+  static const _monoNums = <FontFeature>[FontFeature.tabularFigures()];
+
+  /// Screen title "Olympia Weekend" / "Schedule" / "Athletes" / "Venues" /
+  /// "Saved" — 32/700 / -0.5.
+  TextStyle get title => TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+        height: 1.1,
+        color: _c.text,
+      );
+
+  /// Section header — "Up next" / "All day" / "Morning" / "Afternoon and
+  /// evening" — 17/600, high-contrast.
+  TextStyle get section => TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
+        color: _c.text,
+      );
+
+  /// Row primary text — event title, athlete name — 15/500.
+  TextStyle get row => TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        height: 1.25,
+        color: _c.text,
+      );
+
+  /// Row subtitle — venue name + relative time — 13/regular muted.
+  TextStyle get caption => TextStyle(
+        fontSize: 13,
+        height: 1.35,
+        color: _c.textMuted,
+      );
+
+  /// Tabular time cell — "6:00" / "12:00" — 17/600 with tabular figures so
+  /// digits align vertically in stacked rows.
+  TextStyle get timeCell => TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+        fontFeatures: _monoNums,
+        color: _c.text,
+      );
+
+  /// Happening-now inner title — 22/700 / -0.3 / 1.15 line-height.
+  TextStyle get cardTitle => TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
+        height: 1.15,
+        color: _c.text,
+      );
+
+  /// Access-tag ("Free" / "Ticket" / "VIP") — 12/600 pill.
+  TextStyle get tag => const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        height: 1.0,
+      );
+
+  /// Day-pill label — 14/500 inactive, 14/600 active. Callers pass `active`.
+  TextStyle pill({required bool active}) => TextStyle(
+        fontSize: 14,
+        fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+        color: active ? _c.pillActiveText : _c.textMuted,
+      );
+
+  /// Tab-bar label — 10/500 inactive, 10/600 active. Callers pass `active`.
+  TextStyle tab({required bool active}) => TextStyle(
+        fontSize: 10,
+        fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+        color: active ? _c.text : _c.textFaint,
+      );
+
+  /// Full-day / See-all trailing link on section headers — 15/regular accent.
+  TextStyle link({required Color accent}) => TextStyle(
+        fontSize: 15,
+        color: accent,
+      );
+
+  /// Faint caption — 12/regular muted (e.g. "No booth listed").
+  TextStyle get faint => TextStyle(
+        fontSize: 12,
+        height: 1.35,
+        color: _c.textFaint,
+      );
 }
