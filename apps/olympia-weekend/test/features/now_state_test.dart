@@ -42,13 +42,20 @@ void main() {
     expect(state.phase, WeekendPhase.during);
   });
 
-  test('Tuesday before the weekend → next is empty, phase is before', () {
+  test('Tuesday before the weekend → next previews Wednesday, phase is before', () {
+    // Regression from Sarang's Tuesday-evening review — the pre-
+    // weekend Up-next was showing an empty state instead of rolling
+    // forward to Wednesday's events. We still want phase = before so
+    // the empty-state copy elsewhere doesn't lie.
     final events = parseSchedule(
       File('assets/data/schedule.json').readAsStringSync(),
     );
     final now = tz.TZDateTime(loc(), 2026, 9, 22, 10, 0);
     final state = computeNowState(events, now);
-    expect(state.next, isEmpty);
+    expect(state.next, isNotEmpty);
+    for (final e in state.next) {
+      expect(e.event.date, '2026-09-23'); // Wed
+    }
     expect(state.phase, WeekendPhase.before);
   });
 

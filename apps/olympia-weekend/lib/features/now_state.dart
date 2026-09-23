@@ -101,6 +101,13 @@ enum WeekendPhase { before, during, after }
 NowState computeNowState(List<Event> events, tz.TZDateTime now) {
   final resolved = events.map(resolveEvent).toList(growable: false);
   final today = vegasDateOf(now);
+  // "Up next" pivot date. During and after the weekend it's the same
+  // as today; before the weekend starts we roll forward to the first
+  // Olympia day (Wednesday) so users on Tuesday still see a real
+  // preview instead of an empty "Weekend starts Wednesday" card.
+  final pivotDate = today.compareTo(olympiaWeekendDates.first) < 0
+      ? olympiaWeekendDates.first
+      : today;
 
   final happening = resolved.firstWhere(
     (r) =>
@@ -131,12 +138,12 @@ NowState computeNowState(List<Event> events, tz.TZDateTime now) {
       .where((r) =>
           r.startAt != null &&
           r.startAt!.isAfter(now) &&
-          r.event.date == today)
+          r.event.date == pivotDate)
       .toList()
     ..sort((a, b) => a.startAt!.compareTo(b.startAt!));
 
   final allDayToday = resolved
-      .where((r) => r.event.isAllDay && r.event.date == today)
+      .where((r) => r.event.isAllDay && r.event.date == pivotDate)
       .toList();
 
   final WeekendPhase phase;
