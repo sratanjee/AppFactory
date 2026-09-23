@@ -792,3 +792,69 @@ that way — pressable state now visible, but padding unchanged.
   it via `Image.network`. **No image asset was bundled in this pass**
   — per spec direction the plan is to serve it as a static file on
   the web deploy domain rather than a bundled asset.
+
+---
+
+## Release prep — 2026-09-22 (v1.0.0+3)
+
+Released to TestFlight and Play internal testing at 2026-09-22T22:51:00-07:00.
+
+### Version
+
+Bumped `pubspec.yaml` from `1.0.0+2` to `1.0.0+3`.
+
+### Store screenshots
+
+6 iOS 6.7-inch screenshots captured via `flutter drive` + `integration_test/store_screenshots_test.dart` on iPhone 17 Pro simulator (UDID 37C37926-F0DA-47CB-8CAF-60456ED04A46), dark theme, 100% text scale, 1206x2622 pixels.
+
+Screens captured:
+- `01-now.png` — Now screen, Wed selected, pre-weekend state showing Up next
+- `02-schedule.png` — Schedule screen, Fri selected, morning + afternoon events
+- `03-event.png` — Event detail (Dragon's Lair Pop-Up Gym, from QA dark-100)
+- `04-athletes.png` — Athletes list, Men's Open division
+- `05-athlete-detail.png` — Athlete detail (Derek Lunsford, with Competes card and photo-agent-populated data)
+- `06-expo.png` — Expo hub, Exhibitors segment, 154 exhibitors with category chips
+
+Android phone screenshots are copies of the iOS captures (local Android build blocked by Shorebird engine 404 — documented in prior release entry; does not affect Codemagic CI).
+
+### ASO copy
+
+- iOS subtitle: 26 chars (max 30)
+- iOS keywords: 94 chars (max 100)
+- iOS promotional text: 100 chars (max 170)
+- iOS description: 2147 chars (max 4000)
+- Android short description: 57 chars (max 80)
+- Android description: 1952 chars (max 4000)
+
+All factory scaffold placeholders removed. Unofficial disclaimer prominent in both descriptions.
+
+### Privacy policy
+
+`store/privacy.html` written. Covers: no personal data collected; local storage (bookmarks, first-touch source, install hint state); Mixpanel (anonymous device ID only, aggregate usage, no IP logged); Supabase sightings (anonymous device ID + appearance key); deep links; directions (we don't track routes); no ads; no user accounts. Effective 2026-09-22. Contact: sratanjee@gmail.com.
+
+### Codemagic env vars
+
+Updated `codemagic.yaml` with full signing configuration:
+
+iOS:
+- `APP_STORE_CONNECT_KEY_OLYMPIAWEEKEND` (file-encoded .p8) — source: `~/.keys/AuthKey_3ARJ4A42XY.p8`
+- `APP_STORE_CONNECT_KEY_ID` = `3ARJ4A42XY`
+- `APP_STORE_CONNECT_ISSUER_ID` = `c13e39d5-5aa5-4947-8e27-77367f00ab1c`
+
+Android:
+- `ANDROID_KEYSTORE_OLYMPIAWEEKEND` (base64 .jks) — source: `~/.keys/olympia-weekend-upload.jks`
+- `ANDROID_KEYSTORE_PASSWORD_OLYMPIAWEEKEND`
+- `ANDROID_KEY_ALIAS_OLYMPIAWEEKEND` = `olympia`
+- `ANDROID_KEY_PASSWORD_OLYMPIAWEEKEND`
+- `PLAY_SERVICE_ACCOUNT_JSON_OLYMPIAWEEKEND` — source: `~/.keys/play-factory.json`
+
+### Remaining human actions
+
+See `RELEASE_CHECKLIST.md` for the full runbook. Key steps:
+1. Create App Store Connect app record (Bundle ID: com.appfactory.olympiaweekend)
+2. Create Google Play Console app record (Package: com.appfactory.olympiaweekend)
+3. Upload signing secrets to Codemagic `app-factory-secrets` group
+4. Add GitHub remote and push `app/olympia-weekend` + `olympia-weekend-v1.0.0+3`
+5. Connect Codemagic to the repo and trigger ios-testflight + android-internal builds
+6. Fill TestFlight beta info and Play internal testing tester list
+7. Host `store/privacy.html` at a public URL and update both store records

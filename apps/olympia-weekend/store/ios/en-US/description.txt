@@ -1,21 +1,19 @@
-"I'm at Olympia and I want to know what's happening right now, what's next, and where to go, without digging through the official site."
+Olympia Weekend is an unofficial fan guide for the 2026 Mr. Olympia in Las Vegas. It answers the one question every fan has at the venue: what is happening right now, what is next, and where do I go?
 
-For nobody. Free, no ads, no account. The goal is a following for the weekend and Mixpanel data on what fans actually use..
+The app runs entirely on your device. No account, no login, no ads, no subscription. Everything you need ships bundled — the schedule still works in airplane mode inside the Palms.
 
-What it does
+What the app does
 
-• Today's date; day pills Wed–Sun; "Happening now" card (red dot, title, divisions, venue, until-time, access tag); "Up next" list with times relative to now; "All day" list; tab bar Now / Schedule / Athletes / Venues / Saved
-• Day pills; filter chips All / Free / Ticketed / At Palms; events grouped Morning / Afternoon and evening; access tags; chevrons
-• Red band; back + Save; date/time; title; divisions; three facts (Doors or VIP entry / Venue / Access); Running order with estimates, or Meet-and-greets for the Expo; Afterward or Good to know; "Save to my day" + "Directions"
-• Division chips; search; division header with pre-judging/finals times; athlete rows with avatar initials, tagline, booth or "No booth listed," meet-and-greet time. Athlete page: name, division, country, **Instagram row** (opens app or web), appearances with Confirmed/Reported and an "I saw this" button, "Report a booth or time"
-• Google Map with five pins; venue rows with role and drive time; shuttle note. Saved: bookmarked events grouped by day with a "Nothing saved yet — tap the bookmark on any event" empty state
+- Now screen: see what is happening at this moment, what is coming up next, and all-day events on a single glance screen. The clock runs on Las Vegas local time regardless of where your phone thinks it is.
+- Schedule: browse every event from Wednesday through Sunday. Filter by access level (free, ticketed, or VIP) or by venue. Tap any event to see doors time, running order, and directions.
+- Event detail: the three facts you need — when doors open, where it is, and what kind of ticket gets you in — plus the full running order, VIP photo opportunity times, and a Save button so you can build your personal itinerary.
+- Athletes: find competitors across Men's Open, Classic Physique, Bikini, Figure, Wellness, 212, and more. See each athlete's expo booth, meet-and-greet schedule, and Instagram. Tap "I saw this" to confirm a sighting; the crowd confirmation count updates live.
+- Expo: browse all 150+ exhibitors at the World Fitness Expo in the Convention Center. Filter by category — supplements, apparel, equipment, and more. Find floor plan and stage event times.
+- Venues: see all five weekend venues on a map with drive times from the Palms. Tap any venue for directions — opens Apple Maps or Google Maps on iOS.
+- Saved: bookmark events from anywhere in the app. Your saved list groups by day so you can see Tuesday's plan, then Friday's, without scrolling through the full schedule.
 
-Why people use it
+Unofficial disclaimer
 
-everything free
+This app is not affiliated with, endorsed by, or connected to American Media LLC, Olympia LLC, the IFBB Professional League, or the Mr. Olympia contest. Schedule data is compiled from publicly available sources and may change. Check mrolympia.com for the authoritative schedule.
 
-Subscription
-
-Free trial: n/a. Weekly: . Annual: .
-Auto-renews unless cancelled.
-Manage in App Store settings.
+Free, no ads, no account required.

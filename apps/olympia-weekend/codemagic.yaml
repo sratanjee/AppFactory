@@ -10,6 +10,22 @@
 # All env vars land via the shared Codemagic env group "app-factory-secrets"
 # which mirrors the factory.config keys documented under
 # apps/olympia-weekend/REVIEW.md.
+#
+# Signing env vars required before triggering ios-testflight / android-internal:
+#
+#   iOS (App Store Connect):
+#     APP_STORE_CONNECT_KEY_OLYMPIAWEEKEND  — file-encoded .p8 (base64)
+#     APP_STORE_CONNECT_KEY_ID              — value: 3ARJ4A42XY
+#     APP_STORE_CONNECT_ISSUER_ID           — value: c13e39d5-5aa5-4947-8e27-77367f00ab1c
+#
+#   Android (upload keystore):
+#     ANDROID_KEYSTORE_OLYMPIAWEEKEND          — base64 file-encoded .jks
+#     ANDROID_KEYSTORE_PASSWORD_OLYMPIAWEEKEND — keystore password
+#     ANDROID_KEY_ALIAS_OLYMPIAWEEKEND         — value: olympia
+#     ANDROID_KEY_PASSWORD_OLYMPIAWEEKEND      — key password
+#
+#   Play (service account):
+#     PLAY_SERVICE_ACCOUNT_JSON_OLYMPIAWEEKEND — contents of play-factory.json
 
 workflows:
   web-vercel:
@@ -55,6 +71,15 @@ workflows:
         script: |
           eval "export MIXPANEL_TOKEN=\$MIXPANEL_TOKEN_olympiaweekend"
           eval "export GOOGLE_MAPS_IOS_KEY=\$GOOGLE_MAPS_IOS_KEY_olympiaweekend"
+      - name: Set up App Store Connect API key
+        script: |
+          # Decode the base64-encoded .p8 into a temp file for Codemagic's
+          # app-store-connect CLI. The file-encoded var is set in
+          # app-factory-secrets as APP_STORE_CONNECT_KEY_OLYMPIAWEEKEND.
+          echo "$APP_STORE_CONNECT_KEY_OLYMPIAWEEKEND" | base64 --decode \
+            > /tmp/asc_key_olympiaweekend.p8
+          # Export so app-store-connect publish can find it
+          export APP_STORE_CONNECT_PRIVATE_KEY_PATH=/tmp/asc_key_olympiaweekend.p8
       - name: Build IPA
         script: |
           cd apps/olympia-weekend
@@ -66,8 +91,11 @@ workflows:
       - name: Upload to TestFlight
         script: |
           app-store-connect publish \
-            --path build/ios/ipa/*.ipa \
-            --testflight
+            --path apps/olympia-weekend/build/ios/ipa/*.ipa \
+            --testflight \
+            --api-key "$APP_STORE_CONNECT_KEY_ID" \
+            --api-issuer "$APP_STORE_CONNECT_ISSUER_ID" \
+            --api-key-path /tmp/asc_key_olympiaweekend.p8
 
   android-internal:
     name: olympia-weekend — Play internal
@@ -81,6 +109,18 @@ workflows:
         script: |
           eval "export MIXPANEL_TOKEN=\$MIXPANEL_TOKEN_olympiaweekend"
           eval "export GOOGLE_MAPS_ANDROID_KEY=\$GOOGLE_MAPS_ANDROID_KEY_olympiaweekend"
+      - name: Set up Android keystore
+        script: |
+          # Decode base64 keystore from Codemagic secret
+          echo "$ANDROID_KEYSTORE_OLYMPIAWEEKEND" | base64 --decode \
+            > /tmp/olympia-weekend-upload.jks
+          # Write key.properties for the Gradle signing config
+          cat > apps/olympia-weekend/android/key.properties << EOF
+          storeFile=/tmp/olympia-weekend-upload.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD_OLYMPIAWEEKEND
+          keyAlias=$ANDROID_KEY_ALIAS_OLYMPIAWEEKEND
+          keyPassword=$ANDROID_KEY_PASSWORD_OLYMPIAWEEKEND
+          EOF
       - name: Build AAB
         script: |
           cd apps/olympia-weekend
@@ -89,8 +129,13 @@ workflows:
             --dart-define=SUPABASE_URL="$SUPABASE_OLYMPIAWEEKEND_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_OLYMPIAWEEKEND_ANON_KEY" \
             --dart-define=GOOGLE_MAPS_ANDROID_KEY="$GOOGLE_MAPS_ANDROID_KEY"
+      - name: Set up Play service account
+        script: |
+          echo "$PLAY_SERVICE_ACCOUNT_JSON_OLYMPIAWEEKEND" \
+            > /tmp/play-service-account-olympiaweekend.json
       - name: Upload to Play internal
         script: |
           google-play publish \
             --track internal \
-            build/app/outputs/bundle/release/*.aab
+            --credentials /tmp/play-service-account-olympiaweekend.json \
+            apps/olympia-weekend/build/app/outputs/bundle/release/*.aab
