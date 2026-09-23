@@ -1,7 +1,7 @@
 name: olympia_weekend
 description: Olympia Weekend — the pocket program for the 2026 weekend in Las Vegas.
 publish_to: none
-version: 1.0.0+10
+version: 1.0.0+11
 
 environment:
   sdk: ^3.13.0
