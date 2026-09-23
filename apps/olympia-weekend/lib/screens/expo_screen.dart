@@ -39,6 +39,9 @@ class _ExpoScreenState extends ConsumerState<ExpoScreen> {
   String _query = '';
   ExhibitorCategory? _selectedCategory; // null == "All"
   late _ExpoSegment _segment = _segmentFor(widget.initialTab);
+  // Events segment day filter — Fri or Sat. Default to Friday since
+  // it's the first expo day.
+  String _eventsDay = '2026-09-25';
 
   static _ExpoSegment _segmentFor(String? raw) => switch (raw) {
         'events' => _ExpoSegment.events,
@@ -282,18 +285,47 @@ class _ExpoScreenState extends ConsumerState<ExpoScreen> {
       ];
     }
 
+    final visible = _eventsDay == '2026-09-25' ? fri : sat;
     return [
-      if (fri.isNotEmpty) ...[
-        const _DayHeader(label: AppStrings.expoEventsFri),
-        const SizedBox(height: 10),
-        _EventsCard(events: fri),
-        const SizedBox(height: 24),
-      ],
-      if (sat.isNotEmpty) ...[
-        const _DayHeader(label: AppStrings.expoEventsSat),
-        const SizedBox(height: 10),
-        _EventsCard(events: sat),
-      ],
+      // Fri / Sat side-by-side day pills. Each stretches to half the
+      // row width so the two days read as peers, matching the Now
+      // screen's day-pill row visually.
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          children: [
+            Expanded(
+              child: _ExpoDayPill(
+                label: 'Fri Sep 25',
+                active: _eventsDay == '2026-09-25',
+                onTap: () => setState(() => _eventsDay = '2026-09-25'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _ExpoDayPill(
+                label: 'Sat Sep 26',
+                active: _eventsDay == '2026-09-26',
+                onTap: () => setState(() => _eventsDay = '2026-09-26'),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 16),
+      if (visible.isEmpty)
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            AppStrings.expoEventsEmpty,
+            style: context.olympiaText.row.copyWith(
+              fontWeight: FontWeight.w400,
+              color: colors.textMuted,
+            ),
+          ),
+        )
+      else
+        _EventsCard(events: visible),
     ];
   }
 
@@ -400,15 +432,53 @@ class _ExpoScreenState extends ConsumerState<ExpoScreen> {
   }
 }
 
-class _DayHeader extends StatelessWidget {
-  const _DayHeader({required this.label});
+/// Fri / Sat pill on the Events segment — filled with the accent when
+/// active, muted surface when not. Wider than a schedule day pill so
+/// two of them fit the row with generous tap targets.
+class _ExpoDayPill extends StatelessWidget {
+  const _ExpoDayPill({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
   final String label;
+  final bool active;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Text(label, style: context.olympiaText.section),
-      );
+  Widget build(BuildContext context) {
+    final colors = context.olympiaColors;
+    return OlympiaPressable(
+      onTap: onTap,
+      semanticsLabel: label,
+      semanticsSelected: active,
+      minSize: const Size(0, 44),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: active
+              ? const Color(0xFFe2231a)
+              : colors.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: active
+                ? const Color(0xFFe2231a)
+                : colors.surfaceBorder,
+          ),
+        ),
+        child: Text(
+          label,
+          style: context.olympiaText.pill(active: active).copyWith(
+                color: active
+                    ? const Color(0xFFFFFFFF)
+                    : colors.text,
+              ),
+        ),
+      ),
+    );
+  }
 }
 
 class _EventsCard extends StatelessWidget {
