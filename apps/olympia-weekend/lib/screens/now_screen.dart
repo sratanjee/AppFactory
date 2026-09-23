@@ -12,6 +12,8 @@ import 'package:olympia_weekend/features/vegas_time.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
+import 'package:olympia_weekend/screens/schedule_screen.dart'
+    show scheduleSelectedDayProvider;
 import 'package:olympia_weekend/widgets/access_tag.dart';
 import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
@@ -125,7 +127,14 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             onSelected: (d) {
               if (d == selectedDate) return;
               ref.read(mixpanelProvider).dayChange(selectedDate, d);
-              // Jump to schedule for other days.
+              // Prime Schedule with the tapped day before jumping —
+              // without this, Schedule reads `primed = null` and falls
+              // back to today (or Friday when today is pre-weekend), so
+              // tapping Thu on Now would land the user on the wrong
+              // day. Regression from commit 2a798cf whose message
+              // claimed to do this write but only implemented the
+              // Schedule-side read.
+              ref.read(scheduleSelectedDayProvider.notifier).set(d);
               context.goNamed(Routes.schedule);
             },
           ),
