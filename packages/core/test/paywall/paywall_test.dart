@@ -10,9 +10,20 @@ void main() {
       paywall = Paywall.disabled();
     });
 
-    test('hasEntitlement returns false', () async {
-      expect(await paywall.hasEntitlement(), isFalse);
+    test('isDisabled is true', () {
+      expect(paywall.isDisabled, isTrue);
     });
+
+    test(
+      'hasEntitlement returns true in debug mode so gated actions are '
+      'reachable without RC config wired',
+      () async {
+        // flutter_test runs kDebugMode = true; the "isDisabled &&
+        // (kDebugMode || kIsWeb) -> true" branch is what dev/preview
+        // builds hit.
+        expect(await paywall.hasEntitlement(), isTrue);
+      },
+    );
 
     test('fetchOffering returns null', () async {
       expect(await paywall.fetchOffering(), isNull);

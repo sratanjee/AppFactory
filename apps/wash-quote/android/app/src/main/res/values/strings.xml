@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Quick Settings tile label. Kept short per DESIGN_GUIDE (one line, no scope creep). -->
+    <string name="qs_tile_label_new_quote">New quote</string>
+</resources>

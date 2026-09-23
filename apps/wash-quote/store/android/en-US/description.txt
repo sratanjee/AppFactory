@@ -1,0 +1,30 @@
+Price a job while you're standing in the customer's driveway, and send them a branded PDF before you drive off.
+
+Wash Quote & Invoice is a pressure-washing quote and invoice tool for solo operators. It runs on your phone, works with no signal, and it does one thing well: quote the job, send the PDF, take a deposit, get to the next stop.
+
+QUOTE FROM THE DRIVEWAY
+Tap New quote from the driveway, snap a photo of the surface, pick a service from your price list, adjust the square footage, and you have a live total. Add a deposit percent and your pay-via text (Venmo, Zelle, Square, check — your call). Save it.
+
+YOUR PRICES, YOUR UNITS
+Set your own services once. House soft wash, driveway, roof, deck, fence, commercial flatwork — priced per square foot, per linear foot, per hour, or flat. Every quote pulls from your list.
+
+LOOKS LIKE A REAL COMPANY
+The PDF has your logo, your business name, itemized lines, the deposit line, your pay-via text, and before / after photo pages. It renders the same on every device, in Gmail, Drive, and WhatsApp.
+
+SHOW THE WORK, GET PAID FASTER
+Attach before photos on the quote. Add after photos when the job is done and convert to an invoice with one tap. When it's time to collect the deposit, create a Stripe payment link straight from the invoice.
+
+ONE PRICE, UNLIMITED DOCUMENTS
+Business setup is free. Sending quotes and invoices needs Pro: $9.99 monthly, $59.99 annual (7-day free trial), or $79.99 one-time. No document caps. No branding on your PDFs but yours. No pushy upsell prompts later, because there is nothing left to upgrade to.
+
+LOCAL-FIRST, PRIVATE BY DEFAULT
+Every quote and invoice lives on your phone. No accounts, no login, no cloud dashboard. Automatic backup to Google Drive. You can export every job as a PDF or the whole ledger as CSV at any time.
+
+WHAT IT IS NOT
+Not scheduling, not routing, not team management, not accounting sync. If you want those, use Jobber. This is the tool for pricing a job in a driveway and sending a PDF before you leave it.
+
+SUBSCRIPTION DETAILS
+Subscriptions auto-renew unless cancelled at least 24 hours before the period ends. Manage or cancel any time in Play Store subscription settings. The 7-day free trial applies to the annual plan.
+
+Privacy policy: https://sratanjee.github.io/appfactory-site/wash-quote/privacy.html
+Terms of use: https://sratanjee.github.io/appfactory-site/terms.html

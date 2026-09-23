@@ -1,0 +1,156 @@
+# Root Codemagic pipeline for App Factory.
+#
+# Codemagic reads THIS file at repo root. Codemagic does not support a
+# YAML `include` directive that resolves at parse time, so each per-app
+# workflow is aggregated here. The per-app `apps/<slug>/codemagic.yaml`
+# stays alongside its app for readability and CI-local invocations
+# (`codemagic --config apps/<slug>/codemagic.yaml`), but the root file
+# below is what runs on push to `app/<slug>` branches and `main`.
+#
+# ADDING A NEW APP (idempotent-safe):
+#   1. Duplicate the two workflow blocks for `wash-quote` below.
+#   2. Rename the block keys `<slug>_ios_testflight` and
+#      `<slug>_android_internal`.
+#   3. Replace every `wash-quote`, `wash_quote`, and `washquote` in the
+#      scripts + workflow names.
+#   4. Add the app's slug to the `triggering.branch_patterns` list of
+#      the block so `app/<slug>` pushes only build that app.
+#   5. Provision RC keys `REVENUECAT_IOS_KEY_<slug>` and
+#      `REVENUECAT_ANDROID_KEY_<slug>` in the `app-factory-secrets`
+#      env group. No shared secrets are per-app.
+#
+# The two per-workflow scripts intentionally mirror
+# `apps/wash-quote/codemagic.yaml`. When the per-app file changes, sync
+# the root; the per-app file is the source of truth for developers
+# reading the app directory, the root file is the source of truth for
+# CI.
+#
+# Env group `app-factory-secrets` must contain:
+#   ASC_KEY_ID                            App Store Connect API key id
+#   ASC_ISSUER_ID                         ASC issuer id
+#   ASC_KEY_P8                            ASC private key (paste .p8 body)
+#   PLAY_SERVICE_ACCOUNT_JSON             Play Console service account JSON
+#   REVENUECAT_IOS_KEY_<slug>             RC iOS SDK key, one per app
+#   REVENUECAT_ANDROID_KEY_<slug>         RC Android SDK key, one per app
+#   POSTHOG_KEY                           shared analytics key
+
+definitions:
+  # Shared env group + flutter version, referenced by every workflow.
+  # When Flutter bumps factory-wide, edit this once.
+  environments:
+    app-factory: &app_factory_env
+      groups:
+        - app-factory-secrets
+      flutter: 3.47.4
+      vars:
+        BUNDLE_ID_PREFIX: "com.appfactory"
+
+  # Reusable trigger fragment. Each workflow narrows this by branch
+  # pattern so an `app/wash-quote` push only fires wash-quote lanes.
+  triggering:
+    ci_triggers: &ci_triggers
+      events:
+        - push
+      cancel_previous_builds: true
+
+workflows:
+
+  # -------------------------------------------------------------------
+  # wash-quote
+  # -------------------------------------------------------------------
+
+  wash_quote_ios_testflight:
+    name: "wash-quote — iOS TestFlight"
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      <<: *app_factory_env
+      xcode: latest
+      cocoapods: default
+    triggering:
+      <<: *ci_triggers
+      branch_patterns:
+        - pattern: "app/wash-quote"
+          include: true
+        - pattern: "main"
+          include: true
+    scripts:
+      - name: Install Flutter deps
+        script: |
+          cd apps/wash-quote
+          flutter pub get
+      - name: Install CocoaPods
+        script: |
+          cd apps/wash-quote/ios
+          pod install
+      - name: Resolve per-slug RC key
+        script: |
+          # Group vars land in env directly. Alias the per-slug key onto
+          # a stable name the flutter build step can pass through.
+          eval "export RC_IOS_KEY=\$REVENUECAT_IOS_KEY_wash_quote"
+          if [ -z "$RC_IOS_KEY" ]; then
+            echo "REVENUECAT_IOS_KEY_wash_quote unset in app-factory-secrets"
+            exit 2
+          fi
+      - name: Build IPA
+        script: |
+          cd apps/wash-quote
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist \
+            --dart-define=REVENUECAT_IOS_KEY="$RC_IOS_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to TestFlight
+        script: |
+          app-store-connect publish \
+            --path apps/wash-quote/build/ios/ipa/*.ipa \
+            --testflight
+    artifacts:
+      - apps/wash-quote/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - apps/wash-quote/build/**/*.dSYM.zip
+
+  wash_quote_android_internal:
+    name: "wash-quote — Play internal"
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      <<: *app_factory_env
+    triggering:
+      <<: *ci_triggers
+      branch_patterns:
+        - pattern: "app/wash-quote"
+          include: true
+        - pattern: "main"
+          include: true
+    scripts:
+      - name: Install Flutter deps
+        script: |
+          cd apps/wash-quote
+          flutter pub get
+      - name: Resolve per-slug RC key
+        script: |
+          eval "export RC_ANDROID_KEY=\$REVENUECAT_ANDROID_KEY_wash_quote"
+          if [ -z "$RC_ANDROID_KEY" ]; then
+            echo "REVENUECAT_ANDROID_KEY_wash_quote unset in app-factory-secrets"
+            exit 2
+          fi
+      - name: Build AAB
+        script: |
+          cd apps/wash-quote
+          flutter build appbundle --release \
+            --dart-define=REVENUECAT_ANDROID_KEY="$RC_ANDROID_KEY" \
+            --dart-define=POSTHOG_KEY="$POSTHOG_KEY"
+      - name: Upload to Play internal
+        script: |
+          google-play publish \
+            --track internal \
+            --package-name com.appfactory.washquote \
+            apps/wash-quote/build/app/outputs/bundle/release/*.aab
+    artifacts:
+      - apps/wash-quote/build/app/outputs/bundle/release/*.aab
+      - apps/wash-quote/build/app/outputs/mapping/release/mapping.txt
+
+  # -------------------------------------------------------------------
+  # Append new apps here. Keep alphabetical by slug so the diff on a new
+  # app is easy to review.
+  # -------------------------------------------------------------------
