@@ -207,12 +207,6 @@ class _NowScreenState extends ConsumerState<NowScreen> {
           _padded(
             child: OlympiaCard(
               padding: EdgeInsets.zero,
-              // Thin accent border on Up next + All day so the day's
-              // schedule pops off the black canvas without shouting.
-              border: Border.all(
-                color: const Color(0xFFe2231a),
-                width: 1,
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -245,10 +239,6 @@ class _NowScreenState extends ConsumerState<NowScreen> {
           _padded(
             child: OlympiaCard(
               padding: EdgeInsets.zero,
-              border: Border.all(
-                color: const Color(0xFFe2231a),
-                width: 1,
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
