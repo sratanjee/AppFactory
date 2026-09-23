@@ -10,6 +10,8 @@ import 'package:olympia_weekend/widgets/async_body.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/chip_strip.dart';
 import 'package:olympia_weekend/widgets/filter_chip.dart';
+import 'package:olympia_weekend/widgets/pressable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// First-class Expo hub — three segments (Exhibitors / Events / Floor
 /// plan) rolled into one screen. Consolidates the old
@@ -300,11 +302,12 @@ class _ExpoScreenState extends ConsumerState<ExpoScreen> {
   List<Widget> _floorPlanSection() {
     final colors = context.olympiaColors;
     final domain = AppConfig.webDeployDomain;
-    // If we know a deploy domain we can point at an external image; on
-    // dev / preview builds without WEB_DEPLOY_DOMAIN we fall back to a
-    // dashed placeholder card so the segment isn't empty.
     final hasImage = domain.isNotEmpty;
     return [
+      // Primary: the bundled static floor plan (cached, offline-
+      // friendly, matches the dark palette). Falls back to a
+      // placeholder card until the PNG lands at
+      // web/expo-floor-plan.png.
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: ClipRRect(
@@ -315,6 +318,61 @@ class _ExpoScreenState extends ConsumerState<ExpoScreen> {
                   fallback: _floorPlanFallback(colors),
                 )
               : _floorPlanFallback(colors),
+        ),
+      ),
+      const SizedBox(height: 12),
+      // Fallback for users who want live booth search: link out to
+      // a2z's own interactive map at fp37.a2zinc.net. Opens in the
+      // system browser so we don't need webview_flutter.
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: OlympiaPressable(
+          onTap: () async {
+            final uri = Uri.parse(
+              'https://fp37.a2zinc.net/clients/fpWeiderPub/'
+              'JoeWeidersOlympia2026/Public/EventMap.aspx',
+            );
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          },
+          semanticsLabel: AppStrings.expoInteractiveMapCta,
+          minSize: const Size(0, 44),
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: colors.surfaceBorder),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppStrings.expoInteractiveMapCta,
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '↗',
+                  style: context.olympiaText.row.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 8),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Text(
+          AppStrings.expoInteractiveMapNote,
+          style: context.olympiaText.caption,
         ),
       ),
     ];

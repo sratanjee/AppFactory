@@ -129,6 +129,9 @@ abstract final class AppStrings {
   static const String expoFloorPlanFallback =
       'Floor plan drops here. Bundling the PNG at web/expo-floor-plan.png '
       'in the next drop.';
+  static const String expoInteractiveMapCta = 'Open interactive map';
+  static const String expoInteractiveMapNote =
+      'Live booth-level search on mrolympia.com — opens in a new tab.';
   static const String expoStageChip = 'See stage events';
   static const String expoVenueLink = 'See exhibitors';
   static const String expoEventsTitle = 'Expo stage & meet-and-greets';
