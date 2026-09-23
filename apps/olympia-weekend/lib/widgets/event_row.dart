@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/design_tokens.dart';
 import 'package:olympia_weekend/widgets/access_tag.dart';
+import 'package:olympia_weekend/widgets/backstage_pill.dart';
 import 'package:olympia_weekend/widgets/pressable.dart';
 
 /// One row inside an event list card. Shows the time column (or a
@@ -15,6 +16,7 @@ class EventRow extends StatelessWidget {
     required this.onTap,
     this.trailing,
     this.showChevron = true,
+    this.internal = false,
     super.key,
   });
 
@@ -26,6 +28,11 @@ class EventRow extends StatelessWidget {
   final VoidCallback onTap;
   final Widget? trailing;
   final bool showChevron;
+
+  /// Staff-only row — renders a small "BACKSTAGE" badge next to the
+  /// title so unlockers can see at a glance which rows are hidden from
+  /// public attendees.
+  final bool internal;
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +67,20 @@ class EventRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    event.title,
-                    style: context.olympiaText.row,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          event.title,
+                          style: context.olympiaText.row,
+                        ),
+                      ),
+                      if (internal) ...[
+                        const SizedBox(width: 8),
+                        const BackstagePill(dense: true),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Row(

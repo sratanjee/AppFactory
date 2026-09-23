@@ -98,8 +98,15 @@ enum WeekendPhase { before, during, after }
 ///   start and end (Expo / Pop-Up Gym).
 /// - `phase`: whether we're before, during, or after the weekend, so
 ///   the caller can pick an empty-state message.
-NowState computeNowState(List<Event> events, tz.TZDateTime now) {
-  final resolved = events.map(resolveEvent).toList(growable: false);
+NowState computeNowState(
+  List<Event> events,
+  tz.TZDateTime now, {
+  bool includeInternal = false,
+}) {
+  final visible = includeInternal
+      ? events
+      : events.where((e) => !e.internal).toList(growable: false);
+  final resolved = visible.map(resolveEvent).toList(growable: false);
   final today = vegasDateOf(now);
   // "Up next" pivot date. During and after the weekend it's the same
   // as today; before the weekend starts we roll forward to the first

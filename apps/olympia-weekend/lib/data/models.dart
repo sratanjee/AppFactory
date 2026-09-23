@@ -43,6 +43,7 @@ class Event {
     required this.shuttle,
     required this.amateur,
     required this.endEstimate,
+    this.internal = false,
     this.start,
     this.end,
     this.room,
@@ -87,6 +88,7 @@ class Event {
       runningOrderNote: json['runningOrderNote'] as String?,
       endEstimate: json['endEstimate'] as bool? ?? false,
       doorsEstimate: json['doorsEstimate'] as String?,
+      internal: json['internal'] as bool? ?? false,
     );
   }
 
@@ -111,6 +113,11 @@ class Event {
   final String? runningOrderNote;
   final bool endEstimate;
   final String? doorsEstimate;
+
+  /// Staff-only events (athlete meetings, weigh-ins, judge's meeting,
+  /// amateur registration). Hidden from the public schedule; only shown
+  /// when the user has unlocked Backstage mode via the About sheet.
+  final bool internal;
 
   bool get isExpo => id.contains('expo') || title.toLowerCase().contains('expo');
   bool get isAllDay => start != null && end != null;

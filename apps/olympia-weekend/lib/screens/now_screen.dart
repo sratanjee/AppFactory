@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:olympia_weekend/features/backstage.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/now_state.dart';
 import 'package:olympia_weekend/features/saved_events.dart';
@@ -13,10 +14,12 @@ import 'package:olympia_weekend/features/vegas_time.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:olympia_weekend/l10n/app_strings.dart';
 import 'package:olympia_weekend/router.dart';
+import 'package:olympia_weekend/screens/about_sheet.dart';
 import 'package:olympia_weekend/screens/schedule_screen.dart'
     show scheduleSelectedDayProvider;
 import 'package:olympia_weekend/widgets/access_tag.dart';
 import 'package:olympia_weekend/widgets/async_body.dart';
+import 'package:olympia_weekend/widgets/backstage_pill.dart';
 import 'package:olympia_weekend/widgets/card.dart';
 import 'package:olympia_weekend/widgets/day_pills.dart';
 import 'package:olympia_weekend/widgets/event_row.dart';
@@ -69,7 +72,12 @@ class _NowScreenState extends ConsumerState<NowScreen> {
                   (_isWeekend(vegasDateOf(now))
                       ? vegasDateOf(now)
                       : days.first);
-              final state = computeNowState(events, now);
+              final backstage = ref.watch(backstageUnlockedProvider);
+              final state = computeNowState(
+                events,
+                now,
+                includeInternal: backstage,
+              );
 
               if (!_tracked) {
                 _tracked = true;
@@ -117,7 +125,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
-        _Header(now: now),
+        _Header(now: now, backstage: ref.watch(backstageUnlockedProvider)),
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
           child: DayPills(
@@ -217,6 +225,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
                           venuesById[state.next[i].event.venueId],
                           state.next[i].event),
                       timeLabel: _shortTime(state.next[i].event.start),
+                      internal: state.next[i].event.internal,
                       onTap: () => _openEvent(state.next[i].event, 'now'),
                     ),
                     if (i != state.next.length - 1)
@@ -249,6 +258,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
                           venuesById[state.allDay[i].event.venueId],
                           state.allDay[i].event),
                       timeLabel: '',
+                      internal: state.allDay[i].event.internal,
                       onTap: () => _openEvent(state.allDay[i].event, 'now'),
                     ),
                     if (i != state.allDay.length - 1)
@@ -368,8 +378,9 @@ class _NowScreenState extends ConsumerState<NowScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.now});
+  const _Header({required this.now, required this.backstage});
   final tz.TZDateTime now;
+  final bool backstage;
 
   @override
   Widget build(BuildContext context) {
@@ -384,7 +395,26 @@ class _Header extends StatelessWidget {
               children: [
                 Text(_longDate(now), style: context.olympiaText.caption),
                 const SizedBox(height: 6),
-                Text(AppStrings.appTitle, style: context.olympiaText.title),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: OlympiaPressable(
+                        onTap: () => showAboutSheet(context),
+                        semanticsLabel: AppStrings.aboutTitle,
+                        pressedOpacity: 0.7,
+                        child: Text(
+                          AppStrings.appTitle,
+                          style: context.olympiaText.title,
+                        ),
+                      ),
+                    ),
+                    if (backstage) ...[
+                      const SizedBox(width: 10),
+                      const BackstagePill(),
+                    ],
+                  ],
+                ),
               ],
             ),
           ),

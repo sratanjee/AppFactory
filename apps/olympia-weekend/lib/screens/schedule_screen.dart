@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:olympia_weekend/features/backstage.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/now_state.dart';
 import 'package:olympia_weekend/features/vegas_time.dart';
@@ -100,8 +101,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 });
               }
 
+              final backstage = ref.watch(backstageUnlockedProvider);
               final dayEvents = events
-                  .where((e) => e.date == selected)
+                  .where((e) =>
+                      e.date == selected && (backstage || !e.internal))
                   .toList()
                 ..sort(
                     (a, b) => (a.start ?? '99:99').compareTo(b.start ?? '99:99'));
@@ -246,6 +249,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     venueLabel: _venueLabel(
                         venuesById[events[i].venueId], events[i]),
                     timeLabel: _shortTime(events[i].start),
+                    internal: events[i].internal,
                     onTap: () {
                       ref.read(mixpanelProvider).viewEvent(
                             eventId: events[i].id,
