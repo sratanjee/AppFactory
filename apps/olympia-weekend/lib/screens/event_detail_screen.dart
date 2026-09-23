@@ -8,6 +8,7 @@ import 'package:olympia_weekend/app_config.dart';
 import 'package:olympia_weekend/data/models.dart';
 import 'package:olympia_weekend/data/schedule_repo.dart';
 import 'package:olympia_weekend/design_tokens.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:olympia_weekend/features/directions.dart';
 import 'package:olympia_weekend/features/mixpanel_service.dart';
 import 'package:olympia_weekend/features/saved_events.dart';
@@ -352,23 +353,44 @@ class EventDetailScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
+          if (event.access == EventAccess.ticket) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: AdaptiveSecondaryButton(
+                label: AppStrings.eventGetTickets,
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://mrolympia.com/tickets'),
+                    mode: LaunchMode.externalApplication,
+                  );
+                  ref
+                      .read(mixpanelProvider)
+                      .directionsTap(venueId: 'tickets', mapsApp: 'browser');
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: AdaptiveSecondaryButton(
               label: AppStrings.eventShare,
               onPressed: () async {
-                // Build from the live deploy domain (--dart-define
-                // WEB_DEPLOY_DOMAIN), falling back to the current
-                // Vercel URL if no custom domain is wired.
+                // launchUrl(sameOrigin) just navigates back to the
+                // current page on web — that's the "share loops" bug.
+                // Copy to clipboard on all platforms; if the user is
+                // on a native app we could switch to `share_plus`
+                // later, but clipboard is universal and works today.
                 final host = AppConfig.webDeployDomain.isNotEmpty
                     ? AppConfig.webDeployDomain
                     : 'olympia-weekend.vercel.app';
-                final url = Uri.parse(
-                    'https://$host/e/${event.id}?utm_source=share');
-                await launchUrl(url, mode: LaunchMode.externalApplication);
+                final url =
+                    'https://$host/e/${event.id}?utm_source=share';
+                await Clipboard.setData(ClipboardData(text: url));
                 ref
                     .read(mixpanelProvider)
                     .shareTap(screen: 'event', eventId: event.id);
+                if (context.mounted) _showCopiedToast(context);
               },
             ),
           ),
@@ -426,6 +448,45 @@ class EventDetailScreen extends ConsumerWidget {
         body: SafeArea(bottom: false, child: child),
       ),
     );
+  }
+
+  /// Lightweight bottom toast — no `ScaffoldMessenger` (which would
+  /// require importing material). Slides in via an Overlay entry that
+  /// removes itself after 2 s. Used to confirm "link copied" when the
+  /// browser doesn't expose the Web Share API.
+  void _showCopiedToast(BuildContext context) {
+    final colors = context.olympiaColors;
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(ctx).padding.bottom + 24,
+        child: IgnorePointer(
+          child: Center(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: colors.surfaceBorder),
+              ),
+              child: Text(
+                AppStrings.eventShareCopied,
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colors.text,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 2), entry.remove);
   }
 }
 

@@ -75,6 +75,8 @@ abstract final class AppStrings {
   static const String eventUnsave = 'Saved';
   static const String eventDirections = 'Directions';
   static const String eventShare = 'Share';
+  static const String eventShareCopied = 'Link copied — paste it anywhere';
+  static const String eventGetTickets = 'Get tickets';
   static const String eventBackToSchedule = 'Schedule';
   static const String eventBackToNow = 'Now';
   static const String eventShuttle = 'Shuttles run to this venue.';
