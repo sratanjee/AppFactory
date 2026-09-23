@@ -345,13 +345,12 @@ class _NowScreenState extends ConsumerState<NowScreen> {
   }
 }
 
-class _Header extends ConsumerWidget {
+class _Header extends StatelessWidget {
   const _Header({required this.now});
   final tz.TZDateTime now;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final savedCount = ref.watch(savedEventsProvider).length;
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       child: Row(
@@ -368,7 +367,19 @@ class _Header extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 12),
-          _SavedHeartAction(count: savedCount),
+          // The heart badge subscribes to `savedEventsProvider` on its
+          // own Element via `Consumer` + `.select` on the length. Two
+          // reasons: (a) rebuilds only on count changes, not on set
+          // identity, (b) no prop-drilling from the parent means the
+          // pop-back-from-Saved path can never leave a stale count.
+          Consumer(
+            builder: (context, ref, _) {
+              final count = ref.watch(
+                savedEventsProvider.select((s) => s.length),
+              );
+              return _SavedHeartAction(count: count);
+            },
+          ),
         ],
       ),
     );
