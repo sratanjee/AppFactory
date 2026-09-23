@@ -1,4 +1,4 @@
-package com.appfactory.olympia_weekend
+package com.appfactory.olympiaweekend
 
 import io.flutter.embedding.android.FlutterActivity
 
