@@ -28,15 +28,9 @@ abstract final class AppStrings {
   static const String nowEmptyEndOfDay =
       'That\'s it for today. Full schedule is one tap away.';
   static const String nowInstallHint =
-      'Unofficial fan guide. Add to your home screen for one-tap access.';
-  static const String nowInstallHintCta = 'How';
-  static const String nowInstallSheetIosTitle = 'Add to Home Screen';
-  static const String nowInstallSheetIosBody =
-      'Tap the Share button in Safari, then choose Add to Home Screen.';
-  static const String nowInstallSheetAndroidBody =
-      'Tap Install to add Olympia Weekend to your home screen.';
-  static const String nowInstallSheetAndroidCta = 'Install';
-  static const String nowInstallSheetDismiss = 'Got it';
+      'Know someone heading to Vegas this weekend? Send them the app.';
+  static const String nowInstallHintCta = 'Share';
+  static const String nowShareCopied = 'Link copied — paste it anywhere';
 
   // Schedule screen.
   static const String scheduleTitle = 'Schedule';
@@ -169,7 +163,7 @@ abstract final class AppStrings {
 
   // About.
   static const String aboutTitle = 'About';
-  static const String aboutTagline = 'Unofficial fan guide.';
+  static const String aboutTagline = 'Olympia weekend, in your pocket.';
   static const String aboutTickets = 'Official tickets';
   static const String aboutLivestream = 'Official livestream';
   static const String aboutReport = 'Report a fix';

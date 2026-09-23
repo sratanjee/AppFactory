@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0e0e0e",
     "theme_color": "#e2231a",
-    "description": "Unofficial fan guide for Olympia Weekend 2026 in Las Vegas.",
+    "description": "The pocket program for Olympia Weekend 2026 in Las Vegas.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

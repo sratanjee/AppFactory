@@ -1,4 +1,5 @@
 import 'package:factory_core/adaptive/adaptive.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -294,7 +295,7 @@ class _NowScreenState extends ConsumerState<NowScreen> {
             ),
             const SizedBox(width: 8),
             OlympiaPressable(
-              onTap: () => _showInstallSheet(context),
+              onTap: () => _shareApp(context),
               semanticsLabel: AppStrings.nowInstallHintCta,
               minSize: const Size(0, 44),
               child: Padding(
@@ -314,38 +315,50 @@ class _NowScreenState extends ConsumerState<NowScreen> {
     );
   }
 
-  Future<void> _showInstallSheet(BuildContext context) async {
+  Future<void> _shareApp(BuildContext context) async {
     ref.read(mixpanelProvider).installPromptShown();
-    await AdaptiveSheet.show<void>(
-      context,
-      child: Builder(
-        builder: (ctx) => Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppStrings.nowInstallSheetIosTitle,
-                style: ctx.olympiaText.section,
+    await Clipboard.setData(
+      const ClipboardData(text: 'https://olympia-weekend.vercel.app'),
+    );
+    if (!context.mounted) return;
+    _showCopiedToast(context);
+  }
+
+  /// Bottom toast confirming "link copied". Matches the pattern used
+  /// by Event Share so both surfaces feel the same.
+  void _showCopiedToast(BuildContext context) {
+    final colors = context.olympiaColors;
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(ctx).padding.bottom + 24,
+        child: IgnorePointer(
+          child: Center(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: colors.surfaceBorder),
               ),
-              const SizedBox(height: 8),
-              Text(
-                AppStrings.nowInstallSheetIosBody,
-                style: ctx.olympiaText.row.copyWith(
-                  fontWeight: FontWeight.w400,
+              child: Text(
+                AppStrings.nowShareCopied,
+                style: context.olympiaText.row.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colors.text,
                 ),
               ),
-              const SizedBox(height: 16),
-              AdaptivePrimaryButton(
-                label: AppStrings.nowInstallSheetDismiss,
-                onPressed: () => Navigator.of(ctx).pop(),
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 2), entry.remove);
   }
 
   void _openEvent(Event event, String fromScreen) {
