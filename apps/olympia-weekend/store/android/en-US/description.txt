@@ -1,25 +1,27 @@
-Olympia Weekend is an unofficial fan guide for the 2026 Mr. Olympia in Las Vegas. It answers the one question every fan has at the venue: what is happening right now, what is next, and where do I go?
+The pocket program for Olympia weekend in Las Vegas. Everything happening from Wednesday through Sunday — the schedule, the five venues, the 154-booth expo floor, and the meet-and-greet times — all in one place, all offline inside the Palms.
 
-The app runs entirely on your device. No account, no login, no ads, no subscription. Everything you need ships bundled — the schedule still works in airplane mode inside the Palms.
+Built for the fan who is actually at the venue, not the fan browsing history. If you want to know when doors open, which venue pre-judging is at, where the free pop-up gym is, or which booth Chris Bumstead is signing at today, this is the app. No account. No login. No ads. No subscription.
 
 What the app does
 
-• Now screen — see what is happening at this moment, what is coming up next, and all-day events on one screen. The clock runs on Las Vegas local time regardless of where your phone thinks it is.
+• Now — one glance answers "what should I be watching right now" and "what's up next". The clock runs on Las Vegas local time regardless of where your phone thinks it is. All-day events surface on their day so nothing gets buried.
 
-• Schedule — browse every event from Wednesday through Sunday. Filter by access level (free, ticketed, or VIP) or by venue. Tap any event to see doors time, running order, and directions.
+• Schedule — every event Wed through Sun with doors time, running order, venue, and access level (free, ticketed, or VIP). Filter by day, access, or venue. Tap any event for directions to the door.
 
-• Event detail — the three facts you need: when doors open, where it is, and what ticket gets you in. Plus the full running order, VIP photo opportunity times, and a Save button for your itinerary.
+• Expo — all 154 exhibitors at the World Fitness Expo in the LVCC South Hall. Filter by category — supplements, apparel, equipment, coaching, more. Fri and Sat stage-event times. Floor plan bundled so you can find booth B4 in the aisle, not on Instagram.
 
-• Athletes — find competitors across Men's Open, Classic Physique, Bikini, Figure, Wellness, 212, and more. See each athlete's expo booth, meet-and-greet schedule, and Instagram. Tap "I saw this" to confirm a sighting.
+• Venues — five weekend venues on one map with drive times from the Palms and one-tap directions to Google Maps.
 
-• Expo — browse all 150+ exhibitors at the World Fitness Expo. Filter by category. Find stage event times and the floor plan.
+• Athletes — the roster across Men's Open, Classic Physique, 212, Men's Physique, Bikini, Wellness, Figure, Fitness, Women's Physique, Women's Bodybuilding, and Wheelchair. See each competitor's expo booth, meet-and-greet schedule, and Instagram. Tap "I saw this" when you spot them — the crowd confirmation count updates live.
 
-• Venues — all five weekend venues with drive times from the Palms. Tap any venue for turn-by-turn directions in Google Maps.
+• Event detail — three facts you need: when doors open, where the door is, and what ticket gets you in. Plus the running order, VIP photo opportunity times, and a Save button for your itinerary.
 
-• Saved — bookmark any event. Your saved list groups by day so you can see your Wednesday plan, then Friday's, at a glance.
+• Saved — bookmark from anywhere. Your saved list groups by day so you see Wednesday's plan, then Friday's, at a glance.
+
+Made for the weekend. The whole app ships bundled so it works in the Palms elevator, the Convention Center basement, and on Vegas hotel Wi-Fi that keeps timing out.
 
 Unofficial disclaimer
 
-This app is not affiliated with, endorsed by, or connected to American Media LLC, Olympia LLC, the IFBB Professional League, or the Mr. Olympia contest. Schedule data is compiled from publicly available sources and may change. Check mrolympia.com for the authoritative schedule.
+Not affiliated with, endorsed by, or connected to American Media LLC, Olympia LLC, the IFBB Professional League, or the Mr. Olympia contest. Schedule data is compiled from publicly available sources and may change. Check mrolympia.com for the authoritative schedule.
 
 Free. No ads. No account required.

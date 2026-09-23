@@ -1,19 +1,27 @@
-Olympia Weekend is an unofficial fan guide for the 2026 Mr. Olympia in Las Vegas. It answers the one question every fan has at the venue: what is happening right now, what is next, and where do I go?
+The pocket program for Olympia weekend in Las Vegas. Everything happening from Wednesday through Sunday — the schedule, the five venues, the 154-booth expo floor, and the meet-and-greet times — all in one place, all offline inside the Palms.
 
-The app runs entirely on your device. No account, no login, no ads, no subscription. Everything you need ships bundled — the schedule still works in airplane mode inside the Palms.
+Built for the fan who is actually at the venue, not the fan browsing history. If you want to know when doors open, which venue pre-judging is at, where the free pop-up gym is, or which booth Chris Bumstead is signing at today, this is the app. No account. No login. No ads. No subscription.
 
 What the app does
 
-- Now screen: see what is happening at this moment, what is coming up next, and all-day events on a single glance screen. The clock runs on Las Vegas local time regardless of where your phone thinks it is.
-- Schedule: browse every event from Wednesday through Sunday. Filter by access level (free, ticketed, or VIP) or by venue. Tap any event to see doors time, running order, and directions.
-- Event detail: the three facts you need — when doors open, where it is, and what kind of ticket gets you in — plus the full running order, VIP photo opportunity times, and a Save button so you can build your personal itinerary.
-- Athletes: find competitors across Men's Open, Classic Physique, Bikini, Figure, Wellness, 212, and more. See each athlete's expo booth, meet-and-greet schedule, and Instagram. Tap "I saw this" to confirm a sighting; the crowd confirmation count updates live.
-- Expo: browse all 150+ exhibitors at the World Fitness Expo in the Convention Center. Filter by category — supplements, apparel, equipment, and more. Find floor plan and stage event times.
-- Venues: see all five weekend venues on a map with drive times from the Palms. Tap any venue for directions — opens Apple Maps or Google Maps on iOS.
-- Saved: bookmark events from anywhere in the app. Your saved list groups by day so you can see Tuesday's plan, then Friday's, without scrolling through the full schedule.
+- Now: one glance answers "what should I be watching right now" and "what's up next". The clock runs on Las Vegas local time regardless of where your phone thinks it is. All-day events (the expo, the pop-up gym) surface on their day so nothing gets buried.
+
+- Schedule: every event Wed through Sun with doors time, running order, venue, and access level (free, ticketed, or VIP). Filter by day, by access, or by venue. Tap any event for directions to the door.
+
+- Expo: all 154 exhibitors at the World Fitness Expo in the LVCC South Hall. Filter by category — supplements, apparel, equipment, coaching, more. Fri and Sat stage-event times. Floor plan bundled so you can find booth B4 in the aisle, not on Instagram.
+
+- Venues: five weekend venues on one map — the Palms (home base), Orleans Arena (Amateur Olympia), LVCC (expo), Dragon's Lair Pop-Up Gym, and the finals stage — with drive times from the Palms and one-tap directions to Apple Maps or Google Maps.
+
+- Athletes: the roster across Men's Open, Classic Physique, 212, Men's Physique, Bikini, Wellness, Figure, Fitness, Women's Physique, Women's Bodybuilding, and Wheelchair. See each competitor's expo booth, meet-and-greet schedule, and Instagram. Tap "I saw this" when you spot them — the crowd confirmation count updates live so other fans know booth B4 is real, not a rumour.
+
+- Event detail: three facts you need — when doors open, where the door is, and what ticket gets you in — plus the running order, VIP photo opportunity times, presenter/featured guests, and a Save button so you can build your personal itinerary.
+
+- Saved: bookmark from anywhere in the app. Your saved list groups by day so you see Wednesday's plan, then Friday's, without scrolling through the full schedule.
+
+Made for the weekend. The whole app ships bundled so it works in the Palms elevator, in the Convention Center basement, and on Vegas hotel Wi-Fi that keeps timing out.
 
 Unofficial disclaimer
 
-This app is not affiliated with, endorsed by, or connected to American Media LLC, Olympia LLC, the IFBB Professional League, or the Mr. Olympia contest. Schedule data is compiled from publicly available sources and may change. Check mrolympia.com for the authoritative schedule.
+Not affiliated with, endorsed by, or connected to American Media LLC, Olympia LLC, the IFBB Professional League, or the Mr. Olympia contest. Schedule data is compiled from publicly available sources and may change. Check mrolympia.com for the authoritative schedule.
 
-Free, no ads, no account required.
+Free. No ads. No account required.
