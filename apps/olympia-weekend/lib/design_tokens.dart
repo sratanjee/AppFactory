@@ -124,10 +124,16 @@ extension OlympiaColorsFromContext on BuildContext {
 
 /// Type scale — spec §8 + `design/olympia-weekend/*.html` inline values.
 ///
-/// Everything system-font (SF Pro on iOS, Roboto on Android, system-ui on
-/// web). Line heights + letter-spacing mirror the artboard's CSS so the
-/// rendered pixel density matches the mockups instead of drifting on
-/// Flutter's default text metrics.
+/// Fonts: Barlow Condensed for the two headline slots (title, cardTitle) —
+/// gives the front page that fight-night program feel — and Inter for
+/// everything else (sections, rows, captions, time cells, chrome). Line
+/// heights + letter-spacing mirror the artboard's CSS so rendered pixel
+/// density matches the mockups instead of drifting on Flutter's defaults.
+///
+/// TODO(font): web loads these via <link> in web/index.html. Mobile still
+/// falls back to system fonts until the release engineer wires in the
+/// `google_fonts` pub package post-store-submission — we're deliberately
+/// avoiding a pubspec bump before the current review round.
 @immutable
 class OlympiaText {
   const OlympiaText(this._c);
@@ -135,9 +141,13 @@ class OlympiaText {
 
   static const _monoNums = <FontFeature>[FontFeature.tabularFigures()];
 
+  static const _display = 'Barlow Condensed';
+  static const _body = 'Inter';
+
   /// Screen title "Olympia Weekend" / "Schedule" / "Athletes" / "Venues" /
   /// "Saved" — 32/700 / -0.5.
   TextStyle get title => TextStyle(
+        fontFamily: _display,
         fontSize: 32,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
@@ -148,6 +158,7 @@ class OlympiaText {
   /// Section header — "Up next" / "All day" / "Morning" / "Afternoon and
   /// evening" — 17/600, high-contrast.
   TextStyle get section => TextStyle(
+        fontFamily: _body,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         height: 1.2,
@@ -156,6 +167,7 @@ class OlympiaText {
 
   /// Row primary text — event title, athlete name — 15/500.
   TextStyle get row => TextStyle(
+        fontFamily: _body,
         fontSize: 15,
         fontWeight: FontWeight.w500,
         height: 1.25,
@@ -164,6 +176,7 @@ class OlympiaText {
 
   /// Row subtitle — venue name + relative time — 13/regular muted.
   TextStyle get caption => TextStyle(
+        fontFamily: _body,
         fontSize: 13,
         height: 1.35,
         color: _c.textMuted,
@@ -172,6 +185,7 @@ class OlympiaText {
   /// Tabular time cell — "6:00" / "12:00" — 17/600 with tabular figures so
   /// digits align vertically in stacked rows.
   TextStyle get timeCell => TextStyle(
+        fontFamily: _body,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         fontFeatures: _monoNums,
@@ -180,6 +194,7 @@ class OlympiaText {
 
   /// Happening-now inner title — 22/700 / -0.3 / 1.15 line-height.
   TextStyle get cardTitle => TextStyle(
+        fontFamily: _display,
         fontSize: 22,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.3,
@@ -189,6 +204,7 @@ class OlympiaText {
 
   /// Access-tag ("Free" / "Ticket" / "VIP") — 12/600 pill.
   TextStyle get tag => const TextStyle(
+        fontFamily: _body,
         fontSize: 12,
         fontWeight: FontWeight.w600,
         height: 1.0,
@@ -196,6 +212,7 @@ class OlympiaText {
 
   /// Day-pill label — 14/500 inactive, 14/600 active. Callers pass `active`.
   TextStyle pill({required bool active}) => TextStyle(
+        fontFamily: _body,
         fontSize: 14,
         fontWeight: active ? FontWeight.w600 : FontWeight.w500,
         color: active ? _c.pillActiveText : _c.textMuted,
@@ -203,6 +220,7 @@ class OlympiaText {
 
   /// Tab-bar label — 10/500 inactive, 10/600 active. Callers pass `active`.
   TextStyle tab({required bool active}) => TextStyle(
+        fontFamily: _body,
         fontSize: 10,
         fontWeight: active ? FontWeight.w600 : FontWeight.w500,
         color: active ? _c.text : _c.textFaint,
@@ -210,12 +228,14 @@ class OlympiaText {
 
   /// Full-day / See-all trailing link on section headers — 15/regular accent.
   TextStyle link({required Color accent}) => TextStyle(
+        fontFamily: _body,
         fontSize: 15,
         color: accent,
       );
 
   /// Faint caption — 12/regular muted (e.g. "No booth listed").
   TextStyle get faint => TextStyle(
+        fontFamily: _body,
         fontSize: 12,
         height: 1.35,
         color: _c.textFaint,

@@ -23,10 +23,42 @@
 
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <!-- Type — Barlow Condensed for hero display (title / cardTitle), Inter
+       for body. Loaded from Google Fonts on web; mobile falls back to
+       system fonts until google_fonts is wired in post-store-submission.
+       Weights match design_tokens.dart usage (Barlow 700; Inter 400/500/600). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <title>Olympia Weekend</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- Purge any prior Flutter service worker + cache before bootstrap runs.
+       Flutter's default SW ships a "self-nuke" script that calls
+       client.navigate() on activate, which causes a reload loop for any
+       visitor who had an older SW registered. We unregister everything,
+       drop all Cache Storage entries, THEN load flutter_bootstrap.js. -->
+  <script>
+    (async () => {
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((r) => r.unregister()));
+        }
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+      } catch (e) {
+        console.warn('SW/cache purge failed (continuing):', e);
+      }
+      const s = document.createElement('script');
+      s.src = 'flutter_bootstrap.js';
+      s.async = true;
+      document.body.appendChild(s);
+    })();
+  </script>
 </body>
 </html>
