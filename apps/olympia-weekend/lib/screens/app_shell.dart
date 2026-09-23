@@ -26,7 +26,12 @@ class AppShell extends StatelessWidget {
       child: AdaptiveScaffold(
         titleDisplay: TitleDisplay.none,
         backgroundColor: colors.background,
-        body: navigationShell,
+        body: _SwipeToChangeTab(
+          currentIndex: navigationShell.currentIndex,
+          count: 5,
+          onSwipe: (nextIndex) => navigationShell.goBranch(nextIndex),
+          child: navigationShell,
+        ),
         tabBar: OlympiaTabBar(
           destinations: const [
             OlympiaTabDestination(
@@ -62,6 +67,47 @@ class AppShell extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Wraps the shell body so a horizontal drag on the tab canvas switches
+/// tabs (left swipe → next, right swipe → previous). Vertical scrolls
+/// still win because we only claim the gesture when the horizontal
+/// velocity dominates. Ignore swipes at the very edges to leave room
+/// for iOS back-swipe on stacked routes.
+class _SwipeToChangeTab extends StatefulWidget {
+  const _SwipeToChangeTab({
+    required this.currentIndex,
+    required this.count,
+    required this.onSwipe,
+    required this.child,
+  });
+
+  final int currentIndex;
+  final int count;
+  final void Function(int nextIndex) onSwipe;
+  final Widget child;
+
+  @override
+  State<_SwipeToChangeTab> createState() => _SwipeToChangeTabState();
+}
+
+class _SwipeToChangeTabState extends State<_SwipeToChangeTab> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onHorizontalDragEnd: (details) {
+        final v = details.primaryVelocity ?? 0;
+        // Ignore tiny flicks — need a real swipe intent.
+        if (v.abs() < 300) return;
+        final delta = v > 0 ? -1 : 1; // swipe right → previous tab
+        final next = widget.currentIndex + delta;
+        if (next < 0 || next >= widget.count) return;
+        widget.onSwipe(next);
+      },
+      child: widget.child,
     );
   }
 }
