@@ -131,6 +131,8 @@ class _AthletesScreenState extends ConsumerState<AthletesScreen> {
           child: AdaptiveInput(
             controller: _searchController,
             placeholder: AppStrings.athletesSearchHint,
+            style: context.olympiaText.row,
+            placeholderStyle: context.olympiaText.row.copyWith(color: colors.textMuted),
             onChanged: (v) {
               setState(() => _query = v);
               ref.read(mixpanelProvider).searchAthletes(v.length, 0);

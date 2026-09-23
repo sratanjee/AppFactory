@@ -26,6 +26,8 @@ class AdaptiveInput extends StatelessWidget {
     this.maxLength,
     this.onChanged,
     this.onSubmitted,
+    this.style,
+    this.placeholderStyle,
     super.key,
   });
 
@@ -40,10 +42,17 @@ class AdaptiveInput extends StatelessWidget {
   final int? maxLength;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
+  final TextStyle? style;
+  final TextStyle? placeholderStyle;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.adaptiveTheme;
+    // Fall back to the ambient DefaultTextStyle so a dark-themed app doesn't
+    // land on CupertinoTextField's default black-on-white input color.
+    final resolvedStyle = style ?? DefaultTextStyle.of(context).style;
+    final resolvedPlaceholder =
+        placeholderStyle ?? resolvedStyle.copyWith(color: CupertinoColors.systemGrey);
     if (AdaptivePlatform.isIOS) {
       return CupertinoTextField(
         controller: controller,
@@ -58,6 +67,8 @@ class AdaptiveInput extends StatelessWidget {
         onChanged: onChanged,
         onSubmitted: onSubmitted,
         cursorColor: theme.accent,
+        style: resolvedStyle,
+        placeholderStyle: resolvedPlaceholder,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           border: Border.all(color: CupertinoColors.systemGrey4),
@@ -77,8 +88,10 @@ class AdaptiveInput extends StatelessWidget {
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       cursorColor: theme.accent,
+      style: resolvedStyle,
       decoration: InputDecoration(
         hintText: placeholder,
+        hintStyle: resolvedPlaceholder,
         border: const OutlineInputBorder(),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: theme.accent, width: 2),
