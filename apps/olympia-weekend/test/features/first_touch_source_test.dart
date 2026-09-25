@@ -17,4 +17,21 @@ void main() {
     expect(parseUtmSource(''), isNull);
     expect(parseUtmSource(null), isNull);
   });
+
+  test('extracts referrer host from a full URL', () {
+    expect(
+      parseReferrerHost('https://www.google.com/search?q=olympia'),
+      'www.google.com',
+    );
+    expect(
+      parseReferrerHost('https://l.instagram.com/?u=https%3A%2F%2Folympiaweekend.app'),
+      'l.instagram.com',
+    );
+  });
+
+  test('referrer host handles empty / null / bare', () {
+    expect(parseReferrerHost(null), isNull);
+    expect(parseReferrerHost(''), isNull);
+    expect(parseReferrerHost('not a url'), isNull);
+  });
 }

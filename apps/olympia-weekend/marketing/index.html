@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0E0E0E" />
+
+  <title>Olympia Weekend &mdash; Your pass to the show. Sep 24&ndash;27, Las Vegas.</title>
+  <meta name="description" content="The pocket program for Olympia weekend. Every event, five venues, 154 booths &mdash; in Vegas or in your pocket. Free, no account, offline in the Palms." />
+
+  <link rel="canonical" href="https://olympiaweekend.app/" />
+
+  <link rel="icon" href="/assets/img/icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/assets/img/icon.png" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Olympia Weekend" />
+  <meta property="og:title" content="Your pass to the show." />
+  <meta property="og:description" content="The pocket program for Olympia weekend. Every event, five venues, 154 booths." />
+  <meta property="og:url" content="https://olympiaweekend.app/" />
+  <meta property="og:image" content="/assets/img/icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts &mdash; same URL family the Flutter web app uses. Barlow Condensed 700/900 for display, Inter 400/500/600 for UI. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" />
+
+  <!-- Preload the hero silhouette so it doesn't pop in. -->
+  <link rel="preload" as="image" href="/assets/img/silhouette-hero.svg" type="image/svg+xml" />
+
+  <link rel="stylesheet" href="/assets/css/site.css" />
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ============================================================
+       STICKY NAV &mdash; fades in after scrolling past hero
+       ============================================================ -->
+  <header class="nav" data-nav>
+    <div class="container nav__row">
+      <a class="brand-mark" href="/" aria-label="Olympia Weekend home"
+         data-track="nav_brand_click">
+        <span class="brand-mark__icon" aria-hidden="true">
+          <img src="/assets/img/icon.png" alt="" width="32" height="32" />
+        </span>
+        <span class="brand-mark__omega" aria-hidden="true">&#937;</span>
+      </a>
+      <a class="btn-red" href="#download"
+         data-track="nav_get_app_click">Get the app</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============================================================
+         HERO &mdash; FIGHT POSTER
+         ============================================================ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <img class="hero__silhouette"
+           src="/assets/img/silhouette-hero.svg"
+           alt=""
+           aria-hidden="true"
+           width="1024"
+           height="1024"
+           fetchpriority="high" />
+      <div class="hero__vignette" aria-hidden="true"></div>
+      <div class="hero__grain" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <span class="chip" data-live-chip>
+          <span class="chip__dot" aria-hidden="true"></span>
+          Live now &middot; Sep 24&ndash;27 &middot; Las Vegas
+        </span>
+
+        <h1 id="hero-title" class="hero__headline">
+          Your pass to <span class="accent">the show.</span>
+        </h1>
+
+        <p class="hero__subhead">
+          The pocket program for Olympia weekend. Every event,
+          <strong>five venues, 154 booths</strong> &mdash; in Vegas or in your pocket.
+        </p>
+
+        <div class="hero__cta">
+          <a class="badge-link"
+             href="https://apps.apple.com/us/app/id6815354055"
+             aria-label="Download on the App Store"
+             rel="noopener"
+             data-track="cta_app_store"
+             data-prop-location="hero">
+            <img src="/assets/img/app-store-badge.svg"
+                 alt="Download on the App Store"
+                 width="164" height="54" />
+          </a>
+          <a class="badge-link badge-link--play"
+             href="https://play.google.com/store/apps/details?id=com.appfactory.olympiaweekend"
+             aria-label="Get it on Google Play"
+             rel="noopener"
+             data-track="cta_play_store"
+             data-prop-location="hero">
+            <img src="/assets/img/google-play-badge.png"
+                 alt="Get it on Google Play"
+                 width="236" height="78" />
+          </a>
+          <a class="btn-browser" href="/app" aria-label="Use Olympia Weekend in your browser"
+             data-track="cta_use_in_browser"
+             data-prop-location="hero">
+            <span>Use in browser</span>
+            <span class="btn-browser__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         WHAT'S INSIDE &mdash; feature grid, floating raw screenshots
+         ============================================================ -->
+    <section id="inside" class="section" aria-labelledby="inside-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <h2 id="inside-title" class="section__title">
+            The program.
+          </h2>
+          <p class="section__lede">
+            Four days, five venues, 325 competitors. The schedule, the expo floor,
+            the athlete card &mdash; loaded before you land, offline all weekend.
+          </p>
+        </header>
+
+        <div class="inside__grid">
+          <article class="feature" data-reveal>
+            <div class="feature__shot">
+              <img src="/assets/img/screenshot-schedule.png"
+                   alt="Olympia Weekend schedule screen showing sessions filtered by day and division"
+                   loading="lazy"
+                   width="800" height="1739" />
+            </div>
+            <h3 class="feature__title">Every event. Wednesday to Sunday.</h3>
+            <p class="feature__desc">
+              Prejudging, finals, meet-and-greets, the media day. Filter by day,
+              division, or venue. Bookmark what you care about.
+            </p>
+          </article>
+
+          <article class="feature" data-reveal>
+            <div class="feature__shot">
+              <img src="/assets/img/screenshot-expo.png"
+                   alt="Olympia Weekend expo screen with a searchable list of 154 exhibitor booths"
+                   loading="lazy"
+                   width="800" height="1739" />
+            </div>
+            <h3 class="feature__title">One hundred fifty-four booths. Searchable.</h3>
+            <p class="feature__desc">
+              The full LVCC South Hall floor plan bundled inside the app. Filter
+              by category, pinch-zoom the map, no signal required.
+            </p>
+          </article>
+
+          <article class="feature" data-reveal>
+            <div class="feature__shot">
+              <img src="/assets/img/screenshot-athletes.png"
+                   alt="Olympia Weekend athletes screen listing competitors by division"
+                   loading="lazy"
+                   width="800" height="1739" />
+            </div>
+            <h3 class="feature__title">Athletes. Booths. Meet-and-greets.</h3>
+            <p class="feature__desc">
+              Every one of the 325 pros gets a profile: division, tagline, where
+              they&rsquo;re signing, when they&rsquo;re on stage.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ATHLETES &mdash; PHOTO GRID OF TOP 6 CHAMPS
+         ============================================================ -->
+    <section id="athletes" class="athletes" aria-labelledby="athletes-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <h2 id="athletes-title" class="section__title">
+            The roster.
+          </h2>
+          <p class="section__lede">
+            325 competitors across 11 divisions.
+          </p>
+        </header>
+
+        <div class="athletes__grid">
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/derek-lunsford.jpg"
+                   alt="Derek Lunsford"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Derek Lunsford</div>
+              <div class="champ__desc">Men&rsquo;s Open &middot; Reigning 2x champion</div>
+            </figcaption>
+          </figure>
+
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/ashley-kaltwasser.jpg?v=3"
+                   alt="Ashley Kaltwasser"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Ashley Kaltwasser</div>
+              <div class="champ__desc">Bikini &middot; Multi-time Olympia champion</div>
+            </figcaption>
+          </figure>
+
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/nick-walker.jpg"
+                   alt="Nick Walker"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Nick Walker</div>
+              <div class="champ__desc">Men&rsquo;s Open &middot; Fan favorite, returning contender</div>
+            </figcaption>
+          </figure>
+
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/maureen-blanquisco.jpg"
+                   alt="Maureen Blanquisco"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Maureen Blanquisco</div>
+              <div class="champ__desc">Bikini &middot; 2023 &amp; 2025 Bikini Olympia champion</div>
+            </figcaption>
+          </figure>
+
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/hadi-choopan.jpg"
+                   alt="Hadi Choopan"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Hadi Choopan</div>
+              <div class="champ__desc">Men&rsquo;s Open &middot; 2022 champion, 2025 runner-up</div>
+            </figcaption>
+          </figure>
+
+          <figure class="champ" data-reveal>
+            <div class="champ__photo">
+              <img src="/assets/img/athletes/samson-dauda.jpg?v=2"
+                   alt="Samson Dauda"
+                   loading="lazy"
+                   width="640" height="640" />
+            </div>
+            <figcaption>
+              <div class="champ__name">Samson Dauda</div>
+              <div class="champ__desc">Men&rsquo;s Open &middot; 2024 champion</div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         EXPO &mdash; floor plan + stats
+         ============================================================ -->
+    <section id="expo" class="section" aria-labelledby="expo-title">
+      <div class="container">
+        <div class="expo__grid">
+          <div class="expo__map" data-reveal>
+            <img src="/assets/img/floor-plan.jpg"
+                 alt="LVCC South Hall floor plan for Olympia Expo 2026, showing 154 exhibitor booths."
+                 loading="lazy"
+                 width="1600" height="900" />
+            <span class="expo__map__caption">LVCC South Hall &middot; 2026</span>
+          </div>
+
+          <div class="expo__copy" data-reveal>
+            <h2 id="expo-title" class="section__title">
+              One hundred fifty-four booths.
+              <span class="accent">One floor.</span>
+            </h2>
+            <p class="section__lede" style="margin-top: 20px;">
+              The official South Hall map, bundled. Filter by category, tap a brand
+              to see if they&rsquo;re running signings, never lose your bearings
+              between rows Q and R.
+            </p>
+            <div class="expo__stats">
+              <div>
+                <div class="stat__num"><span class="accent">154</span></div>
+                <div class="stat__label">Exhibitors</div>
+              </div>
+              <div>
+                <div class="stat__num">3</div>
+                <div class="stat__label">Expo days</div>
+              </div>
+              <div>
+                <div class="stat__num">1</div>
+                <div class="stat__label">Interactive map</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         VENUES
+         ============================================================ -->
+    <section id="venues" class="section" aria-labelledby="venues-title">
+      <div class="container">
+        <div class="venues__grid">
+          <div class="venues__copy" data-reveal>
+            <h2 id="venues-title" class="section__title">
+              Five venues. <span class="accent">One map.</span>
+            </h2>
+            <p class="section__lede" style="margin-top: 20px;">
+              The Pearl, LVCC South Hall, Resorts World Theatre, the Palms pool
+              deck, the House of Blues. Drive times from your hotel, addresses
+              that open straight into Apple or Google Maps.
+            </p>
+            <ul class="venues__list">
+              <li><span class="name">The Pearl @ Palms</span><span class="drive">Host venue</span></li>
+              <li><span class="name">LVCC South Hall</span><span class="drive">~15 min drive</span></li>
+              <li><span class="name">Resorts World Theatre</span><span class="drive">~14 min drive</span></li>
+              <li><span class="name">Palms Pool Deck</span><span class="drive">On-site</span></li>
+              <li><span class="name">House of Blues</span><span class="drive">~12 min drive</span></li>
+            </ul>
+          </div>
+
+          <div class="venues__shot" data-reveal>
+            <img src="/assets/img/screenshot-event.png"
+                 alt="Olympia Weekend event detail screen showing venue, time, and directions"
+                 loading="lazy"
+                 width="800" height="1739" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FINAL CTA
+         ============================================================ -->
+    <section id="download" class="cta" aria-labelledby="cta-title">
+      <div class="cta__bg" aria-hidden="true"></div>
+      <div class="cta__silhouette" aria-hidden="true">
+        <img src="/assets/img/silhouette-hero.svg" alt="" width="1024" height="1024" loading="lazy" />
+      </div>
+
+      <div class="container cta__inner">
+        <span class="eyebrow eyebrow--accent" data-reveal>Free &middot; No account &middot; No ads</span>
+        <h2 id="cta-title" class="cta__display" data-reveal>
+          Get it before <br />the <span class="accent">first callout.</span>
+        </h2>
+        <p class="cta__sub" data-reveal>
+          Every event, every athlete, every booth &mdash; in your pocket for the
+          Vegas weekend. Or use it in the browser if you&rsquo;re out of storage.
+        </p>
+
+        <div class="cta__badges" data-reveal>
+          <a class="badge-link"
+             href="https://apps.apple.com/us/app/id6815354055"
+             aria-label="Download on the App Store"
+             rel="noopener"
+             data-track="cta_app_store"
+             data-prop-location="footer_cta">
+            <img src="/assets/img/app-store-badge.svg"
+                 alt="Download on the App Store"
+                 width="176" height="58" />
+          </a>
+          <a class="badge-link badge-link--play"
+             href="https://play.google.com/store/apps/details?id=com.appfactory.olympiaweekend"
+             aria-label="Get it on Google Play"
+             rel="noopener"
+             data-track="cta_play_store"
+             data-prop-location="footer_cta">
+            <img src="/assets/img/google-play-badge.png"
+                 alt="Get it on Google Play"
+                 width="248" height="82" />
+          </a>
+          <a class="btn-browser btn-browser--lg" href="/app" aria-label="Use Olympia Weekend in your browser"
+             data-track="cta_use_in_browser"
+             data-prop-location="footer_cta">
+            <span>Use in browser</span>
+            <span class="btn-browser__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+
+        <span class="cta__promise" data-reveal>
+          <span>Free</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span>No account</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span>No ads</span>
+        </span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__col">
+          <div class="footer__brand">
+            <img src="/assets/img/icon.png" alt="" aria-hidden="true" width="40" height="40" />
+            <span>Olympia Weekend</span>
+          </div>
+          <p class="footer__disclaimer">
+            Olympia Weekend is an independent app. It is not affiliated with
+            American Media LLC, Olympia LLC, or the IFBB Professional League.
+            For the official contest, visit
+            <a href="https://mrolympia.com" rel="noopener"
+               data-track="outbound_click"
+               data-prop-target="mrolympia"
+               data-prop-location="disclaimer">mrolympia.com</a>.
+          </p>
+        </div>
+
+        <div class="footer__col">
+          <h4>App</h4>
+          <ul>
+            <li><a href="https://apps.apple.com/us/app/id6815354055" rel="noopener"
+                   data-track="cta_app_store" data-prop-location="footer">App Store</a></li>
+            <li><a href="https://play.google.com/store/apps/details?id=com.appfactory.olympiaweekend" rel="noopener"
+                   data-track="cta_play_store" data-prop-location="footer">Google Play</a></li>
+            <li><a href="/app"
+                   data-track="cta_use_in_browser" data-prop-location="footer">Open in browser</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Info</h4>
+          <ul>
+            <li><a href="/privacy.html"
+                   data-track="nav_privacy_click">Privacy</a></li>
+            <li><a href="https://mrolympia.com" rel="noopener"
+                   data-track="outbound_click"
+                   data-prop-target="mrolympia"
+                   data-prop-location="footer">mrolympia.com</a></li>
+            <li><a href="mailto:sratanjee@gmail.com"
+                   data-track="contact_click">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>&copy; 2026 Olympia Weekend</span>
+        <span>Made in Vegas for the four days that matter</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js" defer></script>
+  <script src="/assets/js/analytics.js" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function () {
+      window.olympiaAnalytics.init({ token: '__MP_TOKEN__', page: 'landing' });
+    });
+  </script>
+</body>
+</html>

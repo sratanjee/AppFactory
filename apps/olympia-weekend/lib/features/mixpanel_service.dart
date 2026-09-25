@@ -45,6 +45,7 @@ class MixpanelService {
 
     final prefs = await SharedPreferences.getInstance();
     final source = await ensureFirstTouchSource(prefs);
+    final referrer = await ensureFirstTouchReferrer(prefs);
     final theme = _detectTheme();
     final now = tz.TZDateTime.now(vegasLocation);
     final props = <String, Object?>{
@@ -55,6 +56,7 @@ class MixpanelService {
       'day': _dayShort(now),
       'hour': now.hour,
       'source': source,
+      'referrer_host': referrer,
     };
 
     if (mp != null) {

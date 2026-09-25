@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Olympia Weekend</title>
+  <style>
+    :root {
+      --bg: #f8f8f8;
+      --surface: #ffffff;
+      --text: #141414;
+      --text-faint: #6b6b68;
+      --accent: #e2231a;
+      --border: #e0e0df;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d0d0d;
+        --surface: #1a1a1a;
+        --text: #f0f0ee;
+        --text-faint: #9a9a96;
+        --border: #2a2a2a;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 24px 16px 64px;
+    }
+    .container { max-width: 680px; margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    header .app-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .effective {
+      font-size: 14px;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+    section { margin-bottom: 32px; }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    p { color: var(--text); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    .summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+    .summary-box p {
+      font-size: 17px;
+      font-weight: 500;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+    th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-faint);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-faint);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="app-name">Olympia Weekend</div>
+    <h1>Privacy policy</h1>
+    <p class="effective">Effective 22 September 2026</p>
+  </header>
+
+  <div class="summary-box">
+    <p>Olympia Weekend does not collect personal information. No name, email, phone number, or location is ever recorded or transmitted.</p>
+  </div>
+
+  <section>
+    <h2>What stays on your device</h2>
+    <p>The following data is stored locally on your device only and is never transmitted:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Where it lives</th>
+          <th>What it is used for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bookmarked events</td>
+          <td>Device storage (SharedPreferences)</td>
+          <td>Shows your saved events in the Saved view</td>
+        </tr>
+        <tr>
+          <td>First-touch source</td>
+          <td>Device storage (SharedPreferences)</td>
+          <td>Remembers how you first found the app (e.g., from an Instagram link) so Mixpanel can group usage by source — a single text string, not your identity</td>
+        </tr>
+        <tr>
+          <td>Install hint dismissed</td>
+          <td>Device storage (SharedPreferences)</td>
+          <td>Hides the "add to home screen" banner after you dismiss it</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;">None of this data leaves your device. Uninstalling the app removes it entirely.</p>
+  </section>
+
+  <section>
+    <h2>Analytics — Mixpanel</h2>
+    <p>The app uses <a href="https://mixpanel.com" target="_blank" rel="noopener">Mixpanel</a> to understand how fans use it during the weekend. This helps decide what to improve for future events.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>What Mixpanel receives</th>
+          <th>What it does not receive</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Anonymous device ID (a random string, not your name or email)</td>
+          <td>Your name, email, phone number, or any identifier that could be traced back to you</td>
+        </tr>
+        <tr>
+          <td>Aggregate usage events: which screens you viewed, which filters you used, which tabs you tapped</td>
+          <td>Your location, contacts, photos, or microphone</td>
+        </tr>
+        <tr>
+          <td>Platform and app version</td>
+          <td>IP address stored by us (Mixpanel may see it transiently at the network layer but we do not log it)</td>
+        </tr>
+        <tr>
+          <td>First-touch source (e.g., "instagram" or "direct")</td>
+          <td>Any data from other apps on your device</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;">Mixpanel's own privacy policy is at <a href="https://mixpanel.com/legal/privacy-policy" target="_blank" rel="noopener">mixpanel.com/legal/privacy-policy</a>.</p>
+  </section>
+
+  <section>
+    <h2>Crowd confirmations — Supabase</h2>
+    <p>When you tap "I saw this" on an athlete's page, the app sends a confirmation to our database to help other fans see that an athlete is at a specific booth or location.</p>
+    <p>What is sent:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Anonymous device ID</td>
+          <td>A random string generated when you first open the app. Not linked to your name, account, or Apple/Google ID.</td>
+        </tr>
+        <tr>
+          <td>Appearance key</td>
+          <td>A composite of athlete ID + date + start time + venue + booth. Identifies which sighting you are confirming, not who you are.</td>
+        </tr>
+        <tr>
+          <td>Timestamp</td>
+          <td>When you tapped "I saw this".</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;">Confirmations are rate-limited to 30 per device per hour to prevent abuse. No name, email, or phone number is ever associated with a confirmation. Supabase's privacy policy is at <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
+  </section>
+
+  <section>
+    <h2>Deep links</h2>
+    <p>The app supports the <code>olympia://</code> URL scheme. When you tap a link that starts with <code>olympia://</code>, your device opens the app and navigates to the relevant screen (for example, <code>olympia://schedule</code> opens the Schedule tab). No data about this navigation is transmitted to us beyond the Mixpanel screen-view event described above.</p>
+  </section>
+
+  <section>
+    <h2>Directions</h2>
+    <p>Tapping "Directions" on any venue or event opens Google Maps or Apple Maps with the venue address pre-filled. The address is hardcoded in the app. We do not receive or log your current location, your route, or any navigation data. Google Maps and Apple Maps have their own privacy policies that govern what they collect when you use their apps.</p>
+  </section>
+
+  <section>
+    <h2>Third-party advertising</h2>
+    <p>There are no ads in this app. We do not use any advertising SDKs. No data is sold or shared with advertising networks.</p>
+  </section>
+
+  <section>
+    <h2>User accounts</h2>
+    <p>There are no user accounts. There is no sign-up, no sign-in, and no profile. The app does not require an Apple ID, Google account, email address, or phone number at any point.</p>
+  </section>
+
+  <section>
+    <h2>Children</h2>
+    <p>This app is not directed at children under 13. We do not knowingly collect any information from children.</p>
+  </section>
+
+  <section>
+    <h2>Changes to this policy</h2>
+    <p>If we update this policy, we will post the new version here with an updated effective date. Continued use of the app after a change constitutes acceptance of the new policy.</p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href="mailto:sratanjee@gmail.com">sratanjee@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <p>Olympia Weekend is an independent app. It is not affiliated with American Media LLC, Olympia LLC, or the IFBB Professional League.</p>
+  </footer>
+
+</div>
+<script src="/assets/js/analytics.js" defer></script>
+<script defer>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.olympiaAnalytics.init({ token: '__MP_TOKEN__', page: 'privacy' });
+  });
+</script>
+</body>
+</html>
