@@ -114,7 +114,9 @@ fi
 
 echo "-> vercel deploy --prod --yes"
 cd "$DEPLOY_DIR"
-vercel deploy --prod --yes
+# Scope is required because the copied .vercel/project.json points at a
+# stale team_id — passing --scope routes the deploy to the current team.
+vercel deploy --prod --yes --scope sarang-ratanjees-projects
 
 echo ""
 echo "  Done. Visit https://olympiaweekend.app/"

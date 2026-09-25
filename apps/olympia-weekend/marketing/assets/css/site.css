@@ -124,15 +124,16 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
   border: 1px solid var(--line);
 }
 .brand-mark__icon img { width: 100%; height: 100%; object-fit: cover; }
-.brand-mark__omega {
+.brand-mark__wordmark {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 16px;
-  letter-spacing: 0.06em;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.02em;
   color: var(--text);
   text-transform: uppercase;
+  line-height: 1;
 }
-@media (max-width: 640px) { .brand-mark__omega { display: none; } }
+@media (max-width: 640px) { .brand-mark__wordmark { display: none; } }
 
 .btn-red {
   display: inline-flex;

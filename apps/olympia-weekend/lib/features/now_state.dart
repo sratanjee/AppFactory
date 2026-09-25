@@ -86,16 +86,25 @@ String vegasDateOf(tz.TZDateTime t) {
 /// Used to swap the "Up next" empty-state copy on the Now screen.
 enum WeekendPhase { before, during, after }
 
+/// Default duration used when an event has a known start but no
+/// declared end (finals, judging, VIP Q&A — the schedule leaves end
+/// null when it isn't officially published). Kept generous so that
+/// judging blocks that run five hours don't fall out of "Happening
+/// now" halfway through the session.
+const Duration _defaultEventDuration = Duration(hours: 4);
+
 /// Compute Now / Up-next / All-day state for a given Vegas moment.
 ///
-/// - `happening`: the first event with startAt <= now <= endAt, if any.
-///   For all-day events (start + end both set) the whole window counts.
+/// - `happening`: the first timed event whose active window includes
+///   `now`. Timed = not marked all-day; the active window runs from
+///   `startAt` through `endAt` (if set) or `startAt + 4h` otherwise.
+///   Falls back to an active all-day event (pop-up gym, expo) only
+///   when nothing timed is running — so the primary card surfaces the
+///   real thing (Sandow Q&A, finals) instead of the ambient gym card.
 /// - `next`: upcoming events *on the same Vegas day as `now`*, capped
-///   at 6, sorted ascending by start. Reviewer round 1 blocker 3:
-///   cross-day rows in the pre-weekend view read as broken duplicates
-///   — filtering to today makes the "Wed / Thu / Fri" jumble go away.
-/// - `allDay`: events on the same Vegas day as `now` that have both
-///   start and end (Expo / Pop-Up Gym).
+///   at 6, sorted ascending by start.
+/// - `allDay`: all-day events on the same Vegas day whose window still
+///   includes `now` — expo/gym drop off once they close.
 /// - `phase`: whether we're before, during, or after the weekend, so
 ///   the caller can pick an empty-state message.
 NowState computeNowState(
@@ -116,21 +125,29 @@ NowState computeNowState(
       ? olympiaWeekendDates.first
       : today;
 
+  bool activeTimed(ResolvedEvent r) {
+    if (r.event.isAllDay) return false;
+    if (r.event.date != today) return false;
+    final start = r.startAt;
+    if (start == null) return false;
+    if (now.isBefore(start)) return false;
+    final end = r.endAt ?? start.add(_defaultEventDuration);
+    return !now.isAfter(end);
+  }
+
+  bool activeAllDay(ResolvedEvent r) {
+    if (!r.event.isAllDay) return false;
+    if (r.event.date != today) return false;
+    final start = r.startAt;
+    final end = r.endAt;
+    if (start == null || end == null) return false;
+    return !now.isBefore(start) && !now.isAfter(end);
+  }
+
   final happening = resolved.firstWhere(
-    (r) =>
-        r.startAt != null &&
-        r.endAt != null &&
-        !now.isBefore(r.startAt!) &&
-        !now.isAfter(r.endAt!) &&
-        !r.event.isAllDay,
+    activeTimed,
     orElse: () => resolved.firstWhere(
-      (r) =>
-          r.event.isAllDay &&
-          r.event.date == today &&
-          r.startAt != null &&
-          r.endAt != null &&
-          !now.isBefore(r.startAt!) &&
-          !now.isAfter(r.endAt!),
+      activeAllDay,
       orElse: () => ResolvedEvent(
         event: _sentinel,
         startAt: null,
@@ -149,8 +166,13 @@ NowState computeNowState(
       .toList()
     ..sort((a, b) => a.startAt!.compareTo(b.startAt!));
 
+  // Show only all-day events still in their window — expo listed as
+  // "All day" three hours after it closed looked broken.
   final allDayToday = resolved
-      .where((r) => r.event.isAllDay && r.event.date == pivotDate)
+      .where((r) => r.event.isAllDay && r.event.date == pivotDate && (
+        // Pre-weekend view still lists everything ambient for context.
+        pivotDate != today || activeAllDay(r)
+      ))
       .toList();
 
   final WeekendPhase phase;

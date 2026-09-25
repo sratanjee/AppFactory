@@ -11,20 +11,61 @@ void main() {
 
   final loc = () => tz.getLocation('America/Los_Angeles');
 
-  test('mid-Friday morning → happening surfaces an all-day pop-up', () {
+  test('mid-Friday morning → happening surfaces the timed session, not the gym', () {
+    // Prior behaviour: pop-up gym (06–18) always won because it was
+    // the only event with an explicit end, so the primary card sat on
+    // the ambient gym card for the whole day. Fix: timed events with a
+    // known start inherit a 4-hour default duration so pre-judging /
+    // finals / VIP Q&A win the primary slot when they're active.
     final events = parseSchedule(
       File('assets/data/schedule.json').readAsStringSync(),
     );
     final now = tz.TZDateTime(loc(), 2026, 9, 25, 10, 0);
     final state = computeNowState(events, now);
-    // Friday 10:00 has three concurrent open windows: Dragon's Lair gym
-    // (06–18) and the Expo (09–17); Friday pre-judging has no explicit
-    // end so it doesn't qualify as "happening now" without inference.
+    expect(state.happening, isNotNull);
+    expect(state.happening!.event.id, 'fri-prejudging');
+    // The ambient gym + expo cards drop to the "All day" section.
+    final allDayIds = state.allDay.map((e) => e.event.id).toSet();
+    expect(allDayIds, containsAll(<String>['fri-gym', 'fri-expo']));
+  });
+
+  test('after the timed event\'s inferred window → falls back to all-day', () {
+    // Between prejudging's inferred close (~13:30) and Sandow's start
+    // (15:00) there is no active timed event, so the primary card
+    // legitimately falls back to the pop-up gym.
+    final events = parseSchedule(
+      File('assets/data/schedule.json').readAsStringSync(),
+    );
+    final now = tz.TZDateTime(loc(), 2026, 9, 25, 14, 0);
+    final state = computeNowState(events, now);
     expect(state.happening, isNotNull);
     expect(
       {'fri-gym', 'fri-expo'},
       contains(state.happening!.event.id),
     );
+  });
+
+  test('Friday 16:00 → Sandow Q&A wins the primary slot', () {
+    final events = parseSchedule(
+      File('assets/data/schedule.json').readAsStringSync(),
+    );
+    final now = tz.TZDateTime(loc(), 2026, 9, 25, 16, 0);
+    final state = computeNowState(events, now);
+    expect(state.happening, isNotNull);
+    expect(state.happening!.event.id, 'fri-sandow');
+  });
+
+  test('all-day section drops the expo after it closes', () {
+    // Expo runs 09:00–17:00. At 18:00 the primary card is finals; the
+    // "All day" section should only carry the pop-up gym (06–18), not
+    // the already-closed expo.
+    final events = parseSchedule(
+      File('assets/data/schedule.json').readAsStringSync(),
+    );
+    final now = tz.TZDateTime(loc(), 2026, 9, 25, 18, 0);
+    final state = computeNowState(events, now);
+    final allDayIds = state.allDay.map((e) => e.event.id).toSet();
+    expect(allDayIds, isNot(contains('fri-expo')));
   });
 
   test('Friday 22:00 → next filters to today, empty if nothing remains', () {
